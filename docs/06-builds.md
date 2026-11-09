@@ -1,0 +1,22 @@
+# 06 — Build breakdown
+
+Work is split into sequential **builds**. Each build has a goal, deliverables and a "done" check, and ends with a commit/push. No build starts before the previous is accepted by the user. Scope follows decisions in `05-decisions.md` and the narrowed MVP in `04-evaluation-and-plan.md`.
+
+| Build | Name | Goal | Deliverables | Done when |
+|---|---|---|---|---|
+| B0 | Project foundations | Empty but loadable extension and a reliable toolchain | TypeScript + MV3 scaffold, bundler, lint/format, unit-test runner, CI check, folder layout | Extension loads in Chrome; `build` and `test` pass |
+| B1 | Rule System | The core: declarative data model | JSON schemas for Transformation Rule, Market Profile, Site Adapter; validator; rule archive layout (examples, limits, evidence level, test results per rule); 15–20 initial rules (Visual first) | Schemas validate sample data; invalid rules are rejected with clear errors |
+| B2 | Extension shell | User-facing controls without transformations | Popup (ON/OFF, profile A/B/Original, depth), options page, local storage, per-domain exclusion, unsupported-page detection, restore button stub | Settings persist; unsupported pages report a clear message |
+| B3 | Engine core | Safe application machinery | Rule loader, Transformation Plan generator, applier, snapshot + rollback, idempotency, MutationObserver guard against loops, namespaced CSS | Apply → restore returns DOM/styles to original; no loops on a dynamic test page |
+| B4 | Visual transformations | First visible result | Design tokens (density, spacing, palette, type), Visual rules for Profile A and B, first site adapter (search engine) | Both profiles visibly change hierarchy/density on the search site; accessibility checks hold |
+| B5 | Analyzer, mapper, classifier (adapter-driven) | Recognize components and page types | Page Analyzer, Semantic Mapper v0 (HTML/ARIA first, adapter rules), page-type classifier, confidence levels | Main components of the 4 sites recognized; low confidence → visual-only fallback |
+| B6 | Structural transformations | Reorganize, not just restyle | Reordering, grouping, shortcuts, menu changes, compatibility indicator; adapters for the remaining 3 sites | Structural changes work on all 4 sites with original functions intact |
+| B7 | Alternative path + comparison | Prove one interaction change; show before/after | One working alternative path using original site functions, preliminary Hybrid profile, side-by-side original/adapted view | Alternative path works without simulating site features; comparison view usable |
+| B8 | Internal validation and report | Decide what comes next | Test harness, metrics (recognition precision, rollback success, errors, performance, data sent out = 0), internal evaluation report, go/no-go for Deep mode | MVP acceptance criteria from spec section 15 checked and reported |
+
+## Working rules for every build
+- Rules are data, not code; no remote code execution.
+- Privacy: local processing, minimal permissions, zero external requests.
+- Protected elements (passwords, payment, consent, auth, transactions) are never touched.
+- Every rule carries evidence level, limits and test results.
+- Everything in English (docs, code, UI).
