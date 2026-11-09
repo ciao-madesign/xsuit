@@ -1,4 +1,12 @@
-import type { Adapter, Profile, Rule, RuleSet, ValidationIssue, ValidationResult } from "./types";
+import type {
+  Adapter,
+  Profile,
+  Rule,
+  RuleSet,
+  Source,
+  ValidationIssue,
+  ValidationResult,
+} from "./types";
 import {
   ACTION_TYPES,
   COMPONENTS,
@@ -10,9 +18,11 @@ import {
   MODES,
   PAGE_TYPES,
   POSITIONS,
+  PRIMARY_SOURCE_KINDS,
   PROFILE_IDS,
   PROTECTED_COMPONENTS,
   RISKS,
+  SOURCE_KINDS,
   STRENGTHS,
   STRUCTURAL_ACTIONS,
   TEST_OUTCOMES,
@@ -117,6 +127,11 @@ export function validateRule(input: unknown): ValidationResult<Rule> {
     c.add("id", 'must look like "visual.search.compact-density" (lowercase, dot-separated)');
   c.str("title", r.title);
   c.str("description", r.description);
+  if (!isStr(r.rationale) || r.rationale.trim().length < 40)
+    c.add(
+      "rationale",
+      "must explain in at least a sentence why this action follows from the evidence",
+    );
   c.oneOf("profile", r.profile, PROFILE_IDS);
   c.oneOf("level", r.level, LEVELS);
   c.oneOf("mode", r.mode, MODES);
@@ -156,9 +171,22 @@ export function validateRule(input: unknown): ValidationResult<Rule> {
 
   if (!isObj(r.evidence)) c.add("evidence", "must be an object (every rule carries evidence)");
   else {
-    c.oneOf("evidence.level", r.evidence.level, EVIDENCE_LEVELS);
-    c.str("evidence.summary", r.evidence.summary);
-    c.strArray("evidence.sources", r.evidence.sources, { min: 1 });
+    const e = r.evidence;
+    c.oneOf("evidence.level", e.level, EVIDENCE_LEVELS);
+    c.str("evidence.summary", e.summary);
+    c.strArray("evidence.sources", e.sources, {
+      min: 1,
+      item: (p, x) => {
+        if (!isObj(x)) return c.add(p, "must be an object {id, locator, supports}");
+        c.str(`${p}.id`, x.id);
+        c.str(`${p}.locator`, x.locator);
+        c.str(`${p}.supports`, x.supports);
+      },
+    });
+    const needGaps = e.level === "emerging" || e.level === "hypothesis";
+    c.strArray("evidence.gaps", e.gaps, { min: needGaps ? 1 : 0 });
+    if (e.level === "hypothesis" && !isStr(e.validationPlan))
+      c.add("evidence.validationPlan", "a hypothesis must say how it will be validated");
   }
   c.strArray("limits", r.limits, { min: 1 });
   if (!Array.isArray(r.testResults)) c.add("testResults", "must be an array (may be empty)");
@@ -240,7 +268,7 @@ export function validateAdapter(input: unknown): ValidationResult<Adapter> {
 }
 
 // Set-level checks: unique ids, profile consistency, dependencies exist, no cycles.
-export function validateRuleSet(input: unknown): ValidationResult<RuleSet> {
+export function validateRuleSet(input: unknown, registry?: Source[]): ValidationResult<RuleSet> {
   const c = new Collector();
   if (!isObj(input)) {
     c.add("", "rule set must be an object");
@@ -267,6 +295,7 @@ export function validateRuleSet(input: unknown): ValidationResult<RuleSet> {
         `rule profile "${rule.profile}" does not match set profile "${String(input.profile)}"`,
       );
     deps.set(rule.id, rule.dependencies);
+    if (registry) checkEvidenceAgainstRegistry(c, `rules[${i}]`, rule, registry);
   });
   for (const [id, list] of deps)
     for (const d of list)
@@ -285,6 +314,46 @@ export function validateRuleSet(input: unknown): ValidationResult<RuleSet> {
       c.add(`rules.${id}.dependencies`, "circular dependency");
       break;
     }
+  return c.result(input);
+}
+
+function checkEvidenceAgainstRegistry(c: Collector, path: string, rule: Rule, registry: Source[]) {
+  const byId = new Map(registry.map((x) => [x.id, x]));
+  const primary = new Set<string>();
+  for (const ref of rule.evidence.sources) {
+    const src = byId.get(ref.id);
+    if (!src)
+      c.add(`${path}.evidence.sources`, `unknown source "${ref.id}" (not in rules/sources.json)`);
+    else if ((PRIMARY_SOURCE_KINDS as readonly string[]).includes(src.kind)) primary.add(src.id);
+  }
+  const lvl = rule.evidence.level;
+  if ((lvl === "moderate" || lvl === "strong") && primary.size < 1)
+    c.add(
+      `${path}.evidence.level`,
+      `"${lvl}" needs at least one study or review among its sources`,
+    );
+  if (lvl === "strong" && primary.size < 2)
+    c.add(`${path}.evidence.level`, '"strong" needs at least two independent studies or reviews');
+}
+
+export function validateSourceRegistry(input: unknown): ValidationResult<Source[]> {
+  const c = new Collector();
+  if (!Array.isArray(input)) {
+    c.add("", "source registry must be an array");
+    return c.result(input);
+  }
+  const ids = new Set<string>();
+  input.forEach((x, i) => {
+    const p = `[${i}]`;
+    if (!isObj(x)) return c.add(p, "must be an object");
+    if (!isStr(x.id) || !/^[a-z0-9-]+$/.test(x.id)) c.add(`${p}.id`, "must be a lowercase slug");
+    else if (ids.has(x.id)) c.add(`${p}.id`, `duplicate source id "${x.id}"`);
+    else ids.add(x.id);
+    c.oneOf(`${p}.kind`, x.kind, SOURCE_KINDS);
+    for (const k of ["title", "authors", "url", "sample", "notes"]) c.str(`${p}.${k}`, x[k]);
+    if (!Number.isInteger(x.year)) c.add(`${p}.year`, "must be an integer");
+    if (typeof x.verified !== "boolean") c.add(`${p}.verified`, "must be true or false");
+  });
   return c.result(input);
 }
 

@@ -57,6 +57,7 @@ export const TOKENS = {
   "type-scale": ["small", "normal", "large"],
   "image-prominence": ["low", "normal", "high"],
   "visual-hierarchy": ["flat", "balanced", "strong"],
+  "link-affordance": ["default", "underlined"],
 } as const;
 
 export const ACTION_TYPES = [
@@ -82,3 +83,7 @@ export const POSITIONS = ["first", "last", "before", "after"] as const;
 
 // Actions allowed per mode. Visual mode never changes structure.
 export const STRUCTURAL_ACTIONS = ["reorder", "group", "surface-shortcut", "collapse"] as const;
+
+export const SOURCE_KINDS = ["study", "review", "analysis", "synthesis"] as const;
+// Only these kinds can justify a "moderate" or "strong" evidence level.
+export const PRIMARY_SOURCE_KINDS = ["study", "review"] as const;

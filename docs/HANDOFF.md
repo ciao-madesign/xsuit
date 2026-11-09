@@ -19,6 +19,10 @@ A browser extension (Chrome, TypeScript, MV3) that adapts a web page's UX to the
 - Propose open decisions **one at a time**, wait for the answer, record it in `docs/05-decisions.md`.
 - No PR unless explicitly requested. Commit and push to `claude/great-curie-8yfsjr`.
 
+## Standing rule from the user
+
+Every intervention must be motivated and justified; every rule must be traceable to real studies or to observations/data, with stated limits. Never invent citations. Source registry: `rules/sources.json`; audit: `docs/07-evidence-audit.md`. Primary texts are not yet re-verified (flag `verified:false`).
+
 ## Next steps
 
 1. Start **B3 (Engine core)** when the user says go.

@@ -19,5 +19,6 @@ Work is split into sequential **builds**. Each build has a goal, deliverables an
 - Rules are data, not code; no remote code execution.
 - Privacy: local processing, minimal permissions, zero external requests.
 - Protected elements (passwords, payment, consent, auth, transactions) are never touched.
-- Every rule carries evidence level, limits and test results.
+- Every rule carries evidence level, limits and test results, plus a rationale and located sources from `rules/sources.json`. Moderate/strong levels need a real study or review; hypotheses need a validation plan. `docs/07-evidence-audit.md` is generated (`npm run evidence`).
+- Every design decision is recorded with its justification (decisions in `05-decisions.md`, rules in `07-evidence-audit.md`).
 - Everything in English (docs, code, UI).

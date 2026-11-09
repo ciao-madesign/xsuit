@@ -1,11 +1,12 @@
 {
   "profile": "western",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "rules": [
     {
       "id": "visual.western.spacious-density",
       "title": "Spacious density",
       "description": "Use a spacious layout density with more whitespace.",
+      "rationale": "Western homepages in the sample show about a third of the visual density of Chinese ones and fewer content blocks; NN/G reports Western users prefer visual simplicity. Raising whitespace moves a dense page toward that convention without removing content.",
       "profile": "western",
       "level": "visual",
       "mode": "visual",
@@ -24,12 +25,28 @@
       "fallback": "skip",
       "evidence": {
         "level": "moderate",
-        "summary": "Homepage studies report lower information density and more whitespace on Western sites.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "summary": "Measured lower visual density and fewer content blocks on Western homepages, plus reported user preference for simplicity.",
+        "sources": [
+          {
+            "id": "li2026",
+            "locator": "Section 2.2 table: visual density 12.87 vs 38.21 per 1,000 px; main content blocks 3.14 vs 5.91",
+            "supports": "Lower density and fewer blocks on Western homepages"
+          },
+          {
+            "id": "nng2016",
+            "locator": "Section 2.3: Western users prefer visual simplicity",
+            "supports": "Preference for simplicity (supporting)"
+          }
+        ],
+        "gaps": [
+          "Evidence comes from institutional (municipal) homepages; commercial sites are not covered.",
+          "Preference evidence is not from a controlled study of this transformation.",
+          "Search-results and article pages are extrapolations from homepages."
+        ]
       },
       "limits": [
-        "Tendency observed in research, not a universal rule; varies by site and sector.",
-        "Must not hide content; only spacing changes."
+        "Tendency from research, not a universal rule; varies by site and sector.",
+        "Only spacing changes; content must not be hidden."
       ],
       "testResults": []
     },
@@ -37,6 +54,7 @@
       "id": "visual.western.airy-spacing",
       "title": "Airy spacing scale",
       "description": "Increase spacing between blocks.",
+      "rationale": "Literature review reports more white space on Western sites; white space acts as a structural element in the Western model (doc 01 section 3.3).",
       "profile": "western",
       "level": "visual",
       "mode": "visual",
@@ -55,16 +73,32 @@
       "fallback": "skip",
       "evidence": {
         "level": "moderate",
-        "summary": "Homepage studies report lower information density and more whitespace on Western sites.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "summary": "Review of 17 studies reports more white space on Western sites.",
+        "sources": [
+          {
+            "id": "li2022",
+            "locator": "Section 2.1: Western sites have more white space",
+            "supports": "More white space on Western sites"
+          },
+          {
+            "id": "project-synthesis",
+            "locator": "Section 3.3: white space is a structural element in the West",
+            "supports": "Interpretation of the role of white space"
+          }
+        ],
+        "gaps": [
+          "Methods and definitions of white space differ across the reviewed studies.",
+          "No test of whether adding spacing changes user outcomes."
+        ]
       },
-      "limits": ["Tendency observed in research, not a universal rule; varies by site and sector."],
+      "limits": ["Tendency from research, not a universal rule; varies by site and sector."],
       "testResults": []
     },
     {
       "id": "visual.western.muted-palette",
       "title": "Muted palette",
       "description": "Reduce colour saturation for a calmer look.",
+      "rationale": "The 2026 study finds Chinese palettes wider, more saturated and brighter, so Western palettes are comparatively more restrained. The finding is indirect: it measures Chinese sites against Western ones, not Western palettes in absolute terms.",
       "profile": "western",
       "level": "visual",
       "mode": "visual",
@@ -83,11 +117,27 @@
       "fallback": "skip",
       "evidence": {
         "level": "emerging",
-        "summary": "Western homepages tend toward restrained palettes; evidence is weaker than for density.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "summary": "Chinese palettes measured as more saturated and brighter, implying a comparatively more restrained Western baseline.",
+        "sources": [
+          {
+            "id": "li2026",
+            "locator": "Section 2.2 other results: Chinese palettes wider, more saturated, brighter",
+            "supports": "Relative palette difference"
+          },
+          {
+            "id": "project-synthesis",
+            "locator": "docs/02 visual level: contained, more desaturated palettes in the West",
+            "supports": "Descriptive summary only"
+          }
+        ],
+        "gaps": [
+          "Relative finding, no absolute Western saturation value.",
+          "Evidence comes from institutional (municipal) homepages; commercial sites are not covered.",
+          "No evidence that desaturating a site improves experience."
+        ]
       },
       "limits": [
-        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Tendency from research, not a universal rule; varies by site and sector.",
         "Must keep text contrast at or above WCAG AA."
       ],
       "testResults": []
@@ -96,6 +146,7 @@
       "id": "visual.western.strong-hierarchy",
       "title": "Strong visual hierarchy",
       "description": "Make one primary focus per view clearer.",
+      "rationale": "The project synthesis describes the Western model as hierarchical with few competing elements. No measurement directly supports this: the headings measure in the 2026 study is HTML semantics, which doc 01 section 3.4 warns must not be confused with visual hierarchy. Kept as a hypothesis to test.",
       "profile": "western",
       "level": "visual",
       "mode": "visual",
@@ -113,17 +164,34 @@
       "risk": "low",
       "fallback": "skip",
       "evidence": {
-        "level": "moderate",
-        "summary": "Western pages tend to present a clearer single focal path.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "level": "hypothesis",
+        "summary": "Descriptive synthesis of the Western composition model; no direct measurement of visual hierarchy.",
+        "sources": [
+          {
+            "id": "project-synthesis",
+            "locator": "Section 3.1: header, hero, hierarchical sections, few competing elements",
+            "supports": "Descriptive model"
+          },
+          {
+            "id": "li2026",
+            "locator": "Section 2.2: HTML headings 28.95 vs 3.52 per 1,000 text units (semantic, not visual)",
+            "supports": "Related but not equivalent measure"
+          }
+        ],
+        "gaps": [
+          "No direct evidence on visual hierarchy.",
+          "HTML heading counts are a semantic measure and cannot be read as visual hierarchy."
+        ],
+        "validationPlan": "Compare before/after screenshots on the Western test sites and check that the main task is found faster in internal review; add real-user test later."
       },
-      "limits": ["Tendency observed in research, not a universal rule; varies by site and sector."],
+      "limits": ["Tendency from research, not a universal rule; varies by site and sector."],
       "testResults": []
     },
     {
       "id": "visual.western.quiet-promos",
       "title": "Quieter promotions",
       "description": "De-emphasize promotional banners.",
+      "rationale": "Doc 01 section 3.3 contrasts selective Western banners with numerous Chinese ones, and the 2026 study finds fewer posters and infographics on Western homepages (66 vs 99). Reducing prominence moves toward the selective convention.",
       "profile": "western",
       "level": "visual",
       "mode": "visual",
@@ -142,11 +210,27 @@
       "fallback": "skip",
       "evidence": {
         "level": "emerging",
-        "summary": "Promotions are generally less dominant on Western homepages.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "summary": "Fewer posters/infographics measured on Western homepages; banners described as selective.",
+        "sources": [
+          {
+            "id": "li2026",
+            "locator": "Section 2.2 other results: posters/infographics 66 vs 99",
+            "supports": "Fewer promotional-style visuals in the West"
+          },
+          {
+            "id": "project-synthesis",
+            "locator": "Section 3.3 table: banners selective vs numerous and dynamic",
+            "supports": "Descriptive comparison"
+          }
+        ],
+        "gaps": [
+          "Evidence comes from institutional (municipal) homepages; commercial sites are not covered.",
+          "Posters and infographics are not the same as commercial promotion banners."
+        ],
+        "validationPlan": "Internal before/after review (B8) on the paired test sites; add real-user testing after V1."
       },
       "limits": [
-        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Tendency from research, not a universal rule; varies by site and sector.",
         "Never hide legally required notices."
       ],
       "testResults": []
@@ -155,6 +239,7 @@
       "id": "visual.western.quiet-carousel",
       "title": "Quieter carousels",
       "description": "De-emphasize auto-advancing carousels.",
+      "rationale": "The 2026 study counts autoplay elements on 39 vs 99 homepages (West vs China). Autoplay is a proxy for carousels and banners, so the support is partial.",
       "profile": "western",
       "level": "visual",
       "mode": "visual",
@@ -173,11 +258,22 @@
       "fallback": "skip",
       "evidence": {
         "level": "emerging",
-        "summary": "Carousels are less central in Western homepage conventions.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "summary": "Autoplay elements measured on fewer Western homepages.",
+        "sources": [
+          {
+            "id": "li2026",
+            "locator": "Section 2.2 other results: autoplay elements 99 vs 39",
+            "supports": "Fewer autoplaying elements in the West"
+          }
+        ],
+        "gaps": [
+          "Autoplay is a proxy, not a direct count of carousels.",
+          "Evidence comes from institutional (municipal) homepages; commercial sites are not covered."
+        ],
+        "validationPlan": "Internal before/after review (B8) on the paired test sites; add real-user testing after V1."
       },
       "limits": [
-        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Tendency from research, not a universal rule; varies by site and sector.",
         "Does not stop or alter carousel behaviour."
       ],
       "testResults": []
@@ -186,6 +282,7 @@
       "id": "visual.western.search-first",
       "title": "Search first",
       "description": "Make the search box the most prominent control on search-led pages.",
+      "rationale": "Observation of Google, Bing and Western ecosystems shows search as a primary, separate entry point (doc 01 section 4-5). No study tests whether emphasizing the search box helps users; this is a hypothesis drawn from observed product design.",
       "profile": "western",
       "level": "visual",
       "mode": "visual",
@@ -208,55 +305,78 @@
       "risk": "low",
       "fallback": "skip",
       "evidence": {
-        "level": "moderate",
-        "summary": "Western search-led sites centre the search box.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "level": "hypothesis",
+        "summary": "Observed product conventions of Western search-led services; no usability data.",
+        "sources": [
+          {
+            "id": "project-synthesis",
+            "locator": "Sections 4-5: Google/Bing SERP conventions; Western users spread tasks across separate services",
+            "supports": "Observation of product conventions"
+          }
+        ],
+        "gaps": [
+          "No study cited that tests this transformation.",
+          "Observation of a few market leaders does not generalize to all Western sites."
+        ],
+        "validationPlan": "Internal before/after review (B8) on the paired test sites; add real-user testing after V1."
       },
       "limits": [
-        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Tendency from research, not a universal rule; varies by site and sector.",
         "Only on pages where a search box is detected."
       ],
       "testResults": []
     },
     {
-      "id": "visual.western.readable-text",
-      "title": "Readable article text",
-      "description": "Use a comfortable type scale for long reading.",
+      "id": "visual.western.underlined-links",
+      "title": "Underlined links",
+      "description": "Make links visibly underlined so they read as links.",
+      "rationale": "The literature review reports more underlined links on Western sites. Underlining is also a well-established affordance, and it keeps links identifiable without relying on colour alone.",
       "profile": "western",
       "level": "visual",
       "mode": "visual",
-      "pageTypes": ["article"],
-      "components": ["article-body"],
+      "pageTypes": ["any"],
+      "components": ["article-body", "headline-list", "footer"],
       "conditions": [],
       "action": {
         "type": "set-token",
-        "token": "type-scale",
-        "value": "large"
+        "token": "link-affordance",
+        "value": "underlined"
       },
       "dependencies": [],
-      "priority": 45,
+      "priority": 40,
       "reversible": true,
       "risk": "low",
       "fallback": "skip",
       "evidence": {
-        "level": "emerging",
-        "summary": "Long-form reading favours generous type and line length.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "level": "moderate",
+        "summary": "Review of 17 studies reports more underlined links on Western sites.",
+        "sources": [
+          {
+            "id": "li2022",
+            "locator": "Section 2.1: Western sites have more underlined links",
+            "supports": "Underlined links more frequent in the West"
+          }
+        ],
+        "gaps": [
+          "Frequency of a design choice, not evidence that it improves usability for a given user.",
+          "Methods differ across the reviewed studies."
+        ]
       },
       "limits": [
-        "Tendency observed in research, not a universal rule; varies by site and sector.",
-        "Must respect user font settings."
+        "Tendency from research, not a universal rule; varies by site and sector.",
+        "Must not underline buttons or navigation chrome."
       ],
       "testResults": []
     },
     {
       "id": "structure.western.collapse-sidebar",
-      "title": "Collapse sidebar on articles",
-      "description": "Collapse secondary sidebar on article pages to focus on content.",
+      "title": "Collapse sidebar",
+      "description": "Collapse secondary sidebar blocks to focus on main content.",
+      "rationale": "The 2026 study finds fewer peripheral blocks on Western homepages (0.61 vs 1.61). Applying this to article pages is an extrapolation, so the rule is a hypothesis.",
       "profile": "western",
       "level": "information-architecture",
       "mode": "structural",
-      "pageTypes": ["article"],
+      "pageTypes": ["home", "article"],
       "components": ["sidebar"],
       "conditions": [
         {
@@ -275,8 +395,20 @@
       "fallback": "visual-only",
       "evidence": {
         "level": "hypothesis",
-        "summary": "Single-column reading is common on Western editorial sites; not yet validated for this rule.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "summary": "Fewer peripheral blocks measured on Western homepages; article-page use is untested.",
+        "sources": [
+          {
+            "id": "li2026",
+            "locator": "Section 2.2 table: peripheral blocks 0.61 vs 1.61",
+            "supports": "Fewer peripheral blocks in the West"
+          }
+        ],
+        "gaps": [
+          "Evidence comes from institutional (municipal) homepages; commercial sites are not covered.",
+          "Article pages are not covered by the evidence.",
+          "Hiding content may remove useful navigation."
+        ],
+        "validationPlan": "Verify in B6 that sidebar content stays reachable and that the main content is not harmed; internal review on the Western test sites."
       },
       "limits": [
         "Structural; needs component recognition (B5).",

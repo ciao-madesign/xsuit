@@ -6,18 +6,20 @@ import {
   validateProfile,
   validateRule,
   validateRuleSet,
+  validateSourceRegistry,
 } from "../src/rules";
 
 const load = (p: string) => JSON.parse(readFileSync(p, "utf8"));
 const westernSet = load("rules/western.json");
 const chinaSet = load("rules/china.json");
 const profiles = load("rules/profiles.json");
+const sources = load("rules/sources.json");
 const sample = () => structuredClone(westernSet.rules[0]);
 
 describe("shipped data", () => {
   it("rule sets validate", () => {
     for (const s of [westernSet, chinaSet]) {
-      const r = validateRuleSet(s);
+      const r = validateRuleSet(s, sources);
       expect(formatIssues(r.errors)).toBe("");
       expect(r.ok).toBe(true);
     }
@@ -41,6 +43,49 @@ describe("shipped data", () => {
       for (const c of p.composition ?? [])
         for (const id of c.ruleIds) expect(ids.has(id)).toBe(true);
     }
+  });
+});
+
+describe("evidence traceability", () => {
+  const all = [...westernSet.rules, ...chinaSet.rules];
+  it("source registry is valid", () => {
+    const r = validateSourceRegistry(sources);
+    expect(formatIssues(r.errors)).toBe("");
+  });
+  it("every rule has a rationale, located sources and stated gaps", () => {
+    for (const r of all) {
+      expect(r.rationale.length, r.id).toBeGreaterThan(40);
+      expect(r.evidence.sources.length, r.id).toBeGreaterThan(0);
+      for (const s of r.evidence.sources) expect(s.locator.length, r.id).toBeGreaterThan(5);
+      expect(r.evidence.gaps.length, r.id).toBeGreaterThan(0);
+    }
+  });
+  it("synthesis alone never justifies a moderate or strong level", () => {
+    const r = structuredClone(westernSet.rules[0]);
+    r.evidence.sources = [{ id: "project-synthesis", locator: "section 3", supports: "x" }];
+    const res = validateRuleSet({ ...westernSet, rules: [r] }, sources);
+    expect(formatIssues(res.errors)).toContain("needs at least one study or review");
+  });
+  it("rejects unknown sources and hypotheses without a validation plan", () => {
+    const r = structuredClone(westernSet.rules[0]);
+    r.evidence.sources[0].id = "made-up-2030";
+    expect(formatIssues(validateRuleSet({ ...westernSet, rules: [r] }, sources).errors)).toContain(
+      "unknown source",
+    );
+    const h = structuredClone(westernSet.rules[0]);
+    h.evidence.level = "hypothesis";
+    delete h.evidence.validationPlan;
+    expect(formatIssues(validateRule(h).errors)).toContain("validationPlan");
+  });
+  it("rejects a rule without rationale", () => {
+    const r = structuredClone(westernSet.rules[0]);
+    r.rationale = "";
+    expect(formatIssues(validateRule(r).errors)).toContain("rationale");
+  });
+  it("profile evidence references exist in the registry", () => {
+    const ids = new Set(sources.map((s: { id: string }) => s.id));
+    for (const p of profiles)
+      for (const ref of p.evidenceRefs) expect(ids.has(ref), ref).toBe(true);
   });
 });
 

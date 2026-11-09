@@ -1,0 +1,46 @@
+[
+  {
+    "id": "li2022",
+    "kind": "review",
+    "title": "Cultural Differences in Web Design on Chinese and Western Websites",
+    "authors": "Li, Karreman, de Jong",
+    "year": 2022,
+    "url": "https://ieeexplore.ieee.org/document/9881630",
+    "sample": "Literature review of 17 comparative studies",
+    "verified": false,
+    "notes": "Findings taken from docs/01 section 2.1. The authors note that definitions and methods are not uniform across the reviewed studies."
+  },
+  {
+    "id": "li2026",
+    "kind": "study",
+    "title": "Cross-Cultural Design: Comparing the Visual Characteristics of Chinese and Western Municipal Websites",
+    "authors": "Li, Karreman, de Jong",
+    "year": 2026,
+    "url": "https://journals.sagepub.com/doi/full/10.1177/00472816261460385",
+    "sample": "100 Chinese and 100 Western municipal homepages (institutional sites, not commercial apps)",
+    "verified": false,
+    "notes": "Figures taken from docs/01 section 2.2. Shows differences in this sample, not universal user preferences."
+  },
+  {
+    "id": "nng2016",
+    "kind": "analysis",
+    "title": "Are Chinese Websites Too Complex?",
+    "authors": "Nielsen Norman Group",
+    "year": 2016,
+    "url": "https://www.nngroup.com/articles/china-website-complexity/",
+    "sample": "Expert analysis based on NN/G research (sample not reproduced in project docs)",
+    "verified": false,
+    "notes": "Findings taken from docs/01 section 2.3. Not a controlled study; used as supporting evidence only."
+  },
+  {
+    "id": "project-synthesis",
+    "kind": "synthesis",
+    "title": "Project synthesis of Western vs Chinese interface composition",
+    "authors": "xsuit project",
+    "year": 2026,
+    "url": "docs/01-research-western-vs-chinese-ux.md",
+    "sample": "Narrative synthesis (docs/01 sections 3-6, docs/02), not independent data",
+    "verified": true,
+    "notes": "Own synthesis of the cited studies and observed platforms. Cannot raise an evidence level on its own."
+  }
+]

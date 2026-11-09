@@ -9,6 +9,7 @@ import type {
   PAGE_TYPES,
   PROFILE_IDS,
   RISKS,
+  SOURCE_KINDS,
   TEST_OUTCOMES,
 } from "./vocab";
 
@@ -37,10 +38,30 @@ export interface Action {
   label?: string;
 }
 
+export interface SourceRef {
+  id: string; // key in rules/sources.json
+  locator: string; // where in the source (section, table, figure)
+  supports: string; // what exactly this source supports
+}
+
+export interface Source {
+  id: string;
+  kind: V<typeof SOURCE_KINDS>;
+  title: string;
+  authors: string;
+  year: number;
+  url: string;
+  sample: string;
+  verified: boolean; // primary text re-read and figures checked
+  notes: string;
+}
+
 export interface Evidence {
   level: V<typeof EVIDENCE_LEVELS>;
   summary: string;
-  sources: string[];
+  sources: SourceRef[];
+  gaps: string[]; // what the evidence does NOT show
+  validationPlan?: string; // required for hypotheses
 }
 
 export interface TestResult {
@@ -54,6 +75,7 @@ export interface Rule {
   id: string;
   title: string;
   description: string;
+  rationale: string; // why this action follows from the evidence
   profile: ProfileId;
   level: V<typeof LEVELS>;
   mode: V<typeof MODES>;

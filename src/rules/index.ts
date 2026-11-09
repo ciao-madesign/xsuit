@@ -5,5 +5,6 @@ export {
   validateRuleSet,
   validateProfile,
   validateAdapter,
+  validateSourceRegistry,
   formatIssues,
 } from "./validate";

@@ -1,11 +1,12 @@
 {
   "profile": "china",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "rules": [
     {
       "id": "visual.china.compact-density",
       "title": "Compact density",
       "description": "Use a compact layout density with more content per screen.",
+      "rationale": "Chinese homepages show about three times the visual density and nearly twice the main content blocks; NN/G reports Chinese users prefer relatively high information density and perceive complexity through familiarity.",
       "profile": "china",
       "level": "visual",
       "mode": "visual",
@@ -24,11 +25,27 @@
       "fallback": "skip",
       "evidence": {
         "level": "moderate",
-        "summary": "Homepage studies report higher information density and more parallel entry points on Chinese sites.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "summary": "Measured higher visual density and more blocks on Chinese homepages, plus reported user tolerance for density.",
+        "sources": [
+          {
+            "id": "li2026",
+            "locator": "Section 2.2 table: visual density 38.21 vs 12.87; main content blocks 5.91 vs 3.14",
+            "supports": "Higher density and more blocks on Chinese homepages"
+          },
+          {
+            "id": "nng2016",
+            "locator": "Section 2.3: Chinese users prefer relatively high information density",
+            "supports": "Preference for density (supporting)"
+          }
+        ],
+        "gaps": [
+          "Evidence comes from institutional (municipal) homepages; commercial sites are not covered.",
+          "Preference evidence is not from a controlled study of this transformation.",
+          "Both user groups struggle when complexity becomes excessive (NN/G)."
+        ]
       },
       "limits": [
-        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Tendency from research, not a universal rule; varies by site and sector.",
         "Touch targets must stay usable."
       ],
       "testResults": []
@@ -37,6 +54,7 @@
       "id": "visual.china.tight-spacing",
       "title": "Tight spacing scale",
       "description": "Reduce spacing between blocks.",
+      "rationale": "The literature review reports less dominant white space on Chinese sites, consistent with denser layouts; doc 01 section 3.3 lists white space as less dominant.",
       "profile": "china",
       "level": "visual",
       "mode": "visual",
@@ -55,16 +73,32 @@
       "fallback": "skip",
       "evidence": {
         "level": "moderate",
-        "summary": "Homepage studies report higher information density and more parallel entry points on Chinese sites.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "summary": "Review of 17 studies reports more elements and less white space on Chinese sites.",
+        "sources": [
+          {
+            "id": "li2022",
+            "locator": "Section 2.1: Chinese sites have more elements and interactions; Western sites more white space",
+            "supports": "Less white space in Chinese designs"
+          },
+          {
+            "id": "project-synthesis",
+            "locator": "Section 3.3 table: white space less dominant",
+            "supports": "Descriptive comparison"
+          }
+        ],
+        "gaps": [
+          "Methods and definitions differ across the reviewed studies.",
+          "No test of whether tighter spacing helps users."
+        ]
       },
-      "limits": ["Tendency observed in research, not a universal rule; varies by site and sector."],
+      "limits": ["Tendency from research, not a universal rule; varies by site and sector."],
       "testResults": []
     },
     {
       "id": "visual.china.vivid-palette",
       "title": "Vivid palette",
       "description": "Increase colour saturation for a livelier look.",
+      "rationale": "The 2026 study finds Chinese palettes wider, more saturated and brighter, and the 2022 review reports more red and blue. Doc 02 warns against the red+gold stereotype, so this rule changes saturation only, not hue.",
       "profile": "china",
       "level": "visual",
       "mode": "visual",
@@ -83,12 +117,29 @@
       "fallback": "skip",
       "evidence": {
         "level": "moderate",
-        "summary": "Homepage studies report more colourful, higher-energy Chinese pages.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "summary": "Two independent sources report more saturated, brighter, wider palettes on Chinese sites.",
+        "sources": [
+          {
+            "id": "li2026",
+            "locator": "Section 2.2 other results: Chinese palettes wider, more saturated, brighter",
+            "supports": "Saturation difference"
+          },
+          {
+            "id": "li2022",
+            "locator": "Section 2.1: more red and blue on Chinese sites",
+            "supports": "Colour usage difference"
+          }
+        ],
+        "gaps": [
+          "Evidence comes from institutional (municipal) homepages; commercial sites are not covered.",
+          "No evidence that raising saturation improves experience.",
+          "Hue is deliberately untouched."
+        ]
       },
       "limits": [
-        "Tendency observed in research, not a universal rule; varies by site and sector.",
-        "Must keep text contrast at or above WCAG AA."
+        "Tendency from research, not a universal rule; varies by site and sector.",
+        "Must keep text contrast at or above WCAG AA.",
+        "Never apply a red/gold stereotype."
       ],
       "testResults": []
     },
@@ -96,6 +147,7 @@
       "id": "visual.china.image-led",
       "title": "Image-led cards",
       "description": "Give images more prominence in cards.",
+      "rationale": "The 2026 study measures higher image diversity (6.32 vs 4.34) and visual density on Chinese homepages. Extending this to product and feed cards is an extrapolation from institutional homepages, so the level is emerging.",
       "profile": "china",
       "level": "visual",
       "mode": "visual",
@@ -113,12 +165,23 @@
       "risk": "low",
       "fallback": "skip",
       "evidence": {
-        "level": "moderate",
-        "summary": "Chinese e-commerce and content feeds are strongly image-led.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "level": "emerging",
+        "summary": "Higher image diversity and visual density measured on Chinese homepages; card-level use is untested.",
+        "sources": [
+          {
+            "id": "li2026",
+            "locator": "Section 2.2 table: image diversity 6.32 vs 4.34; visual density 38.21 vs 12.87",
+            "supports": "More images on Chinese homepages"
+          }
+        ],
+        "gaps": [
+          "Evidence comes from institutional (municipal) homepages; commercial sites are not covered.",
+          "Product and feed cards are not covered by the evidence."
+        ],
+        "validationPlan": "Internal before/after review (B8) on the paired test sites; add real-user testing after V1."
       },
       "limits": [
-        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Tendency from research, not a universal rule; varies by site and sector.",
         "Images must keep alt text."
       ],
       "testResults": []
@@ -127,6 +190,7 @@
       "id": "visual.china.flat-hierarchy",
       "title": "Flat hierarchy",
       "description": "Present many parallel entry points at similar weight.",
+      "rationale": "Chinese homepages show more main content blocks (5.91 vs 3.14) and the project synthesis describes hierarchy as distributed across modules rather than absent (doc 02). The link between block count and flat visual weight is interpretive.",
       "profile": "china",
       "level": "visual",
       "mode": "visual",
@@ -144,17 +208,37 @@
       "risk": "low",
       "fallback": "skip",
       "evidence": {
-        "level": "moderate",
-        "summary": "Homepage studies report higher information density and more parallel entry points on Chinese sites.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "level": "emerging",
+        "summary": "More main content blocks measured; distributed hierarchy described in synthesis.",
+        "sources": [
+          {
+            "id": "li2026",
+            "locator": "Section 2.2 table: main content blocks 5.91 vs 3.14",
+            "supports": "More parallel blocks"
+          },
+          {
+            "id": "project-synthesis",
+            "locator": "docs/02 visual level: hierarchy distributed across modules",
+            "supports": "Interpretation"
+          }
+        ],
+        "gaps": [
+          "Block count does not directly measure visual weight.",
+          "Evidence comes from institutional (municipal) homepages; commercial sites are not covered."
+        ],
+        "validationPlan": "Internal before/after review (B8) on the paired test sites; add real-user testing after V1."
       },
-      "limits": ["Tendency observed in research, not a universal rule; varies by site and sector."],
+      "limits": [
+        "Tendency from research, not a universal rule; varies by site and sector.",
+        "Distributed hierarchy is not absence of hierarchy; keep headings and semantics intact."
+      ],
       "testResults": []
     },
     {
       "id": "visual.china.prominent-promos",
       "title": "Prominent promotions",
       "description": "Emphasize promotional banners.",
+      "rationale": "Doc 01 section 3.3 describes numerous, dynamic banners in the Chinese model, and the 2026 study finds more posters and infographics (99 vs 66). Institutional posters are only a proxy for commercial promotions.",
       "profile": "china",
       "level": "visual",
       "mode": "visual",
@@ -172,12 +256,28 @@
       "risk": "low",
       "fallback": "skip",
       "evidence": {
-        "level": "moderate",
-        "summary": "Promotions and campaigns are prominent in Chinese commerce.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "level": "emerging",
+        "summary": "More posters/infographics measured; banners described as numerous and dynamic.",
+        "sources": [
+          {
+            "id": "li2026",
+            "locator": "Section 2.2 other results: posters/infographics 99 vs 66",
+            "supports": "More promotional-style visuals"
+          },
+          {
+            "id": "project-synthesis",
+            "locator": "Section 3.3 table: banners numerous and dynamic",
+            "supports": "Descriptive comparison"
+          }
+        ],
+        "gaps": [
+          "Evidence comes from institutional (municipal) homepages; commercial sites are not covered.",
+          "Posters and infographics are not the same as commercial promotion banners."
+        ],
+        "validationPlan": "Internal before/after review (B8) on the paired test sites; add real-user testing after V1."
       },
       "limits": [
-        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Tendency from research, not a universal rule; varies by site and sector.",
         "Does not add or invent promotions."
       ],
       "testResults": []
@@ -186,6 +286,7 @@
       "id": "visual.china.prominent-carousel",
       "title": "Prominent carousel",
       "description": "Emphasize the main carousel/banner area.",
+      "rationale": "The 2026 study counts autoplay elements on 99 vs 39 homepages (China vs West). Autoplay is a proxy for carousels, so support is partial.",
       "profile": "china",
       "level": "visual",
       "mode": "visual",
@@ -204,11 +305,22 @@
       "fallback": "skip",
       "evidence": {
         "level": "emerging",
-        "summary": "Large banner areas are common on Chinese homepages.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "summary": "Autoplay elements measured on more Chinese homepages.",
+        "sources": [
+          {
+            "id": "li2026",
+            "locator": "Section 2.2 other results: autoplay elements 99 vs 39",
+            "supports": "More autoplaying elements"
+          }
+        ],
+        "gaps": [
+          "Autoplay is a proxy, not a direct count of carousels.",
+          "Evidence comes from institutional (municipal) homepages; commercial sites are not covered."
+        ],
+        "validationPlan": "Internal before/after review (B8) on the paired test sites; add real-user testing after V1."
       },
       "limits": [
-        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Tendency from research, not a universal rule; varies by site and sector.",
         "Does not alter carousel behaviour."
       ],
       "testResults": []
@@ -217,6 +329,7 @@
       "id": "visual.china.discovery-feed",
       "title": "Discovery feed prominence",
       "description": "Emphasize recommendation areas.",
+      "rationale": "The project synthesis describes feeds and recommendations as central to Chinese homepages and journeys (doc 01 sections 3.2, 3.3, 6). This is observational; it relies on platform observation, not on a measured study.",
       "profile": "china",
       "level": "visual",
       "mode": "visual",
@@ -239,12 +352,23 @@
       "risk": "low",
       "fallback": "skip",
       "evidence": {
-        "level": "emerging",
-        "summary": "Recommendation and discovery feeds are central in Chinese content and commerce apps.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "level": "hypothesis",
+        "summary": "Observed platform conventions (feed central in Chinese content and commerce); no measurement cited.",
+        "sources": [
+          {
+            "id": "project-synthesis",
+            "locator": "Sections 3.2, 3.3, 6: feed can be central; content generates the need",
+            "supports": "Observation of platform conventions"
+          }
+        ],
+        "gaps": [
+          "No study cited that tests this transformation.",
+          "Platform observation is mostly of apps, not websites."
+        ],
+        "validationPlan": "Internal before/after review (B8) on the paired test sites; add real-user testing after V1."
       },
       "limits": [
-        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Tendency from research, not a universal rule; varies by site and sector.",
         "Only if a recommendations area is detected."
       ],
       "testResults": []
@@ -253,6 +377,7 @@
       "id": "structure.china.recommendations-up",
       "title": "Recommendations higher on home",
       "description": "Move recommendations just below the hero on home pages.",
+      "rationale": "Builds on the observed centrality of feeds in Chinese homepages. The specific reordering has no direct evidence, so it remains a hypothesis.",
       "profile": "china",
       "level": "information-architecture",
       "mode": "structural",
@@ -281,8 +406,19 @@
       "fallback": "visual-only",
       "evidence": {
         "level": "hypothesis",
-        "summary": "Discovery-first layouts are common; the specific reordering is not yet validated.",
-        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+        "summary": "Feed centrality is observed; the proposed position is a design guess.",
+        "sources": [
+          {
+            "id": "project-synthesis",
+            "locator": "Section 3.3 table: feed can be central to the homepage",
+            "supports": "Observation of platform conventions"
+          }
+        ],
+        "gaps": [
+          "The specific position has no evidence.",
+          "Reordering may break expected flow on some sites."
+        ],
+        "validationPlan": "Verify in B6 that the original order is fully recoverable and that the page still works; internal before/after review."
       },
       "limits": [
         "Structural; needs component recognition (B5).",

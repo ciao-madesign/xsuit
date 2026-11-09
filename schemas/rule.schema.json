@@ -21,7 +21,8 @@
     "fallback",
     "evidence",
     "limits",
-    "testResults"
+    "testResults",
+    "rationale"
   ],
   "properties": {
     "id": {
@@ -126,7 +127,8 @@
             "palette-saturation",
             "type-scale",
             "image-prominence",
-            "visual-hierarchy"
+            "visual-hierarchy",
+            "link-affordance"
           ]
         }
       }
@@ -153,7 +155,7 @@
     },
     "evidence": {
       "type": "object",
-      "required": ["level", "summary", "sources"],
+      "required": ["level", "summary", "sources", "gaps"],
       "properties": {
         "level": {
           "enum": ["strong", "moderate", "emerging", "hypothesis"]
@@ -166,9 +168,31 @@
           "type": "array",
           "minItems": 1,
           "items": {
-            "type": "string",
-            "minLength": 1
+            "type": "object",
+            "required": ["id", "locator", "supports"],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "locator": {
+                "type": "string",
+                "minLength": 1
+              },
+              "supports": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
           }
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "validationPlan": {
+          "type": "string"
         }
       }
     },
@@ -202,6 +226,10 @@
           }
         }
       }
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 40
     }
   }
 }
