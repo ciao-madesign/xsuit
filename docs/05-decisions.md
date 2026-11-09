@@ -9,6 +9,7 @@
 | 5 | Work method | Open decisions are proposed one at a time; work proceeds in builds B0–B8 (`06-builds.md`) | 2026-11-09 |
 | 6 | Rule format | Declarative JSON files under `rules/`, one set per profile; data only, never executable code | 2026-11-09 |
 | 7 | Names | Project: **xsuit** (x = cross, suit = a "suitable" outfit for each target market). Profiles: Western, China, Hybrid. "Cross-Market UX Lens" is only a descriptive subtitle | 2026-11-09 |
+| 8 | Real-user testing | Deferred past V1; V1 uses internal before/after evaluation only | 2026-11-09 |
 
 ## Decided: test and reference sites (answer to former open #1)
 | Category | Western | Chinese |
@@ -24,5 +25,5 @@ Notes:
 - Several Chinese platforms (WeChat, RED, Weibo) are login-gated or app-first; the practical way to study them (screenshots, public pages, web versions) is to be settled when B5/B6 start.
 - Two TBD sites (Chinese entertainment, non-state-run news) to be picked later.
 
-## Still open (ask one at a time, in this order)
-1. Role of real-user testing in V1. Proposal: defer; internal before/after evaluation only.
+## Still open
+None. All initial decisions are made.
