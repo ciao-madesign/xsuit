@@ -8,7 +8,7 @@ A browser extension (Chrome, TypeScript, MV3) that adapts a web page's UX to the
 ## State (2026-11-09)
 - Repo `ciao-madesign/xsuit`, branch `claude/great-curie-8yfsjr`. Only documentation exists; **no code yet**.
 - Docs 01–06 written in English. README lists the reading order.
-- Decisions made: user = UX designer/researcher; stack = TypeScript + Chrome MV3; everything in English; sites = well-known Western sites (exact list open).
+- Decisions made: user = UX designer/researcher; stack = TypeScript + Chrome MV3; everything in English; sites = paired Western + Chinese set (Google/Baidu, Amazon/Alibaba, BBC/Chinese entertainment, Guardian/non-state Chinese news, YouTube-Reddit-Instagram/Weibo-WeChat-RED); see `05-decisions.md`.
 - Build plan B0–B8 defined in `docs/06-builds.md`. Nothing started.
 
 ## How the user wants to work
@@ -17,6 +17,6 @@ A browser extension (Chrome, TypeScript, MV3) that adapts a web page's UX to the
 - No PR unless explicitly requested. Commit and push to `claude/great-curie-8yfsjr`.
 
 ## Next steps
-1. Ask open decision #1 (the 4 test sites), then #2, #3, #4 — one per turn.
+1. Ask the remaining open decisions (rule format, names, real-user testing) — one per turn.
 2. Record each answer in `docs/05-decisions.md`.
 3. Start **B0 (Project foundations)** once the user says go.

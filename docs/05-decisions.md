@@ -3,13 +3,26 @@
 | # | Decision | Choice | Date |
 |---|---|---|---|
 | 1 | Primary V1 user | UX designer / researcher | 2026-11-09 |
-| 2 | MVP test sites | Well-known Western sites, one per category (search, e-commerce, editorial portal, content platform); exact sites TBD (see open #1) | 2026-11-09 |
+| 2 | MVP test sites | Paired Western and Chinese sites per category, used as reference for both profiles (see list below) | 2026-11-09 |
 | 3 | Tech stack | TypeScript + Chrome Manifest V3, no heavy frontend framework | 2026-11-09 |
 | 4 | Language | Everything in English (documents, code, extension UI) | 2026-11-09 |
 | 5 | Work method | Open decisions are proposed one at a time; work proceeds in builds B0–B8 (`06-builds.md`) | 2026-11-09 |
 
+## Decided: test and reference sites (answer to former open #1)
+| Category | Western | Chinese |
+|---|---|---|
+| Search | Google | Baidu |
+| E-commerce | Amazon | Alibaba |
+| Editorial / entertainment portal | BBC | A Chinese entertainment site (TBD) |
+| News | The Guardian | A non-state-run Chinese outlet (TBD) |
+| Social / content platform | YouTube, Reddit, Instagram | Weibo, WeChat, RED (Xiaohongshu) |
+
+Notes:
+- The study set is wider than the V1 adapter set. Which sites get a working adapter in V1 is to be narrowed in B1/B4 (each adapter is costly).
+- Several Chinese platforms (WeChat, RED, Weibo) are login-gated or app-first; the practical way to study them (screenshots, public pages, web versions) is to be settled when B5/B6 start.
+- Two TBD sites (Chinese entertainment, non-state-run news) to be picked later.
+
 ## Still open (ask one at a time, in this order)
-1. Exact 4 test sites. Proposal: Google (search), Amazon (e-commerce), BBC or The Guardian (editorial portal), YouTube or Reddit (content platform).
-2. Rule data format and location in the repo. Proposal: declarative JSON files, one set per profile, under `rules/`.
-3. Project and profile display names.
-4. Role of real-user testing in V1. Proposal: defer; internal before/after evaluation only.
+1. Rule data format and location in the repo. Proposal: declarative JSON files, one set per profile, under `rules/`.
+2. Project and profile display names.
+3. Role of real-user testing in V1. Proposal: defer; internal before/after evaluation only.
