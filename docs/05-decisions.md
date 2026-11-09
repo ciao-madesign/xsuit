@@ -19,6 +19,7 @@
 | 15  | Re-plan approved                     | Builds B5–B11 as in `08-scope-review-and-replan.md`; "measure first, apply only the delta" approach                                                                                                                                                                                  | 2026-11-09 |
 | 16  | Per-site opt-in                      | No access to any site by default. xsuit runs automatically only on sites the user enabled (optional host permission); elsewhere only on click (activeTab). Replaces the "excluded sites" list. Reason: minimal permissions                                                           | 2026-11-09 |
 | 17  | Page metrics                         | Own operationalisation of the study indicators; definitions exported in every file; approximate metrics are labelled; size-based metrics are null when there is no layout; measurement is always of the original page; numbers only, no page text or query string                    | 2026-11-09 |
+| 18  | China-oriented e-commerce reference  | Taobao (JD.com as fallback if login walls make Taobao impractical). Alibaba.com stays only as a secondary case, labelled as the international B2B site                                                                                                                               | 2026-11-09 |
 
 ## Decided: test and reference sites (answer to former open #1)
 

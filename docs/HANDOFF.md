@@ -25,7 +25,7 @@ Every intervention must be motivated and justified; every rule must be traceable
 
 ## Next steps
 
-1. B5 is done. Ask the remaining decisions from `08` section 7, one at a time: (2) Taobao/JD instead of Alibaba.com, (3) Bilibili + Caixin as the TBD sites, (4) optional features in or out.
+1. B5 is done. Ask the remaining decisions from `08` section 7, one at a time: (2) done: Taobao (decision #18), (3) Bilibili + Caixin as the TBD sites, (4) optional features in or out.
 2. Then start **B6 (Delta-based rules)**: metric conditions in the rule vocabulary, provisional profile baselines, density/spacing rules made delta-based.
 3. Evidence track (needs the user's PC): verify li2022 / li2026; collect measurements per `research/measurements/README.md`. Do not spoof user agents.
 4. Not testable headless: the browser permission prompt for "Always on this site" and the toolbar popup click (activeTab). Everything behind them was tested in real Chromium with a test build limited to localhost.
