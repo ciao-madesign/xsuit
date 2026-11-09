@@ -1,0 +1,49 @@
+<!-- Synthetic page for tests. NOT a capture of a real site. -->
+<html lang="zh">
+  <head>
+    <title>dense</title>
+    <style>
+      a.u {
+        text-decoration: underline;
+      }
+      .red {
+        background-color: rgb(220, 30, 30);
+      }
+      .hide {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav><a href="/a">首页</a><a href="/b">新闻</a></nav>
+    </header>
+    <main>
+      <section>
+        <h2>头条</h2>
+        <p>今日新闻内容</p>
+        <img src="a.png" alt="a" /><img src="b.png" alt="b" />
+      </section>
+      <section class="red">
+        <h2>推荐</h2>
+        <p>Hello world again</p>
+        <video autoplay></video>
+      </section>
+      <section>
+        <article><p>nested</p></article>
+        <img src="qr.png" alt="扫码 二维码" /><img src="/img/qrcode-app.png" alt="" />
+      </section>
+      <section class="hide">
+        <p>hidden text should not count</p>
+        <img src="h.png" />
+      </section>
+    </main>
+    <aside><p>Side</p></aside>
+    <footer>
+      <a class="u" href="/about">About us</a><a href="/c"><img src="c.png" alt="c" /></a>
+    </footer>
+    <script>
+      var ignored = "not text";
+    </script>
+  </body>
+</html>

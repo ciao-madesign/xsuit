@@ -9,14 +9,15 @@ export interface Settings {
   enabled: boolean;
   profile: ProfileChoice;
   depth: Depth;
-  excludedDomains: string[];
+  /** Sites where xsuit runs automatically. Everywhere else it runs only on request. */
+  enabledSites: string[];
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   enabled: true,
   profile: "original",
   depth: "visual",
-  excludedDomains: [],
+  enabledSites: [],
 };
 
 const HOST_RE = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/;
@@ -38,32 +39,37 @@ export function normalizeHost(input: string): string | null {
 
 /** Makes any stored value safe: unknown or corrupted data falls back to defaults. */
 export function normalizeSettings(raw: unknown): Settings {
-  const s: Settings = { ...DEFAULT_SETTINGS, excludedDomains: [] };
+  const s: Settings = { ...DEFAULT_SETTINGS, enabledSites: [] };
   if (typeof raw !== "object" || raw === null) return s;
   const r = raw as Record<string, unknown>;
   if (typeof r.enabled === "boolean") s.enabled = r.enabled;
   if (PROFILE_CHOICES.includes(r.profile as ProfileChoice)) s.profile = r.profile as ProfileChoice;
   if (DEPTHS.includes(r.depth as Depth)) s.depth = r.depth as Depth;
-  if (Array.isArray(r.excludedDomains)) {
+  if (Array.isArray(r.enabledSites)) {
     const set = new Set<string>();
-    for (const d of r.excludedDomains) {
+    for (const d of r.enabledSites) {
       const h = typeof d === "string" ? normalizeHost(d) : null;
       if (h) set.add(h);
     }
-    s.excludedDomains = [...set].sort();
+    s.enabledSites = [...set].sort();
   }
   return s;
 }
 
-export function isExcluded(settings: Settings, host: string): boolean {
+export function isSiteEnabled(settings: Settings, host: string): boolean {
   const h = normalizeHost(host);
   if (!h) return false;
-  return settings.excludedDomains.some((d) => h === d || h.endsWith(`.${d}`));
+  return settings.enabledSites.some((d) => h === d || h.endsWith(`.${d}`));
 }
 
-export function withExclusion(settings: Settings, host: string, excluded: boolean): Settings {
+export function withSite(settings: Settings, host: string, enabled: boolean): Settings {
   const h = normalizeHost(host);
   if (!h) return settings;
-  const rest = settings.excludedDomains.filter((d) => d !== h);
-  return { ...settings, excludedDomains: excluded ? [...rest, h].sort() : rest };
+  const rest = settings.enabledSites.filter((d) => d !== h);
+  return { ...settings, enabledSites: enabled ? [...rest, h].sort() : rest };
+}
+
+/** Match patterns for a site and its subdomains, for permissions and script registration. */
+export function sitePatterns(host: string): string[] {
+  return [`*://${host}/*`, `*://*.${host}/*`];
 }

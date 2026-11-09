@@ -36,12 +36,22 @@
         </select>
       </div>
       <div class="row">
-        <label for="exclude">Exclude this site</label>
-        <input type="checkbox" id="exclude" />
+        <label for="always">Always on this site</label>
+        <input type="checkbox" id="always" />
       </div>
       <div id="status" class="status" role="status"></div>
       <div class="row">
+        <button id="apply" class="primary" type="button">Apply now</button>
         <button id="restore" type="button">Restore original</button>
+      </div>
+      <h2>Audit</h2>
+      <div class="row">
+        <button id="measure" type="button">Measure this page</button>
+        <button id="download" type="button" disabled>Download JSON</button>
+      </div>
+      <table id="metrics" class="metrics" hidden></table>
+      <div class="row">
+        <span class="muted">Runs locally. Nothing is sent anywhere.</span>
         <a href="options.html" id="open-options" class="muted">Options</a>
       </div>
     </main>

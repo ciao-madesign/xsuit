@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_SETTINGS,
-  isExcluded,
+  isSiteEnabled,
   normalizeHost,
   normalizeSettings,
-  withExclusion,
+  sitePatterns,
+  withSite,
 } from "../src/shared/settings";
 import { checkPageSupport } from "../src/shared/support";
 import { computeStatus } from "../src/shared/state";
@@ -34,27 +35,31 @@ describe("normalizeSettings", () => {
       enabled: false,
       profile: "china",
       depth: "structural",
-      excludedDomains: ["https://www.B.com", "a.com", "a.com", 5, "bad host"],
+      enabledSites: ["https://www.B.com", "a.com", "a.com", 5, "bad host"],
     });
     expect(s).toEqual({
       enabled: false,
       profile: "china",
       depth: "structural",
-      excludedDomains: ["a.com", "b.com"],
+      enabledSites: ["a.com", "b.com"],
     });
   });
 });
 
-describe("exclusion", () => {
-  const s = withExclusion(DEFAULT_SETTINGS, "www.example.com", true);
-  it("matches the domain and its subdomains only", () => {
-    expect(isExcluded(s, "example.com")).toBe(true);
-    expect(isExcluded(s, "shop.example.com")).toBe(true);
-    expect(isExcluded(s, "notexample.com")).toBe(false);
+describe("per-site opt-in", () => {
+  const s = withSite(DEFAULT_SETTINGS, "www.example.com", true);
+  it("matches the site and its subdomains only", () => {
+    expect(isSiteEnabled(s, "example.com")).toBe(true);
+    expect(isSiteEnabled(s, "shop.example.com")).toBe(true);
+    expect(isSiteEnabled(s, "notexample.com")).toBe(false);
   });
   it("can be removed again", () => {
-    expect(withExclusion(s, "example.com", false).excludedDomains).toEqual([]);
+    expect(withSite(s, "example.com", false).enabledSites).toEqual([]);
   });
+  it("builds match patterns for the site and subdomains", () => {
+    expect(sitePatterns("example.com")).toEqual(["*://example.com/*", "*://*.example.com/*"]);
+  });
+  it("no site is enabled by default", () => expect(DEFAULT_SETTINGS.enabledSites).toEqual([]));
 });
 
 describe("page support", () => {
@@ -83,13 +88,17 @@ describe("page support", () => {
 
 describe("computeStatus", () => {
   const url = "https://www.example.com/";
+  const on = { ...DEFAULT_SETTINGS, profile: "western" as const };
   it("reports each state", () => {
-    expect(computeStatus(DEFAULT_SETTINGS, "chrome://x").kind).toBe("unsupported");
-    expect(computeStatus({ ...DEFAULT_SETTINGS, enabled: false }, url).kind).toBe("off");
-    expect(computeStatus(withExclusion(DEFAULT_SETTINGS, "example.com", true), url).kind).toBe(
-      "excluded",
-    );
+    expect(computeStatus(on, "chrome://x").kind).toBe("unsupported");
+    expect(computeStatus({ ...on, enabled: false }, url).kind).toBe("off");
     expect(computeStatus(DEFAULT_SETTINGS, url).kind).toBe("original");
-    expect(computeStatus({ ...DEFAULT_SETTINGS, profile: "western" }, url).kind).toBe("active");
+    expect(computeStatus(on, url).kind).toBe("not-enabled");
+    expect(computeStatus(withSite(on, "example.com", true), url).kind).toBe("active");
+  });
+  it("apply-once works without enabling the site, but never when off or original", () => {
+    expect(computeStatus(on, url, true).kind).toBe("active");
+    expect(computeStatus({ ...on, enabled: false }, url, true).kind).toBe("off");
+    expect(computeStatus(DEFAULT_SETTINGS, url, true).kind).toBe("original");
   });
 });

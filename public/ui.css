@@ -115,3 +115,17 @@ li {
 .muted {
   color: var(--muted);
 }
+.metrics {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 6px 0;
+  font-size: 12px;
+}
+.metrics td {
+  padding: 2px 0;
+  border-bottom: 1px solid var(--line);
+}
+.metrics td:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}

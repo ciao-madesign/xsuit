@@ -1,21 +1,30 @@
-import { computeStatus } from "../shared/state";
-import type { Message, RestoreReply } from "../shared/messages";
-import { loadSettings, saveSettings } from "../shared/storage";
+import { measurementFileName, type Measurement } from "../metrics/metrics";
+import type { ApplyReply, MeasureReply, Message, RestoreReply } from "../shared/messages";
 import {
   DEPTHS,
   PROFILE_CHOICES,
-  withExclusion,
+  normalizeHost,
+  sitePatterns,
+  withSite,
   type Depth,
   type ProfileChoice,
   type Settings,
 } from "../shared/settings";
+import { computeStatus } from "../shared/state";
+import { loadSettings, saveSettings } from "../shared/storage";
+import { summarize } from "./summary";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
 let settings: Settings;
 let tab: chrome.tabs.Tab | undefined;
+let last: Measurement | null = null;
 
-async function render(): Promise<void> {
+function say(text: string): void {
+  $("status").textContent = text;
+}
+
+function render(): void {
   const status = computeStatus(settings, tab?.url);
   $<HTMLInputElement>("enabled").checked = settings.enabled;
   $<HTMLSelectElement>("depth").value = settings.depth;
@@ -23,10 +32,12 @@ async function render(): Promise<void> {
     r.checked = r.value === settings.profile;
   }
   const supported = status.kind !== "unsupported";
-  const exclude = $<HTMLInputElement>("exclude");
-  exclude.disabled = !supported;
-  exclude.checked = status.kind === "excluded";
-  $<HTMLButtonElement>("restore").disabled = !supported;
+  const always = $<HTMLInputElement>("always");
+  always.disabled = !supported;
+  always.checked = status.kind === "active";
+  for (const id of ["restore", "measure"]) $<HTMLButtonElement>(id).disabled = !supported;
+  $<HTMLButtonElement>("apply").disabled =
+    !supported || !settings.enabled || settings.profile === "original";
   const box = $("status");
   box.textContent = status.message;
   box.className = `status ${status.kind}`;
@@ -35,19 +46,73 @@ async function render(): Promise<void> {
 async function update(next: Settings): Promise<void> {
   settings = next;
   await saveSettings(settings);
-  await render();
+  render();
 }
 
-async function restore(): Promise<void> {
-  if (!tab?.id) return;
+/** Talks to the page, injecting the content script first if it is not there (activeTab). */
+async function send<T>(msg: Message): Promise<T | null> {
+  if (!tab?.id) return null;
   try {
-    const reply = (await chrome.tabs.sendMessage(tab.id, {
-      type: "xsuit/restore",
-    } satisfies Message)) as RestoreReply;
-    $("status").textContent = reply.note;
+    return (await chrome.tabs.sendMessage(tab.id, msg)) as T;
   } catch {
-    $("status").textContent = "Could not reach the page. Reload it and try again.";
+    try {
+      await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] });
+      return (await chrome.tabs.sendMessage(tab.id, msg)) as T;
+    } catch {
+      say("Could not reach the page. Reload it and try again.");
+      return null;
+    }
   }
+}
+
+async function setAlways(on: boolean): Promise<void> {
+  const status = computeStatus(settings, tab?.url);
+  if (!("host" in status)) return;
+  const host = normalizeHost(status.host);
+  if (!host) return;
+  const origins = sitePatterns(host);
+  if (on) {
+    // Must be called straight from the click. The prompt may close this popup; the
+    // background worker then records the site.
+    const granted = await chrome.permissions.request({ origins }).catch(() => false);
+    if (!granted) {
+      say("Access was not granted, so xsuit will not run here automatically.");
+      render();
+      return;
+    }
+    await update(withSite(settings, host, true));
+    await send<ApplyReply>({ type: "xsuit/apply-once" });
+  } else {
+    await chrome.permissions.remove({ origins }).catch(() => false);
+    await update(withSite(settings, host, false));
+  }
+}
+
+async function measure(): Promise<void> {
+  const reply = await send<MeasureReply>({ type: "xsuit/measure" });
+  if (!reply) return;
+  last = reply.measurement;
+  const table = $<HTMLTableElement>("metrics");
+  table.replaceChildren();
+  for (const [label, value] of summarize(last)) {
+    const tr = table.insertRow();
+    tr.insertCell().textContent = label;
+    tr.insertCell().textContent = value;
+  }
+  table.hidden = false;
+  $<HTMLButtonElement>("download").disabled = false;
+}
+
+function download(): void {
+  if (!last) return;
+  const url = URL.createObjectURL(
+    new Blob([JSON.stringify(last, null, 2)], { type: "application/json" }),
+  );
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = measurementFileName(last);
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 async function init(): Promise<void> {
@@ -68,13 +133,25 @@ async function init(): Promise<void> {
     const v = (e.target as HTMLSelectElement).value as Depth;
     if (DEPTHS.includes(v)) update({ ...settings, depth: v });
   });
-  $<HTMLInputElement>("exclude").addEventListener("change", (e) => {
-    const host = computeStatus(settings, tab?.url);
-    if ("host" in host)
-      update(withExclusion(settings, host.host, (e.target as HTMLInputElement).checked));
+  $<HTMLInputElement>("always").addEventListener("change", (e) =>
+    setAlways((e.target as HTMLInputElement).checked),
+  );
+  $("apply").addEventListener("click", async () => {
+    const r = await send<ApplyReply>({ type: "xsuit/apply-once" });
+    if (r)
+      say(
+        r.applied
+          ? `Applied to this page (${r.rules} rule(s)).`
+          : "Nothing was applied on this page.",
+      );
   });
-  $("restore").addEventListener("click", restore);
-  await render();
+  $("restore").addEventListener("click", async () => {
+    const r = await send<RestoreReply>({ type: "xsuit/restore" });
+    if (r) say(r.note);
+  });
+  $("measure").addEventListener("click", measure);
+  $("download").addEventListener("click", download);
+  render();
 }
 
 init();

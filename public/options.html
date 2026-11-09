@@ -9,19 +9,12 @@
   <body>
     <main style="max-width: 520px">
       <h1>xsuit options</h1>
-      <h2>Excluded sites</h2>
-      <p class="muted">xsuit never changes these sites.</p>
-      <ul id="excluded"></ul>
-      <div class="row">
-        <input
-          type="text"
-          id="new-domain"
-          placeholder="example.com"
-          aria-label="Domain to exclude"
-        />
-        <button id="add" class="primary" type="button">Add</button>
-      </div>
-      <p id="error" class="muted" role="alert"></p>
+      <h2>Sites where xsuit always runs</h2>
+      <p class="muted">
+        xsuit runs automatically only on these sites. Everywhere else it acts only when you press a
+        button in the popup. Add a site from the popup ("Always on this site").
+      </p>
+      <ul id="sites"></ul>
       <h2>Reset</h2>
       <button id="reset" type="button">Restore default settings</button>
       <h2>Privacy</h2>
