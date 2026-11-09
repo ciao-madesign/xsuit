@@ -77,7 +77,7 @@ No effect (on purpose):
 ### `visual.china.compact-density` — moderate
 
 - **Action:** Use a compact layout density with more content per screen. (china, visual, risk low)
-- **Why:** Chinese homepages show about three times the visual density and nearly twice the main content blocks; NN/G reports Chinese users prefer relatively high information density and perceive complexity through familiarity.
+- **Why:** Chinese homepages show about three times the visual density and nearly twice the main content blocks; NN/G reports Chinese users prefer relatively high information density and perceive complexity through familiarity. It fires only when the measured page is sparser than the midpoint between the two sample means, so pages that are already dense are left alone.
 - **Supported by:**
   - `li2026`, Section 2.2 table: visual density 38.21 vs 12.87; main content blocks 5.91 vs 3.14 — Higher density and more blocks on Chinese homepages
   - `nng2016`, Section 'Yes, Chinese Sites Are Often Complex': Chinese participants tolerated complexity and appreciated density, especially on portal and news sites (n=6 Chinese users, 12 total) — Chinese participants prefer fairly high information density (small qualitative study)
@@ -85,7 +85,8 @@ No effect (on purpose):
   - Sample is institutional (municipal) homepages; commercial sites are not covered.
   - NN/G is small (6 Chinese users): Chinese users also met many usability problems on complex sites and some designs were judged too complicated.
   - Chinese users were less accepting of the simple sites tested, but this is not a test of this transformation.
-- **Limits:** Tendency from research, not a universal rule; varies by site and sector. Touch targets must stay usable.
+  - Delta-based: the density threshold (25.54) is the midpoint of two sample means from a study of municipal homepages. It is provisional and compared against our own metric definition, whose scale may differ from the study's. Replace with own measurements (A2).
+- **Limits:** Tendency from research, not a universal rule; varies by site and sector. Touch targets must stay usable. Does nothing on pages already at or above the threshold; also does nothing if the page could not be measured.
 - **Test results:** none yet
 
 ### `visual.china.tight-spacing` — moderate
@@ -131,7 +132,7 @@ No effect (on purpose):
 ### `visual.western.spacious-density` — moderate
 
 - **Action:** Use a spacious layout density with more whitespace. (western, visual, risk low)
-- **Why:** Western homepages in the sample show about a third of the visual density of Chinese ones and fewer content blocks (2026 study). NN/G found that foreign participants were less annoyed by problems on simple sites than on complex ones. Raising whitespace moves a dense page toward the sparser convention without removing content.
+- **Why:** Western homepages in the sample show about a third of the visual density of Chinese ones and fewer content blocks (2026 study). NN/G found that foreign participants were less annoyed by problems on simple sites than on complex ones. Raising whitespace moves a dense page toward the sparser convention without removing content. It fires only when the measured page is denser than the midpoint between the two sample means, so pages that are already sparse are left alone.
 - **Supported by:**
   - `li2026`, Section 2.2 table: visual density 12.87 vs 38.21 per 1,000 px; main content blocks 3.14 vs 5.91 — Lower density and fewer blocks on Western homepages
   - `nng2016`, Section 'Yes, Chinese Sites Are Often Complex': foreign participants less likely to be annoyed by usability issues on simple sites than on complex ones (n=6 expatriates) — Weak support: tolerance of simple sites among non-Chinese participants
@@ -139,7 +140,8 @@ No effect (on purpose):
   - Sample is institutional (municipal) homepages; commercial sites are not covered.
   - NN/G does not report a general Western preference for simplicity; its non-Chinese participants were 6 expatriates living in China.
   - Search-results and article pages are extrapolations from homepages.
-- **Limits:** Tendency from research, not a universal rule; varies by site and sector. Only spacing changes; content must not be hidden.
+  - Delta-based: the density threshold (25.54) is the midpoint of two sample means from a study of municipal homepages. It is provisional and compared against our own metric definition, whose scale may differ from the study's. Replace with own measurements (A2).
+- **Limits:** Tendency from research, not a universal rule; varies by site and sector. Only spacing changes; content must not be hidden. Does nothing on pages already at or below the threshold; also does nothing if the page could not be measured.
 - **Test results:** none yet
 
 ### `visual.western.underlined-links` — moderate

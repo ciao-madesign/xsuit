@@ -22,6 +22,7 @@ export type PageType = V<typeof PAGE_TYPES>;
 export interface Condition {
   type: V<typeof CONDITION_TYPES>;
   component?: Component;
+  metric?: string;
   value?: number | string;
 }
 

@@ -1,18 +1,24 @@
 {
   "profile": "china",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "rules": [
     {
       "id": "visual.china.compact-density",
       "title": "Compact density",
       "description": "Use a compact layout density with more content per screen.",
-      "rationale": "Chinese homepages show about three times the visual density and nearly twice the main content blocks; NN/G reports Chinese users prefer relatively high information density and perceive complexity through familiarity.",
+      "rationale": "Chinese homepages show about three times the visual density and nearly twice the main content blocks; NN/G reports Chinese users prefer relatively high information density and perceive complexity through familiarity. It fires only when the measured page is sparser than the midpoint between the two sample means, so pages that are already dense are left alone.",
       "profile": "china",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["home", "product-list", "feed"],
       "components": ["headline-list", "product-grid", "feed-item"],
-      "conditions": [],
+      "conditions": [
+        {
+          "type": "metric-below",
+          "metric": "mediaPer1000Px",
+          "value": 25.54
+        }
+      ],
       "action": {
         "type": "set-token",
         "token": "density",
@@ -41,12 +47,14 @@
         "gaps": [
           "Sample is institutional (municipal) homepages; commercial sites are not covered.",
           "NN/G is small (6 Chinese users): Chinese users also met many usability problems on complex sites and some designs were judged too complicated.",
-          "Chinese users were less accepting of the simple sites tested, but this is not a test of this transformation."
+          "Chinese users were less accepting of the simple sites tested, but this is not a test of this transformation.",
+          "Delta-based: the density threshold (25.54) is the midpoint of two sample means from a study of municipal homepages. It is provisional and compared against our own metric definition, whose scale may differ from the study's. Replace with own measurements (A2)."
         ]
       },
       "limits": [
         "Tendency from research, not a universal rule; varies by site and sector.",
-        "Touch targets must stay usable."
+        "Touch targets must stay usable.",
+        "Does nothing on pages already at or above the threshold; also does nothing if the page could not be measured."
       ],
       "testResults": []
     },

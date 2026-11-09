@@ -8,6 +8,8 @@ export interface PageContext {
   /** Recognized components and how sure we are. Missing key = not found. */
   components: Partial<Record<Component, Confidence>>;
   viewportWidth: number;
+  /** Metrics of the ORIGINAL page, measured once (null = could not be measured). */
+  metrics?: Partial<Record<string, number | null>>;
 }
 
 export interface PlanEntry {

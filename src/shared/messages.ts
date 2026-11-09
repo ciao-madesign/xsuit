@@ -9,6 +9,7 @@ export type Message =
 export interface PingReply {
   ok: true;
   applied: boolean;
+  rules: number;
 }
 export interface RestoreReply {
   ok: true;
@@ -19,6 +20,8 @@ export interface ApplyReply {
   ok: true;
   applied: boolean;
   rules: number;
+  /** Rules left out and why (feeds the explain panel in B8). */
+  skipped: { ruleId: string; reason: string }[];
 }
 export interface MeasureReply {
   ok: true;

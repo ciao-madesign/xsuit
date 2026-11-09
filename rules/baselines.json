@@ -1,0 +1,29 @@
+{
+  "version": "0.1.0",
+  "status": "provisional",
+  "note": "Provisional thresholds used by delta-based rules. Each is the midpoint of two sample means from one study of municipal homepages, compared against our own metric definition. Replace with our own measurements (research/measurements/, analysis A2) as soon as they exist. Only metrics with a number in the source are listed: for the others no threshold is invented.",
+  "metrics": {
+    "mediaPer1000Px": {
+      "west": 12.87,
+      "china": 38.21,
+      "threshold": 25.54,
+      "method": "midpoint of the two sample means, rounded to 2 decimals",
+      "source": {
+        "id": "li2026",
+        "locator": "Section 2.2 table: visual density (images/videos per 1,000 px) 38.21 China vs 12.87 West"
+      },
+      "caveats": [
+        "Sample is municipal homepages, not commercial sites.",
+        "The report we hold does not say what '1,000 px' refers to; we measure per 1,000 px of page height, which may not match the study's unit, so the scale may differ.",
+        "Our metric counts images, pictures, videos, canvases and large SVGs; the study counts images and videos."
+      ],
+      "usedByRules": ["visual.china.compact-density", "visual.western.spacious-density"]
+    }
+  },
+  "notQuantified": [
+    "palette-saturation (study gives direction only)",
+    "spacing / white space (study gives direction only)",
+    "autoplay (study counts pages containing autoplay, not a per-page level)",
+    "image diversity (not one of our metrics)"
+  ]
+}

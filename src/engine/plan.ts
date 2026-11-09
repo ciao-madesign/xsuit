@@ -24,6 +24,13 @@ export function selectCandidates(
   return all.filter((r) => wanted.has(r.id));
 }
 
+/** True if any rule of this profile depends on a measured metric, so measuring is worth its cost. */
+export function needsMetrics(input: Pick<PlanInput, "ruleSets" | "profiles" | "profile">): boolean {
+  return selectCandidates(input).some((r) =>
+    r.conditions.some((c) => c.type === "metric-above" || c.type === "metric-below"),
+  );
+}
+
 function confidenceOf(rule: Rule, ctx: PageContext): number {
   // Lowest confidence among the rule's components; unrecognized counts as 0.
   return Math.min(
@@ -44,6 +51,15 @@ function blocker(rule: Rule, input: PlanInput): string | null {
       return `component "${c.component}" is present`;
     if (c.type === "viewport-min-width" && ctx.viewportWidth < Number(c.value))
       return `viewport narrower than ${c.value}px`;
+    if (c.type === "metric-above" || c.type === "metric-below") {
+      const v = ctx.metrics?.[c.metric!];
+      if (typeof v !== "number") return `metric "${c.metric}" not measured`;
+      const limit = Number(c.value);
+      if (c.type === "metric-above" && !(v > limit))
+        return `page already at or below the target (${c.metric} ${v} is not above ${limit})`;
+      if (c.type === "metric-below" && !(v < limit))
+        return `page already at or above the target (${c.metric} ${v} is not below ${limit})`;
+    }
     if (c.type === "confidence-min" && confidenceOf(rule, ctx) < RANK[c.value as Confidence])
       return `component recognition below "${c.value}" confidence`;
   }

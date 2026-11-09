@@ -75,6 +75,32 @@ export const CONDITION_TYPES = [
   "component-absent",
   "viewport-min-width",
   "confidence-min",
+  "metric-above",
+  "metric-below",
+] as const;
+
+// Numeric page metrics a rule may test (see src/metrics/metrics.ts for definitions).
+export const METRIC_NAMES = [
+  "pageHeightPx",
+  "mediaPer1000Px",
+  "imageCount",
+  "videoCount",
+  "textUnits",
+  "textUnitsPer1000Px",
+  "headingsPer1000Text",
+  "paragraphsPer1000Text",
+  "mainBlocks",
+  "peripheralBlocks",
+  "linkCount",
+  "interactivePer1000Px",
+  "underlinedLinkRatio",
+  "footerLinkCount",
+  "autoplayCount",
+  "qrCodeCount",
+  "meanSaturation",
+  "meanLightness",
+  "distinctHues",
+  "whitespaceRatio",
 ] as const;
 
 export const CONFIDENCE = ["low", "medium", "high"] as const;

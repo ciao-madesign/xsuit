@@ -1,18 +1,24 @@
 {
   "profile": "western",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "rules": [
     {
       "id": "visual.western.spacious-density",
       "title": "Spacious density",
       "description": "Use a spacious layout density with more whitespace.",
-      "rationale": "Western homepages in the sample show about a third of the visual density of Chinese ones and fewer content blocks (2026 study). NN/G found that foreign participants were less annoyed by problems on simple sites than on complex ones. Raising whitespace moves a dense page toward the sparser convention without removing content.",
+      "rationale": "Western homepages in the sample show about a third of the visual density of Chinese ones and fewer content blocks (2026 study). NN/G found that foreign participants were less annoyed by problems on simple sites than on complex ones. Raising whitespace moves a dense page toward the sparser convention without removing content. It fires only when the measured page is denser than the midpoint between the two sample means, so pages that are already sparse are left alone.",
       "profile": "western",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["home", "search-results", "article"],
       "components": ["headline-list", "hero", "product-grid"],
-      "conditions": [],
+      "conditions": [
+        {
+          "type": "metric-above",
+          "metric": "mediaPer1000Px",
+          "value": 25.54
+        }
+      ],
       "action": {
         "type": "set-token",
         "token": "density",
@@ -41,12 +47,14 @@
         "gaps": [
           "Sample is institutional (municipal) homepages; commercial sites are not covered.",
           "NN/G does not report a general Western preference for simplicity; its non-Chinese participants were 6 expatriates living in China.",
-          "Search-results and article pages are extrapolations from homepages."
+          "Search-results and article pages are extrapolations from homepages.",
+          "Delta-based: the density threshold (25.54) is the midpoint of two sample means from a study of municipal homepages. It is provisional and compared against our own metric definition, whose scale may differ from the study's. Replace with own measurements (A2)."
         ]
       },
       "limits": [
         "Tendency from research, not a universal rule; varies by site and sector.",
-        "Only spacing changes; content must not be hidden."
+        "Only spacing changes; content must not be hidden.",
+        "Does nothing on pages already at or below the threshold; also does nothing if the page could not be measured."
       ],
       "testResults": []
     },

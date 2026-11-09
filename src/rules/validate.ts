@@ -15,6 +15,7 @@ import {
   EVIDENCE_LEVELS,
   FALLBACKS,
   LEVELS,
+  METRIC_NAMES,
   MODES,
   PAGE_TYPES,
   POSITIONS,
@@ -150,6 +151,11 @@ export function validateRule(input: unknown): ValidationResult<Rule> {
       if (cond.type === "viewport-min-width" && !(typeof cond.value === "number" && cond.value > 0))
         c.add(`${p}.value`, "must be a positive number");
       if (cond.type === "confidence-min") c.oneOf(`${p}.value`, cond.value, CONFIDENCE);
+      if (cond.type === "metric-above" || cond.type === "metric-below") {
+        c.oneOf(`${p}.metric`, cond.metric, METRIC_NAMES);
+        if (typeof cond.value !== "number" || !Number.isFinite(cond.value))
+          c.add(`${p}.value`, "must be a number");
+      }
     });
 
   checkAction(c, r.action, r.mode);

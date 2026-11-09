@@ -16,6 +16,8 @@ const ctx = (over: Partial<PageContext> = {}): PageContext => ({
   pageType: "home",
   components: { hero: "high", carousel: "high", "promo-banner": "high", "search-box": "high" },
   viewportWidth: 1280,
+  // A dense page, so the delta-based density rule for Western applies (see b6.test.ts for the rest).
+  metrics: { mediaPer1000Px: 40 },
   ...over,
 });
 const input = (over: Partial<PlanInput> = {}): PlanInput => ({
