@@ -9,12 +9,14 @@
   <body>
     <main>
       <h1>xsuit</h1>
+
+      <!-- Layer 1: what every user sees. -->
       <div class="row">
-        <label for="enabled">Enabled</label>
-        <input type="checkbox" id="enabled" />
+        <label for="always">Personalize this site</label>
+        <input type="checkbox" id="always" />
       </div>
       <fieldset>
-        <legend class="muted">Profile</legend>
+        <legend class="muted">Style</legend>
         <div class="row">
           <label><input type="radio" name="profile" value="original" /> Original</label>
         </div>
@@ -28,32 +30,41 @@
           <label><input type="radio" name="profile" value="hybrid" /> Hybrid (preliminary)</label>
         </div>
       </fieldset>
-      <div class="row">
-        <label for="depth">Depth</label>
-        <select id="depth">
-          <option value="visual">Visual</option>
-          <option value="structural">Structural</option>
-        </select>
-      </div>
-      <div class="row">
-        <label for="always">Always on this site</label>
-        <input type="checkbox" id="always" />
-      </div>
       <div id="status" class="status" role="status"></div>
-      <div class="row">
-        <button id="apply" class="primary" type="button">Apply now</button>
-        <button id="restore" type="button">Restore original</button>
-      </div>
-      <h2>Audit</h2>
-      <div class="row">
-        <button id="measure" type="button">Measure this page</button>
-        <button id="download" type="button" disabled>Download JSON</button>
-      </div>
-      <table id="metrics" class="metrics" hidden></table>
-      <div class="row">
-        <span class="muted">Runs locally. Nothing is sent anywhere.</span>
-        <a href="options.html" id="open-options" class="muted">Options</a>
-      </div>
+
+      <!-- Layer 2: advanced settings, collapsed by default. -->
+      <details>
+        <summary>Advanced</summary>
+        <div class="row">
+          <label for="enabled">xsuit enabled everywhere</label>
+          <input type="checkbox" id="enabled" />
+        </div>
+        <div class="row">
+          <label for="depth">Depth</label>
+          <select id="depth">
+            <option value="visual">Visual</option>
+            <option value="structural">Structural</option>
+          </select>
+        </div>
+        <div class="row">
+          <button id="apply" class="primary" type="button">Apply now</button>
+          <button id="restore" type="button">Restore original</button>
+        </div>
+        <div class="row">
+          <a href="options.html" id="open-options" class="muted">All options</a>
+        </div>
+      </details>
+
+      <!-- Layer 3: researcher tools (IX researchers are the V1 audience, not the final one). -->
+      <details>
+        <summary>Research tools</summary>
+        <div class="row">
+          <button id="measure" type="button">Measure this page</button>
+          <button id="download" type="button" disabled>Download JSON</button>
+        </div>
+        <table id="metrics" class="metrics" hidden></table>
+        <p class="muted">Runs locally. Nothing is sent anywhere.</p>
+      </details>
     </main>
     <script src="popup.js"></script>
   </body>

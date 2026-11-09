@@ -92,9 +92,18 @@ Done: B0–B4. The old B5–B8 are reorganised into B5–B11 below. Reason for t
 
 **Evidence track (parallel, mostly needs the user's PC):** A1 verification, A2 measurements on real sites, A4 reading. Rules are upgraded or downgraded as data arrives; `docs/07-evidence-audit.md` is regenerated each time.
 
+## 6b. Product layering (decision #21)
+
+The V1 audience (IX researchers) is only one part of the final product. The public tool is a toggle that personalizes the experience, with advanced settings. So:
+
+- Layer 1 (everyone): "Personalize this site" toggle + style choice. Must work without reading anything.
+- Layer 2 (advanced, collapsed): master switch, depth, apply now, restore, per-rule toggles, all options.
+- Layer 3 (research tools, collapsed): measure/export, explain details with evidence, comparison report, observation sheets, equivalents panel.
+- B8 (transparency) must design what the simple toggle does for a non-expert (sensible default style, plain-language "what changed"), and keep evidence detail in layer 3. Popup already restructured in this order.
+
 ## 7. Decisions needed from the user (one at a time)
 
 1. Approve this re-plan (B5–B11) and the delta-based approach.
 2. China-oriented e-commerce reference: Taobao or JD.com instead of Alibaba.com (G7).
 3. The two TBD sites: Bilibili and Caixin (G10).
-4. Optional features 7–8 in or out of V1.
+4. Optional features 7–8 in or out of V1. **Answered: both in (B10).** Items 1–3 answered (decisions #15, #18, #19).

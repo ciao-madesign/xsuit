@@ -23,12 +23,15 @@ A browser extension (Chrome, TypeScript, MV3) that adapts a web page's UX to the
 
 Every intervention must be motivated and justified; every rule must be traceable to real studies or to observations/data, with stated limits. Never invent citations. Source registry: `rules/sources.json`; audit: `docs/07-evidence-audit.md`. Primary texts are not yet re-verified (flag `verified:false`).
 
+## Standing product rule (decision #21)
+
+V1 targets IX researchers, but the final product is a simple public toggle that personalizes the experience, with advanced settings. Researcher tools are a collapsed sub-section. Say which UI layer every new feature belongs to; defaults must work for non-experts.
+
 ## Next steps
 
-1. B5 is done. Ask the remaining decisions from `08` section 7, one at a time: (2) done: Taobao (decision #18), (3) done: Bilibili + Caixin (decision #19), (4) optional features in or out.
-2. Then start **B6 (Delta-based rules)**: metric conditions in the rule vocabulary, provisional profile baselines, density/spacing rules made delta-based.
+1. All scope decisions are closed (#15-#21). Start **B6 (Delta-based rules)**: metric conditions in the rule vocabulary, provisional profile baselines, density/spacing rules made delta-based.
+2. B8 must define what the simple toggle does for a non-expert (default style, plain-language summary).
 3. Evidence track (needs the user's PC): verify li2022 / li2026; collect measurements per `research/measurements/README.md`. Do not spoof user agents.
-4. Not testable headless: the browser permission prompt for "Always on this site" and the toolbar popup click (activeTab). Everything behind them was tested in real Chromium with a test build limited to localhost.
+4. Not testable headless: the permission prompt for "Personalize this site" and the toolbar popup click.
 
 Commands: `npm run check`, `npm run evidence`.
-B5 delivered: `src/metrics/` (20 indicators), popup "Measure this page" + "Download JSON" + "Apply now" + "Always on this site", per-site opt-in permissions, `research/measurements/`; 90 tests.
