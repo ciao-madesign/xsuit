@@ -2,11 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>xsuit options</title>
+    <link rel="stylesheet" href="ui.css" />
   </head>
   <body>
-    <h1>xsuit options</h1>
-    <p>Coming in B2.</p>
+    <main style="max-width: 520px">
+      <h1>xsuit options</h1>
+      <h2>Excluded sites</h2>
+      <p class="muted">xsuit never changes these sites.</p>
+      <ul id="excluded"></ul>
+      <div class="row">
+        <input
+          type="text"
+          id="new-domain"
+          placeholder="example.com"
+          aria-label="Domain to exclude"
+        />
+        <button id="add" class="primary" type="button">Add</button>
+      </div>
+      <p id="error" class="muted" role="alert"></p>
+      <h2>Reset</h2>
+      <button id="reset" type="button">Restore default settings</button>
+      <h2>Privacy</h2>
+      <p class="muted">Everything runs locally. xsuit sends no data anywhere.</p>
+    </main>
     <script src="options.js"></script>
   </body>
 </html>

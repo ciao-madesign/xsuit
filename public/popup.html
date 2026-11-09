@@ -2,11 +2,49 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>xsuit</title>
+    <link rel="stylesheet" href="ui.css" />
   </head>
   <body>
-    <h1>xsuit</h1>
-    <p>Foundations only. No features yet.</p>
+    <main>
+      <h1>xsuit</h1>
+      <div class="row">
+        <label for="enabled">Enabled</label>
+        <input type="checkbox" id="enabled" />
+      </div>
+      <fieldset>
+        <legend class="muted">Profile</legend>
+        <div class="row">
+          <label><input type="radio" name="profile" value="original" /> Original</label>
+        </div>
+        <div class="row">
+          <label><input type="radio" name="profile" value="western" /> Western</label>
+        </div>
+        <div class="row">
+          <label><input type="radio" name="profile" value="china" /> China</label>
+        </div>
+        <div class="row">
+          <label><input type="radio" name="profile" value="hybrid" /> Hybrid (preliminary)</label>
+        </div>
+      </fieldset>
+      <div class="row">
+        <label for="depth">Depth</label>
+        <select id="depth">
+          <option value="visual">Visual</option>
+          <option value="structural">Structural</option>
+        </select>
+      </div>
+      <div class="row">
+        <label for="exclude">Exclude this site</label>
+        <input type="checkbox" id="exclude" />
+      </div>
+      <div id="status" class="status" role="status"></div>
+      <div class="row">
+        <button id="restore" type="button">Restore original</button>
+        <a href="options.html" id="open-options" class="muted">Options</a>
+      </div>
+    </main>
     <script src="popup.js"></script>
   </body>
 </html>
