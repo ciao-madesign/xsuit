@@ -17,6 +17,6 @@ A browser extension (Chrome, TypeScript, MV3) that adapts a web page's UX to the
 - No PR unless explicitly requested. Commit and push to `claude/great-curie-8yfsjr`.
 
 ## Next steps
-1. Ask the remaining open decisions (rule format, names, real-user testing) — one per turn.
+1. Ask the remaining open decisions (names, real-user testing); rule format decided = JSON in `rules/` — one per turn.
 2. Record each answer in `docs/05-decisions.md`.
 3. Start **B0 (Project foundations)** once the user says go.
