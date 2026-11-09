@@ -20,22 +20,22 @@
 | 16  | Per-site opt-in                      | No access to any site by default. xsuit runs automatically only on sites the user enabled (optional host permission); elsewhere only on click (activeTab). Replaces the "excluded sites" list. Reason: minimal permissions                                                           | 2026-11-09 |
 | 17  | Page metrics                         | Own operationalisation of the study indicators; definitions exported in every file; approximate metrics are labelled; size-based metrics are null when there is no layout; measurement is always of the original page; numbers only, no page text or query string                    | 2026-11-09 |
 | 18  | China-oriented e-commerce reference  | Taobao (JD.com as fallback if login walls make Taobao impractical). Alibaba.com stays only as a secondary case, labelled as the international B2B site                                                                                                                               | 2026-11-09 |
+| 19  | The two TBD Chinese sites            | Bilibili (entertainment) and Caixin (non-state-run news; many articles paywalled, so measure home and index pages mainly)                                                                                                                                                            | 2026-11-09 |
 
 ## Decided: test and reference sites (answer to former open #1)
 
-| Category                         | Western                    | Chinese                              |
-| -------------------------------- | -------------------------- | ------------------------------------ |
-| Search                           | Google                     | Baidu                                |
-| E-commerce                       | Amazon                     | Alibaba                              |
-| Editorial / entertainment portal | BBC                        | A Chinese entertainment site (TBD)   |
-| News                             | The Guardian               | A non-state-run Chinese outlet (TBD) |
-| Social / content platform        | YouTube, Reddit, Instagram | Weibo, WeChat, RED (Xiaohongshu)     |
+| Category                         | Western                    | Chinese                               |
+| -------------------------------- | -------------------------- | ------------------------------------- |
+| Search                           | Google                     | Baidu                                 |
+| E-commerce                       | Amazon                     | Alibaba                               |
+| Editorial / entertainment portal | BBC                        | Bilibili                              |
+| News                             | The Guardian               | Caixin (paywall limits article pages) |
+| Social / content platform        | YouTube, Reddit, Instagram | Weibo, WeChat, RED (Xiaohongshu)      |
 
 Notes:
 
 - The study set is wider than the V1 adapter set. Which sites get a working adapter in V1 is to be narrowed in B1/B4 (each adapter is costly).
 - Several Chinese platforms (WeChat, RED, Weibo) are login-gated or app-first; the practical way to study them (screenshots, public pages, web versions) is to be settled when B5/B6 start.
-- Two TBD sites (Chinese entertainment, non-state-run news) to be picked later.
 
 ## Still open
 
