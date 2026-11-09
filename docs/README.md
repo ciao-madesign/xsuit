@@ -9,3 +9,6 @@ Foundations of the **Cross-Market UX Localization Extension**. Reading order:
 5. [05-decisions.md](05-decisions.md) — decisions log and open questions.
 6. [06-builds.md](06-builds.md) — build breakdown (B0–B8).
 7. [HANDOFF.md](HANDOFF.md) — current state and next steps for a fresh session.
+
+- `07-evidence-audit.md`: generated evidence audit per rule.
+- `08-scope-review-and-replan.md`: scope review, gaps, candidate rules, re-planned builds B5–B11.

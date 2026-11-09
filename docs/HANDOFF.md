@@ -25,9 +25,8 @@ Every intervention must be motivated and justified; every rule must be traceable
 
 ## Next steps
 
-1. Start **B5 (Analyzer, semantic mapper, classifier)** when the user says go.
-2. Source verification: li2022 and li2026 still unverified (ieeexplore / sagepub). The environment now allows these hosts, but WebFetch cannot resolve them (curl reaches nngroup.com only without spoofing); do NOT spoof user agents. Ask the user to check the figures manually or supply the PDFs.
-3. Adapters for Google/Baidu are drafts: verify selectors on live pages when possible (B5/B8).
+1. Scope review and re-plan written in `docs/08-scope-review-and-replan.md` (proposed). Get the user's approval, then ask its section 7 decisions one at a time.
+2. After approval start **B5 (Page metrics & audit)** per the new plan (old B5-B8 are superseded).
+3. Evidence track: li2022 / li2026 unverified (do not spoof user agents; ask user for manual check or PDFs). Adapters for Google/Baidu are unverified drafts.
 
 Commands: `npm run check`, `npm run evidence`.
-B4 delivered: `rules/effects.json` + `src/engine/effects.ts`, `adapters/` (google, baidu) + `src/adapters/`, content script uses adapter context; 73 tests; checked in real Chromium with a mapped local page (western / china / original behave correctly).
