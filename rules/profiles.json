@@ -1,0 +1,36 @@
+[
+  {
+    "id": "western",
+    "name": "Western",
+    "description": "Conventions typical of Western-oriented web UX: lower density, more whitespace, clear single focal path, search-led entry. Tendencies, not rules.",
+    "version": "0.1.0",
+    "reliability": "moderate",
+    "evidenceRefs": ["docs/01-research-western-vs-chinese-ux.md"]
+  },
+  {
+    "id": "china",
+    "name": "China",
+    "description": "Conventions typical of mainland-China-oriented web UX: higher density, image-led cards, parallel entry points, discovery feeds. Tendencies, not rules.",
+    "version": "0.1.0",
+    "reliability": "moderate",
+    "evidenceRefs": ["docs/01-research-western-vs-chinese-ux.md"]
+  },
+  {
+    "id": "hybrid",
+    "name": "Hybrid",
+    "description": "Explicit, user-defined composition of rules from other profiles. Preliminary.",
+    "version": "0.1.0",
+    "reliability": "hypothesis",
+    "evidenceRefs": ["docs/01-research-western-vs-chinese-ux.md"],
+    "composition": [
+      {
+        "profile": "western",
+        "ruleIds": ["visual.western.search-first"]
+      },
+      {
+        "profile": "china",
+        "ruleIds": ["visual.china.image-led"]
+      }
+    ]
+  }
+]

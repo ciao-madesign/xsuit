@@ -1,0 +1,288 @@
+{
+  "profile": "western",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "visual.western.spacious-density",
+      "title": "Spacious density",
+      "description": "Use a spacious layout density with more whitespace.",
+      "profile": "western",
+      "level": "visual",
+      "mode": "visual",
+      "pageTypes": ["home", "search-results", "article"],
+      "components": ["headline-list", "hero", "product-grid"],
+      "conditions": [],
+      "action": {
+        "type": "set-token",
+        "token": "density",
+        "value": "spacious"
+      },
+      "dependencies": [],
+      "priority": 50,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "moderate",
+        "summary": "Homepage studies report lower information density and more whitespace on Western sites.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": [
+        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Must not hide content; only spacing changes."
+      ],
+      "testResults": []
+    },
+    {
+      "id": "visual.western.airy-spacing",
+      "title": "Airy spacing scale",
+      "description": "Increase spacing between blocks.",
+      "profile": "western",
+      "level": "visual",
+      "mode": "visual",
+      "pageTypes": ["any"],
+      "components": ["header", "footer", "sidebar"],
+      "conditions": [],
+      "action": {
+        "type": "set-token",
+        "token": "spacing-scale",
+        "value": "airy"
+      },
+      "dependencies": [],
+      "priority": 45,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "moderate",
+        "summary": "Homepage studies report lower information density and more whitespace on Western sites.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": ["Tendency observed in research, not a universal rule; varies by site and sector."],
+      "testResults": []
+    },
+    {
+      "id": "visual.western.muted-palette",
+      "title": "Muted palette",
+      "description": "Reduce colour saturation for a calmer look.",
+      "profile": "western",
+      "level": "visual",
+      "mode": "visual",
+      "pageTypes": ["any"],
+      "components": ["hero", "promo-banner", "product-card"],
+      "conditions": [],
+      "action": {
+        "type": "set-token",
+        "token": "palette-saturation",
+        "value": "muted"
+      },
+      "dependencies": [],
+      "priority": 40,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "emerging",
+        "summary": "Western homepages tend toward restrained palettes; evidence is weaker than for density.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": [
+        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Must keep text contrast at or above WCAG AA."
+      ],
+      "testResults": []
+    },
+    {
+      "id": "visual.western.strong-hierarchy",
+      "title": "Strong visual hierarchy",
+      "description": "Make one primary focus per view clearer.",
+      "profile": "western",
+      "level": "visual",
+      "mode": "visual",
+      "pageTypes": ["home", "article", "product-detail"],
+      "components": ["hero", "headline-list", "article-body"],
+      "conditions": [],
+      "action": {
+        "type": "set-token",
+        "token": "visual-hierarchy",
+        "value": "strong"
+      },
+      "dependencies": [],
+      "priority": 55,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "moderate",
+        "summary": "Western pages tend to present a clearer single focal path.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": ["Tendency observed in research, not a universal rule; varies by site and sector."],
+      "testResults": []
+    },
+    {
+      "id": "visual.western.quiet-promos",
+      "title": "Quieter promotions",
+      "description": "De-emphasize promotional banners.",
+      "profile": "western",
+      "level": "visual",
+      "mode": "visual",
+      "pageTypes": ["home", "product-list"],
+      "components": ["promo-banner"],
+      "conditions": [],
+      "action": {
+        "type": "de-emphasize",
+        "target": "promo-banner",
+        "strength": "medium"
+      },
+      "dependencies": [],
+      "priority": 40,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "emerging",
+        "summary": "Promotions are generally less dominant on Western homepages.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": [
+        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Never hide legally required notices."
+      ],
+      "testResults": []
+    },
+    {
+      "id": "visual.western.quiet-carousel",
+      "title": "Quieter carousels",
+      "description": "De-emphasize auto-advancing carousels.",
+      "profile": "western",
+      "level": "visual",
+      "mode": "visual",
+      "pageTypes": ["home"],
+      "components": ["carousel"],
+      "conditions": [],
+      "action": {
+        "type": "de-emphasize",
+        "target": "carousel",
+        "strength": "medium"
+      },
+      "dependencies": [],
+      "priority": 35,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "emerging",
+        "summary": "Carousels are less central in Western homepage conventions.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": [
+        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Does not stop or alter carousel behaviour."
+      ],
+      "testResults": []
+    },
+    {
+      "id": "visual.western.search-first",
+      "title": "Search first",
+      "description": "Make the search box the most prominent control on search-led pages.",
+      "profile": "western",
+      "level": "visual",
+      "mode": "visual",
+      "pageTypes": ["home", "search-results"],
+      "components": ["search-box"],
+      "conditions": [
+        {
+          "type": "component-present",
+          "component": "search-box"
+        }
+      ],
+      "action": {
+        "type": "emphasize",
+        "target": "search-box",
+        "strength": "high"
+      },
+      "dependencies": [],
+      "priority": 60,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "moderate",
+        "summary": "Western search-led sites centre the search box.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": [
+        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Only on pages where a search box is detected."
+      ],
+      "testResults": []
+    },
+    {
+      "id": "visual.western.readable-text",
+      "title": "Readable article text",
+      "description": "Use a comfortable type scale for long reading.",
+      "profile": "western",
+      "level": "visual",
+      "mode": "visual",
+      "pageTypes": ["article"],
+      "components": ["article-body"],
+      "conditions": [],
+      "action": {
+        "type": "set-token",
+        "token": "type-scale",
+        "value": "large"
+      },
+      "dependencies": [],
+      "priority": 45,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "emerging",
+        "summary": "Long-form reading favours generous type and line length.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": [
+        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Must respect user font settings."
+      ],
+      "testResults": []
+    },
+    {
+      "id": "structure.western.collapse-sidebar",
+      "title": "Collapse sidebar on articles",
+      "description": "Collapse secondary sidebar on article pages to focus on content.",
+      "profile": "western",
+      "level": "information-architecture",
+      "mode": "structural",
+      "pageTypes": ["article"],
+      "components": ["sidebar"],
+      "conditions": [
+        {
+          "type": "confidence-min",
+          "value": "medium"
+        }
+      ],
+      "action": {
+        "type": "collapse",
+        "target": "sidebar"
+      },
+      "dependencies": [],
+      "priority": 30,
+      "reversible": true,
+      "risk": "medium",
+      "fallback": "visual-only",
+      "evidence": {
+        "level": "hypothesis",
+        "summary": "Single-column reading is common on Western editorial sites; not yet validated for this rule.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": [
+        "Structural; needs component recognition (B5).",
+        "Content stays reachable via expand."
+      ],
+      "testResults": []
+    }
+  ]
+}

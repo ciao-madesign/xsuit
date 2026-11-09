@@ -1,0 +1,294 @@
+{
+  "profile": "china",
+  "version": "0.1.0",
+  "rules": [
+    {
+      "id": "visual.china.compact-density",
+      "title": "Compact density",
+      "description": "Use a compact layout density with more content per screen.",
+      "profile": "china",
+      "level": "visual",
+      "mode": "visual",
+      "pageTypes": ["home", "product-list", "feed"],
+      "components": ["headline-list", "product-grid", "feed-item"],
+      "conditions": [],
+      "action": {
+        "type": "set-token",
+        "token": "density",
+        "value": "compact"
+      },
+      "dependencies": [],
+      "priority": 50,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "moderate",
+        "summary": "Homepage studies report higher information density and more parallel entry points on Chinese sites.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": [
+        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Touch targets must stay usable."
+      ],
+      "testResults": []
+    },
+    {
+      "id": "visual.china.tight-spacing",
+      "title": "Tight spacing scale",
+      "description": "Reduce spacing between blocks.",
+      "profile": "china",
+      "level": "visual",
+      "mode": "visual",
+      "pageTypes": ["any"],
+      "components": ["header", "footer", "sidebar"],
+      "conditions": [],
+      "action": {
+        "type": "set-token",
+        "token": "spacing-scale",
+        "value": "tight"
+      },
+      "dependencies": [],
+      "priority": 45,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "moderate",
+        "summary": "Homepage studies report higher information density and more parallel entry points on Chinese sites.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": ["Tendency observed in research, not a universal rule; varies by site and sector."],
+      "testResults": []
+    },
+    {
+      "id": "visual.china.vivid-palette",
+      "title": "Vivid palette",
+      "description": "Increase colour saturation for a livelier look.",
+      "profile": "china",
+      "level": "visual",
+      "mode": "visual",
+      "pageTypes": ["any"],
+      "components": ["hero", "promo-banner", "product-card"],
+      "conditions": [],
+      "action": {
+        "type": "set-token",
+        "token": "palette-saturation",
+        "value": "vivid"
+      },
+      "dependencies": [],
+      "priority": 40,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "moderate",
+        "summary": "Homepage studies report more colourful, higher-energy Chinese pages.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": [
+        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Must keep text contrast at or above WCAG AA."
+      ],
+      "testResults": []
+    },
+    {
+      "id": "visual.china.image-led",
+      "title": "Image-led cards",
+      "description": "Give images more prominence in cards.",
+      "profile": "china",
+      "level": "visual",
+      "mode": "visual",
+      "pageTypes": ["product-list", "feed", "home"],
+      "components": ["product-card", "feed-item"],
+      "conditions": [],
+      "action": {
+        "type": "set-token",
+        "token": "image-prominence",
+        "value": "high"
+      },
+      "dependencies": [],
+      "priority": 50,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "moderate",
+        "summary": "Chinese e-commerce and content feeds are strongly image-led.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": [
+        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Images must keep alt text."
+      ],
+      "testResults": []
+    },
+    {
+      "id": "visual.china.flat-hierarchy",
+      "title": "Flat hierarchy",
+      "description": "Present many parallel entry points at similar weight.",
+      "profile": "china",
+      "level": "visual",
+      "mode": "visual",
+      "pageTypes": ["home", "product-list"],
+      "components": ["headline-list", "product-grid", "primary-nav"],
+      "conditions": [],
+      "action": {
+        "type": "set-token",
+        "token": "visual-hierarchy",
+        "value": "flat"
+      },
+      "dependencies": [],
+      "priority": 55,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "moderate",
+        "summary": "Homepage studies report higher information density and more parallel entry points on Chinese sites.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": ["Tendency observed in research, not a universal rule; varies by site and sector."],
+      "testResults": []
+    },
+    {
+      "id": "visual.china.prominent-promos",
+      "title": "Prominent promotions",
+      "description": "Emphasize promotional banners.",
+      "profile": "china",
+      "level": "visual",
+      "mode": "visual",
+      "pageTypes": ["home", "product-list"],
+      "components": ["promo-banner"],
+      "conditions": [],
+      "action": {
+        "type": "emphasize",
+        "target": "promo-banner",
+        "strength": "medium"
+      },
+      "dependencies": [],
+      "priority": 45,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "moderate",
+        "summary": "Promotions and campaigns are prominent in Chinese commerce.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": [
+        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Does not add or invent promotions."
+      ],
+      "testResults": []
+    },
+    {
+      "id": "visual.china.prominent-carousel",
+      "title": "Prominent carousel",
+      "description": "Emphasize the main carousel/banner area.",
+      "profile": "china",
+      "level": "visual",
+      "mode": "visual",
+      "pageTypes": ["home"],
+      "components": ["carousel"],
+      "conditions": [],
+      "action": {
+        "type": "emphasize",
+        "target": "carousel",
+        "strength": "medium"
+      },
+      "dependencies": [],
+      "priority": 35,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "emerging",
+        "summary": "Large banner areas are common on Chinese homepages.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": [
+        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Does not alter carousel behaviour."
+      ],
+      "testResults": []
+    },
+    {
+      "id": "visual.china.discovery-feed",
+      "title": "Discovery feed prominence",
+      "description": "Emphasize recommendation areas.",
+      "profile": "china",
+      "level": "visual",
+      "mode": "visual",
+      "pageTypes": ["home", "feed"],
+      "components": ["recommendations"],
+      "conditions": [
+        {
+          "type": "component-present",
+          "component": "recommendations"
+        }
+      ],
+      "action": {
+        "type": "emphasize",
+        "target": "recommendations",
+        "strength": "medium"
+      },
+      "dependencies": [],
+      "priority": 40,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "emerging",
+        "summary": "Recommendation and discovery feeds are central in Chinese content and commerce apps.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": [
+        "Tendency observed in research, not a universal rule; varies by site and sector.",
+        "Only if a recommendations area is detected."
+      ],
+      "testResults": []
+    },
+    {
+      "id": "structure.china.recommendations-up",
+      "title": "Recommendations higher on home",
+      "description": "Move recommendations just below the hero on home pages.",
+      "profile": "china",
+      "level": "information-architecture",
+      "mode": "structural",
+      "pageTypes": ["home"],
+      "components": ["recommendations", "hero"],
+      "conditions": [
+        {
+          "type": "confidence-min",
+          "value": "medium"
+        },
+        {
+          "type": "component-present",
+          "component": "hero"
+        }
+      ],
+      "action": {
+        "type": "reorder",
+        "target": "recommendations",
+        "position": "after",
+        "relativeTo": "hero"
+      },
+      "dependencies": [],
+      "priority": 30,
+      "reversible": true,
+      "risk": "medium",
+      "fallback": "visual-only",
+      "evidence": {
+        "level": "hypothesis",
+        "summary": "Discovery-first layouts are common; the specific reordering is not yet validated.",
+        "sources": ["docs/01-research-western-vs-chinese-ux.md"]
+      },
+      "limits": [
+        "Structural; needs component recognition (B5).",
+        "Must keep original order recoverable."
+      ],
+      "testResults": []
+    }
+  ]
+}

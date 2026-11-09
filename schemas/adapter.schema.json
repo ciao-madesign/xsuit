@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "xsuit Site Adapter",
+  "type": "object",
+  "required": ["id", "site", "hosts", "status", "pageTypeHints", "components"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(\\.[a-z0-9-]+)+$"
+    },
+    "site": {
+      "type": "string",
+      "minLength": 1
+    },
+    "hosts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "enum": ["draft", "tested"]
+    },
+    "pageTypeHints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["pageType", "urlPattern"],
+        "properties": {
+          "pageType": {
+            "enum": [
+              "any",
+              "home",
+              "search-results",
+              "product-list",
+              "product-detail",
+              "article",
+              "feed",
+              "video"
+            ]
+          },
+          "urlPattern": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["component", "selectors", "confidence"],
+        "properties": {
+          "component": {
+            "enum": [
+              "header",
+              "primary-nav",
+              "search-box",
+              "hero",
+              "carousel",
+              "promo-banner",
+              "product-card",
+              "product-grid",
+              "filters",
+              "recommendations",
+              "headline-list",
+              "article-body",
+              "feed-item",
+              "video-player",
+              "sidebar",
+              "comments",
+              "ads",
+              "footer"
+            ]
+          },
+          "selectors": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "confidence": {
+            "enum": ["low", "medium", "high"]
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

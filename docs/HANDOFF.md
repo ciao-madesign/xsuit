@@ -11,7 +11,7 @@ A browser extension (Chrome, TypeScript, MV3) that adapts a web page's UX to the
 - Repo `ciao-madesign/xsuit`, branch `claude/great-curie-8yfsjr`. Only documentation exists; B0 done (scaffold + toolchain).
 - Docs 01–06 written in English. README lists the reading order.
 - Decisions made: user = UX designer/researcher; stack = TypeScript + Chrome MV3; everything in English; sites = paired Western + Chinese set (Google/Baidu, Amazon/Alibaba, BBC/Chinese entertainment, Guardian/non-state Chinese news, YouTube-Reddit-Instagram/Weibo-WeChat-RED); see `05-decisions.md`.
-- Build plan B0–B8 defined in `docs/06-builds.md`. B0 complete, awaiting user acceptance; B1 next.
+- Build plan B0–B8 defined in `docs/06-builds.md`. B0 and B1 complete; B2 next.
 
 ## How the user wants to work
 
@@ -20,7 +20,9 @@ A browser extension (Chrome, TypeScript, MV3) that adapts a web page's UX to the
 - No PR unless explicitly requested. Commit and push to `claude/great-curie-8yfsjr`.
 
 ## Next steps
-1. User loads `dist/` in Chrome (`chrome://extensions` > Developer mode > Load unpacked) after `npm install && npm run build`, and accepts B0.
-2. Start **B1 (Rule System)** when the user says go.
+
+1. User can accept B0/B1 (B0 needs a Chrome load test when they have a PC; not blocking).
+2. Start **B2 (Extension shell)**. Browser-side checks can be deferred; everything testable without a browser is built and unit-tested here (user has no terminal for now).
 
 Commands: `npm run check` (typecheck, lint, format, tests, build), `npm run watch`.
+B1 delivered: `src/rules/` (vocab, types, validator), `schemas/`, `rules/` (18 rules, 3 profiles), 16 tests.

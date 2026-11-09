@@ -1,0 +1,84 @@
+// Controlled vocabulary for rules, profiles and adapters. Rules are data: they may only use these terms.
+
+export const PROFILE_IDS = ["western", "china", "hybrid"] as const;
+export const LEVELS = ["visual", "information-architecture", "interaction", "ecosystem"] as const;
+export const MODES = ["visual", "structural", "deep"] as const;
+export const RISKS = ["low", "medium", "high"] as const;
+export const FALLBACKS = ["skip", "visual-only", "original"] as const;
+export const EVIDENCE_LEVELS = ["strong", "moderate", "emerging", "hypothesis"] as const;
+export const TEST_OUTCOMES = ["untested", "pass", "partial", "fail"] as const;
+
+export const PAGE_TYPES = [
+  "any",
+  "home",
+  "search-results",
+  "product-list",
+  "product-detail",
+  "article",
+  "feed",
+  "video",
+] as const;
+
+export const COMPONENTS = [
+  "header",
+  "primary-nav",
+  "search-box",
+  "hero",
+  "carousel",
+  "promo-banner",
+  "product-card",
+  "product-grid",
+  "filters",
+  "recommendations",
+  "headline-list",
+  "article-body",
+  "feed-item",
+  "video-player",
+  "sidebar",
+  "comments",
+  "ads",
+  "footer",
+] as const;
+
+// Never touched by any rule (spec: protected elements).
+export const PROTECTED_COMPONENTS = [
+  "password-field",
+  "payment-form",
+  "consent-banner",
+  "auth-form",
+  "transaction-confirm",
+  "account-deletion",
+] as const;
+
+export const TOKENS = {
+  density: ["compact", "comfortable", "spacious"],
+  "spacing-scale": ["tight", "normal", "airy"],
+  "palette-saturation": ["muted", "normal", "vivid"],
+  "type-scale": ["small", "normal", "large"],
+  "image-prominence": ["low", "normal", "high"],
+  "visual-hierarchy": ["flat", "balanced", "strong"],
+} as const;
+
+export const ACTION_TYPES = [
+  "set-token",
+  "emphasize",
+  "de-emphasize",
+  "collapse",
+  "reorder",
+  "group",
+  "surface-shortcut",
+] as const;
+
+export const CONDITION_TYPES = [
+  "component-present",
+  "component-absent",
+  "viewport-min-width",
+  "confidence-min",
+] as const;
+
+export const CONFIDENCE = ["low", "medium", "high"] as const;
+export const STRENGTHS = ["low", "medium", "high"] as const;
+export const POSITIONS = ["first", "last", "before", "after"] as const;
+
+// Actions allowed per mode. Visual mode never changes structure.
+export const STRUCTURAL_ACTIONS = ["reorder", "group", "surface-shortcut", "collapse"] as const;
