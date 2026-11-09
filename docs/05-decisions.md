@@ -1,15 +1,18 @@
 # 05 — Decisions log
 
-| #   | Decision          | Choice                                                                                                                                                                     | Date       |
-| --- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| 1   | Primary V1 user   | UX designer / researcher                                                                                                                                                   | 2026-11-09 |
-| 2   | MVP test sites    | Paired Western and Chinese sites per category, used as reference for both profiles (see list below)                                                                        | 2026-11-09 |
-| 3   | Tech stack        | TypeScript + Chrome Manifest V3, no heavy frontend framework                                                                                                               | 2026-11-09 |
-| 4   | Language          | Everything in English (documents, code, extension UI)                                                                                                                      | 2026-11-09 |
-| 5   | Work method       | Open decisions are proposed one at a time; work proceeds in builds B0–B8 (`06-builds.md`)                                                                                  | 2026-11-09 |
-| 6   | Rule format       | Declarative JSON files under `rules/`, one set per profile; data only, never executable code                                                                               | 2026-11-09 |
-| 7   | Names             | Project: **xsuit** (x = cross, suit = a "suitable" outfit for each target market). Profiles: Western, China, Hybrid. "Cross-Market UX Lens" is only a descriptive subtitle | 2026-11-09 |
-| 8   | Real-user testing | Deferred past V1; V1 uses internal before/after evaluation only                                                                                                            | 2026-11-09 |
+| #   | Decision                             | Choice                                                                                                                                                                                                   | Date       |
+| --- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| 1   | Primary V1 user                      | UX designer / researcher                                                                                                                                                                                 | 2026-11-09 |
+| 2   | MVP test sites                       | Paired Western and Chinese sites per category, used as reference for both profiles (see list below)                                                                                                      | 2026-11-09 |
+| 3   | Tech stack                           | TypeScript + Chrome Manifest V3, no heavy frontend framework                                                                                                                                             | 2026-11-09 |
+| 4   | Language                             | Everything in English (documents, code, extension UI)                                                                                                                                                    | 2026-11-09 |
+| 5   | Work method                          | Open decisions are proposed one at a time; work proceeds in builds B0–B8 (`06-builds.md`)                                                                                                                | 2026-11-09 |
+| 6   | Rule format                          | Declarative JSON files under `rules/`, one set per profile; data only, never executable code                                                                                                             | 2026-11-09 |
+| 7   | Names                                | Project: **xsuit** (x = cross, suit = a "suitable" outfit for each target market). Profiles: Western, China, Hybrid. "Cross-Market UX Lens" is only a descriptive subtitle                               | 2026-11-09 |
+| 8   | Real-user testing                    | Deferred past V1; V1 uses internal before/after evaluation only                                                                                                                                          | 2026-11-09 |
+| 9   | Evidence standard                    | Every rule needs a rationale, located sources from `rules/sources.json`, stated gaps; moderate/strong need a real study or review; hypotheses need a validation plan. Audit: `docs/07-evidence-audit.md` | 2026-11-09 |
+| 10  | No unjustified styling in the engine | The engine ships with an empty effect catalog; concrete CSS values are added in B4 only with evidence behind each                                                                                        | 2026-11-09 |
+| 11  | Engine safety design                 | All page changes go through a journal (fully reversible); one namespaced style element; protected areas (incl. containers holding them) are skipped; loop guard stops runaway re-application             | 2026-11-09 |
 
 ## Decided: test and reference sites (answer to former open #1)
 

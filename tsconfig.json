@@ -9,6 +9,7 @@
     "noEmit": true,
     "skipLibCheck": true,
     "isolatedModules": true,
+    "resolveJsonModule": true,
     "types": ["chrome", "node"]
   },
   "include": ["src", "tests", "scripts"]

@@ -11,7 +11,7 @@ A browser extension (Chrome, TypeScript, MV3) that adapts a web page's UX to the
 - Repo `ciao-madesign/xsuit`, branch `claude/great-curie-8yfsjr`. Only documentation exists; B0 done (scaffold + toolchain).
 - Docs 01–06 written in English. README lists the reading order.
 - Decisions made: user = UX designer/researcher; stack = TypeScript + Chrome MV3; everything in English; sites = paired Western + Chinese set (Google/Baidu, Amazon/Alibaba, BBC/Chinese entertainment, Guardian/non-state Chinese news, YouTube-Reddit-Instagram/Weibo-WeChat-RED); see `05-decisions.md`.
-- Build plan B0–B8 defined in `docs/06-builds.md`. B0, B1, B2 complete; B3 next.
+- Build plan B0–B8 defined in `docs/06-builds.md`. B0-B3 complete; B4 next.
 
 ## How the user wants to work
 
@@ -25,8 +25,8 @@ Every intervention must be motivated and justified; every rule must be traceable
 
 ## Next steps
 
-1. Start **B3 (Engine core)** when the user says go.
-2. Chrome load test was done headless in the container (extension loads, popup and options work, settings persist). The user has not yet tried it on a real PC; not blocking.
+1. Start **B4 (Visual transformations)**: design-token effect catalog (every value justified), first adapter (search engine: Google/Baidu).
+2. Source verification is pending: the primary texts of li2022, li2026, nng2016 could not be fetched (hosts ieeexplore.ieee.org, journals.sagepub.com, www.nngroup.com are blocked by the session network). Ask the user to allow them or verify figures manually.
 
-Commands: `npm run check` (typecheck, lint, format, tests, build), `npm run watch`.
-B1: `src/rules/`, `schemas/`, `rules/`. B2: `src/shared/` (settings, support, state, storage), popup, options, content stub; 27 tests.
+Commands: `npm run check`, `npm run evidence` (regenerates docs/07).
+B3 delivered: `src/engine/` (plan, apply, journal, css, protect, engine), content script wired to settings; 57 tests; checked in real Chromium (apply and restore).
