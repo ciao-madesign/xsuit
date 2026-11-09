@@ -7,17 +7,17 @@
 
 Not "Western minimalism vs Chinese clutter", but different levels of density, hierarchy and simultaneous information. Evidence: 2026 study of 200 homepages (see doc 01) — limited to institutional sites.
 
-| Element | US/EU | Mainland China |
-|---|---|---|
-| Visual density | Moderate, marked hierarchy and spacing | Higher, more simultaneous blocks |
-| Homepage | Few dominant entry points | More categories, shortcuts, feed, promotions |
-| Colors | Contained, more desaturated palettes | Vivid colors, strong contrasts |
-| Typography | Hierarchy from size, weight, space | More articulated hierarchy, more graphic elements |
-| Components | Cards, menus, tabs, modals, CTAs | Cards, feed, banners, shortcuts, QR, badges, promo modules |
-| Animation | Subordinate to content | More prominent role |
-| QR code | Functional, not central | Frequent entry to services and content |
+| Element        | US/EU                                  | Mainland China                                             |
+| -------------- | -------------------------------------- | ---------------------------------------------------------- |
+| Visual density | Moderate, marked hierarchy and spacing | Higher, more simultaneous blocks                           |
+| Homepage       | Few dominant entry points              | More categories, shortcuts, feed, promotions               |
+| Colors         | Contained, more desaturated palettes   | Vivid colors, strong contrasts                             |
+| Typography     | Hierarchy from size, weight, space     | More articulated hierarchy, more graphic elements          |
+| Components     | Cards, menus, tabs, modals, CTAs       | Cards, feed, banners, shortcuts, QR, badges, promo modules |
+| Animation      | Subordinate to content                 | More prominent role                                        |
+| QR code        | Functional, not central                | Frequent entry to services and content                     |
 
-**Grids.** US/EU: header → hero → priority CTAs → secondary sections → footer; limits visual competition. China: several autonomous areas (header with search/account → categories and shortcuts → banners → feed → service blocks → promotions); hierarchy is *distributed* across modules, not absent.
+**Grids.** US/EU: header → hero → priority CTAs → secondary sections → footer; limits visual competition. China: several autonomous areas (header with search/account → categories and shortcuts → banners → feed → service blocks → promotions); hierarchy is _distributed_ across modules, not absent.
 
 **Color and typography.** Localize, don't translate. Red is frequent in the Chinese sample but must not be automatically the main color; blue is common to both. Typography: full Simplified Chinese support, reliable font fallbacks, different text length/density, adequate sizes and line-height, layouts that do not depend on fixed-length text.
 
@@ -36,16 +36,18 @@ The difference to explore is the mental model by which users reach a service. US
 **Models.** Western: by function (Homepage → Search / Categories / Account). Chinese: multiple entry points (Homepage/Super-app → Search, Services, Feed, QR, Community, Marketplace); same service reachable from multiple contexts.
 
 **Homepage and navigation.**
+
 - US/EU: stable menu, categories by function, predictable paths, search for known content, breadcrumbs and contextual links, separation of editorial/services/account.
 - China: homepage combining navigation, feed, services; quick access to frequent functions; simultaneous categories and promotions; more recommended content; links between services; search for both finding and discovering.
 - Literature distinguishes independent areas vs organization around a focal point: a historical model to verify on current platforms.
 
-**Search: two functions.** *Known-item* (I know what I want) and *exploratory* (I want to discover). Do not design a single system for all cases. For China also consider search inside WeChat, Douyin, Xiaohongshu, Taobao, Baidu: ecosystems, not alternative web engines.
+**Search: two functions.** _Known-item_ (I know what I want) and _exploratory_ (I want to discover). Do not design a single system for all cases. For China also consider search inside WeChat, Douyin, Xiaohongshu, Taobao, Baidu: ecosystems, not alternative web engines.
 
 **Recommended three-layer architecture.**
-1. *Core taxonomy*: categories, entities, content, relations — market-independent.
-2. *Access layer*: menus, search, feed, recommendations, contextual links, QR, external services.
-3. *Presentation layer*: focused vs exploratory navigation, modular homepage, personalized feeds, shortcuts.
+
+1. _Core taxonomy_: categories, entities, content, relations — market-independent.
+2. _Access layer_: menus, search, feed, recommendations, contextual links, QR, external services.
+3. _Presentation layer_: focused vs exploratory navigation, modular homepage, personalized feeds, shortcuts.
 
 **Mistakes:** same homepage in both markets; search hidden in deep categories; confusing taxonomy and menu; categories based on translation only; not distinguishing internal/external search; feed as the only way to find information; personalization that hides important content.
 
@@ -59,14 +61,14 @@ Differences emerge in **complete flows**, not single buttons.
 
 **Authentication.**
 
-| Method | US/EU | China |
-|---|---|---|
-| Email and password | Very common | Available, not always a priority |
-| Social login | Google, Apple, others | WeChat and local platforms |
-| Phone number | Frequent | Very relevant |
-| SMS OTP | Common | Common |
-| QR login | In some services | Important in desktop/mobile flows |
-| Passkey | Growing | To assess per platform |
+| Method             | US/EU                 | China                             |
+| ------------------ | --------------------- | --------------------------------- |
+| Email and password | Very common           | Available, not always a priority  |
+| Social login       | Google, Apple, others | WeChat and local platforms        |
+| Phone number       | Frequent              | Very relevant                     |
+| SMS OTP            | Common                | Common                            |
+| QR login           | In some services      | Important in desktop/mobile flows |
+| Passkey            | Growing               | To assess per platform            |
 
 Do not assume every Chinese user wants/can use WeChat.
 
@@ -92,16 +94,16 @@ Relationship with external services: search engines, social, marketplaces, payme
 
 **Integration modules:**
 
-| Module | US/EU | China |
-|---|---|---|
-| Search | Google/Bing, SEO | Baidu, in-platform search |
-| Identity | Email, Google, Apple, passkey | Phone, WeChat, local accounts |
-| Payments | Cards, PayPal, Apple/Google Pay | Alipay, WeChat Pay |
-| Social | Meta, YouTube, Reddit | WeChat, Douyin, Xiaohongshu |
-| Commerce | Amazon, local marketplaces | Taobao, Tmall, JD.com |
-| Analytics | Compliant tools | Local tools and local compliance |
-| Hosting/CDN | Global providers | Infrastructure meeting local requirements |
-| Content | Common CMS and APIs | Local channels and formats |
+| Module      | US/EU                           | China                                     |
+| ----------- | ------------------------------- | ----------------------------------------- |
+| Search      | Google/Bing, SEO                | Baidu, in-platform search                 |
+| Identity    | Email, Google, Apple, passkey   | Phone, WeChat, local accounts             |
+| Payments    | Cards, PayPal, Apple/Google Pay | Alipay, WeChat Pay                        |
+| Social      | Meta, YouTube, Reddit           | WeChat, Douyin, Xiaohongshu               |
+| Commerce    | Amazon, local marketplaces      | Taobao, Tmall, JD.com                     |
+| Analytics   | Compliant tools                 | Local tools and local compliance          |
+| Hosting/CDN | Global providers                | Infrastructure meeting local requirements |
+| Content     | Common CMS and APIs             | Local channels and formats                |
 
 Not all needed: depends on sector, product, business model.
 
@@ -113,12 +115,12 @@ Not all needed: depends on sector, product, business model.
 
 ## Summary: linking the four levels
 
-| Level | Shared | Localizable |
-|---|---|---|
-| Visual Design | Design tokens, accessibility, base components | Grids, density, colors, hierarchy, composition |
-| Information Architecture | Taxonomy, content, relations, metadata | Menus, homepage, categories, feed, search |
-| Interaction Design | Business logic, states, validation, security | Onboarding, login, checkout, payments, navigation |
-| Ecosystem Integration | Internal APIs, data model, orchestration | Local providers, platforms, services, APIs, infrastructure |
+| Level                    | Shared                                        | Localizable                                                |
+| ------------------------ | --------------------------------------------- | ---------------------------------------------------------- |
+| Visual Design            | Design tokens, accessibility, base components | Grids, density, colors, hierarchy, composition             |
+| Information Architecture | Taxonomy, content, relations, metadata        | Menus, homepage, categories, feed, search                  |
+| Interaction Design       | Business logic, states, validation, security  | Onboarding, login, checkout, payments, navigation          |
+| Ecosystem Integration    | Internal APIs, data model, orchestration      | Local providers, platforms, services, APIs, infrastructure |
 
 **Implementation priorities:** (1) market-independent core; (2) configurable design system; (3) separate taxonomy and navigation; (4) configurable flows; (5) adapters for local providers; (6) tests with real users of each market.
 

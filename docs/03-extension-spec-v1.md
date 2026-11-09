@@ -4,17 +4,20 @@
 
 **Type:** browser extension · **Category:** UX Adaptation / Web Localization · **Architecture:** modular, local-first, multi-market · **First release:** two market profiles · **Goal:** dynamic, reversible adaptation of the web browsing experience.
 
-**Terminology:** the project does not associate a graphic style with a nationality or group. It speaks of *target market* and *UX configurations adapted* to cultural, linguistic, technological and commercial contexts.
+**Terminology:** the project does not associate a graphic style with a nationality or group. It speaks of _target market_ and _UX configurations adapted_ to cultural, linguistic, technological and commercial contexts.
 
 ## 1. Vision
 
 ### 1.1 Goal
+
 Dynamically adapt a web page's UX/UI to the conventions of different markets, changing not only appearance but: organization and hierarchy of information; layout and behavior of components; navigation and access to features; interaction paths; search and discovery; presentation of content and recommendations; access points to external services; linguistic and technological localization. It differs from theming tools because it acts on structure and behavior.
 
 ### 1.2 Long-term vision
+
 A universal UX adaptation engine, multi-browser. V1: Profile A (Western conventions), Profile B (mainland Chinese market conventions). Future: India, Japan, Arab/Middle-Eastern markets, others. Profiles are not national stereotypes but configurations based on evidence, research, tests and real characteristics of local services.
 
 ### 1.3 Principles
+
 1. Cultural neutrality. 2. Functional adaptation. 3. Reversibility. 4. Transparency (user knows what is modified). 5. Privacy (local analysis). 6. Compatibility (preserve original functions). 7. Modularity (one profile per market). 8. Evidence-based design. 9. Accessibility (no transformation compromises it). 10. Non-invasiveness (know when not to modify).
 
 ## 2. Scope
@@ -32,21 +35,21 @@ A universal UX adaptation engine, multi-browser. V1: Profile A (Western conventi
 
 ## 4. Market profiles
 
-**Structure:** each market = an independent *Market Profile* with: id, neutral name, description, language and variants, visual settings, IA rules, Interaction rules, available integrations, compatibility rules, reliability level, references to evidence. No rigid assumptions about individual users.
+**Structure:** each market = an independent _Market Profile_ with: id, neutral name, description, language and variants, visual settings, IA rules, Interaction rules, available integrations, compatibility rules, reliability level, references to evidence. No rigid assumptions about individual users.
 
 **Initial:** A — Western-oriented; B — China-oriented (they describe the design context, not users).
 
 **Future:** other Asian markets, South Asia, Middle East, RTL languages, regional/linguistic configurations, hybrid profiles. Adding a profile must not require changes to the engine.
 
-**Hybrid:** an *explicit* composition of rules (not an automatic average): e.g. one profile's density + another's hierarchy + custom navigation + specific flows + selected integrations.
+**Hybrid:** an _explicit_ composition of rules (not an automatic average): e.g. one profile's density + another's hierarchy + custom navigation + specific flows + selected integrations.
 
 ## 5. Software architecture
 
 - **A. Extension Core:** activation, permissions, configuration, inter-module communication, page state, sessions, extension UI.
 - **B. Page Analyzer** (local): URL/domain, DOM, semantic elements, interactive components, hierarchy, media, menus, search, forms, cards, CTAs, dynamic content, viewport.
-- **C. Semantic Mapper** (heart of the project): recognizes the *function* of elements regardless of HTML implementation. Maps: Header, Navigation, Search, Product Card, Content Card, Primary/Secondary CTA, Filter, Recommendation, Account Area, Footer. Signal preference order: HTML semantics → ARIA → accessible roles/properties → text and structure → known DOM patterns → domain-specific rules. Do not rely solely on fragile CSS selectors.
+- **C. Semantic Mapper** (heart of the project): recognizes the _function_ of elements regardless of HTML implementation. Maps: Header, Navigation, Search, Product Card, Content Card, Primary/Secondary CTA, Filter, Recommendation, Account Area, Footer. Signal preference order: HTML semantics → ARIA → accessible roles/properties → text and structure → known DOM patterns → domain-specific rules. Do not rely solely on fragile CSS selectors.
 - **D. Page Classification Engine:** homepage, search, product, marketplace, article, editorial, social feed, video, dashboard, service, form, authentication.
-- **E. UX Transformation Engine:** receives semantic structure, page type, profile, adaptation level, user preferences; produces a *transformation plan* applied in a controlled, reversible way.
+- **E. UX Transformation Engine:** receives semantic structure, page type, profile, adaptation level, user preferences; produces a _transformation plan_ applied in a controlled, reversible way.
 - **F. Interaction Controller:** links new components to original elements, manages events and state, alternative navigation, synchronization, control of unsupported actions.
 - **G. Site Adapter Manager:** per-domain adapters (recognition, mapping, transformations, exceptions, dynamic components, compatibility checks), isolated from the general engine.
 - **H. Safety & Rollback Manager:** applied changes, DOM conflicts, JS errors, loss of functionality, original state, restoration.
@@ -59,7 +62,7 @@ A universal UX adaptation engine, multi-browser. V1: Profile A (Western conventi
 
 ## 7. Transformation engine
 
-**Process:** analyze → identify components → classify page → load profile → find applicable transformations → check dependencies → generate *Transformation Plan* → apply → monitor stability → allow rollback. It is not a predefined CSS sheet.
+**Process:** analyze → identify components → classify page → load profile → find applicable transformations → check dependencies → generate _Transformation Plan_ → apply → monitor stability → allow rollback. It is not a predefined CSS sheet.
 
 **Transformation Rule** — fields: id, profile, level, page type, affected components, applicability conditions, action, dependencies, priority, reversibility, risk, fallback. Site-independent when possible.
 
@@ -124,35 +127,35 @@ Local processing; minimal permissions; explicit activation; no history collectio
 
 ## 17. Testing and validation
 
-| Area | Metric |
-|---|---|
-| Recognition | Semantic Mapper precision |
-| Visual | Hierarchy consistency |
-| IA | Findability |
-| Interaction | Task completion |
-| Performance | Transformation time |
-| Stability | DOM and JS errors |
-| Compatibility | % of pages supported |
-| Reversibility | Rollback success |
-| Privacy | Data transmitted externally |
+| Area          | Metric                                |
+| ------------- | ------------------------------------- |
+| Recognition   | Semantic Mapper precision             |
+| Visual        | Hierarchy consistency                 |
+| IA            | Findability                           |
+| Interaction   | Task completion                       |
+| Performance   | Transformation time                   |
+| Stability     | DOM and JS errors                     |
+| Compatibility | % of pages supported                  |
+| Reversibility | Rollback success                      |
+| Privacy       | Data transmitted externally           |
 | Accessibility | Accessibility requirements maintained |
 
 Tests with users of the reference markets, not only internal evaluation.
 
 ## 18. Technical risks
 
-| Risk | Mitigation |
-|---|---|
-| Complex DOM | Semantic Mapper and Site Adapter |
-| Dynamic sites | Controlled change monitoring |
-| Unrecognized components | Conservative fallback |
-| Broken interactions | Interaction Controller and tests |
-| CSS conflicts | Namespacing and isolation |
-| Site updates | Regression tests |
-| Provider dependency | Modular connectors |
-| Excess complexity | Progressive MVP |
-| Irreversible changes | Snapshot and rollback |
-| False recognition | Confidence levels |
+| Risk                    | Mitigation                       |
+| ----------------------- | -------------------------------- |
+| Complex DOM             | Semantic Mapper and Site Adapter |
+| Dynamic sites           | Controlled change monitoring     |
+| Unrecognized components | Conservative fallback            |
+| Broken interactions     | Interaction Controller and tests |
+| CSS conflicts           | Namespacing and isolation        |
+| Site updates            | Regression tests                 |
+| Provider dependency     | Modular connectors               |
+| Excess complexity       | Progressive MVP                  |
+| Irreversible changes    | Snapshot and rollback            |
+| False recognition       | Confidence levels                |
 
 ## 19. Future direction
 
@@ -168,4 +171,4 @@ The project must not turn a site into a visual caricature of another market, but
 2. **Don't leave everything to AI**: recognition may use models, but transformations are governed by verifiable, reversible rules.
 3. **Build a verified transformation archive**: each rule with examples, applicability conditions, limits and test results.
 
-**First concrete activity:** define the *Transformation Rule System*, the core that lets markets be added without rewriting the extension.
+**First concrete activity:** define the _Transformation Rule System_, the core that lets markets be added without rewriting the extension.
