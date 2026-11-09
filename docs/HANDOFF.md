@@ -11,7 +11,7 @@ A browser extension (Chrome, TypeScript, MV3) that adapts a web page's UX to the
 - Repo `ciao-madesign/xsuit`, branch `claude/great-curie-8yfsjr`. Only documentation exists; B0 done (scaffold + toolchain).
 - Docs 01–06 written in English. README lists the reading order.
 - Decisions made: user = UX designer/researcher; stack = TypeScript + Chrome MV3; everything in English; sites = paired Western + Chinese set (Google/Baidu, Amazon/Alibaba, BBC/Chinese entertainment, Guardian/non-state Chinese news, YouTube-Reddit-Instagram/Weibo-WeChat-RED); see `05-decisions.md`.
-- Build plan B0–B8 defined in `docs/06-builds.md`. B0-B3 complete; B4 next.
+- Build plan B0–B8 defined in `docs/06-builds.md`. B0-B4 complete; B5 next.
 
 ## How the user wants to work
 
@@ -25,8 +25,9 @@ Every intervention must be motivated and justified; every rule must be traceable
 
 ## Next steps
 
-1. Start **B4 (Visual transformations)**: design-token effect catalog (every value justified), first adapter (search engine: Google/Baidu).
-2. Source verification is pending: the primary texts of li2022, li2026, nng2016 could not be fetched (hosts ieeexplore.ieee.org, journals.sagepub.com, www.nngroup.com are blocked by the session network). Ask the user to allow them or verify figures manually.
+1. Start **B5 (Analyzer, semantic mapper, classifier)** when the user says go.
+2. Source verification: li2022 and li2026 still unverified (ieeexplore / sagepub). The environment now allows these hosts, but WebFetch cannot resolve them (curl reaches nngroup.com only without spoofing); do NOT spoof user agents. Ask the user to check the figures manually or supply the PDFs.
+3. Adapters for Google/Baidu are drafts: verify selectors on live pages when possible (B5/B8).
 
-Commands: `npm run check`, `npm run evidence` (regenerates docs/07).
-B3 delivered: `src/engine/` (plan, apply, journal, css, protect, engine), content script wired to settings; 57 tests; checked in real Chromium (apply and restore).
+Commands: `npm run check`, `npm run evidence`.
+B4 delivered: `rules/effects.json` + `src/engine/effects.ts`, `adapters/` (google, baidu) + `src/adapters/`, content script uses adapter context; 73 tests; checked in real Chromium with a mapped local page (western / china / original behave correctly).

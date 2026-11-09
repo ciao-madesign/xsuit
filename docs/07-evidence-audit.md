@@ -10,12 +10,67 @@ Every rule must be traceable to a real study or to stated observations, with its
 
 ## Sources
 
-| id                | kind      | source                                                                                                                                                                                                 | sample                                                                                     | primary text verified                   |
-| ----------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | --------------------------------------- |
-| li2022            | review    | Li, Karreman, de Jong (2022), [Cultural Differences in Web Design on Chinese and Western Websites](https://ieeexplore.ieee.org/document/9881630)                                                       | Literature review of 17 comparative studies                                                | **no** (figures as reported in docs/01) |
-| li2026            | study     | Li, Karreman, de Jong (2026), [Cross-Cultural Design: Comparing the Visual Characteristics of Chinese and Western Municipal Websites](https://journals.sagepub.com/doi/full/10.1177/00472816261460385) | 100 Chinese and 100 Western municipal homepages (institutional sites, not commercial apps) | **no** (figures as reported in docs/01) |
-| nng2016           | analysis  | Nielsen Norman Group (2016), [Are Chinese Websites Too Complex?](https://www.nngroup.com/articles/china-website-complexity/)                                                                           | Expert analysis based on NN/G research (sample not reproduced in project docs)             | **no** (figures as reported in docs/01) |
-| project-synthesis | synthesis | xsuit project (2026), [Project synthesis of Western vs Chinese interface composition](docs/01-research-western-vs-chinese-ux.md)                                                                       | Narrative synthesis (docs/01 sections 3-6, docs/02), not independent data                  | yes                                     |
+| id                | kind      | source                                                                                                                                                                                                 | sample                                                                                                                                                                | primary text verified                   |
+| ----------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| li2022            | review    | Li, Karreman, de Jong (2022), [Cultural Differences in Web Design on Chinese and Western Websites](https://ieeexplore.ieee.org/document/9881630)                                                       | Literature review of 17 comparative studies                                                                                                                           | **no** (figures as reported in docs/01) |
+| li2026            | study     | Li, Karreman, de Jong (2026), [Cross-Cultural Design: Comparing the Visual Characteristics of Chinese and Western Municipal Websites](https://journals.sagepub.com/doi/full/10.1177/00472816261460385) | 100 Chinese and 100 Western municipal homepages (institutional sites, not commercial apps)                                                                            | **no** (figures as reported in docs/01) |
+| nng2016           | study     | Nielsen Norman Group (2016), [Are Chinese Websites Too Complex?](https://www.nngroup.com/articles/china-website-complexity/)                                                                           | Think-aloud usability testing with 12 participants (6 native Chinese users, 6 expatriates living in China), 2 tasks each on 8 of 14 Chinese sites; small, qualitative | yes                                     |
+| project-synthesis | synthesis | xsuit project (2026), [Project synthesis of Western vs Chinese interface composition](docs/01-research-western-vs-chinese-ux.md)                                                                       | Narrative synthesis (docs/01 sections 3-6, docs/02), not independent data                                                                                             | yes                                     |
+| wcag22            | standard  | W3C (2023), [Web Content Accessibility Guidelines (WCAG) 2.2](https://www.w3.org/TR/WCAG22/)                                                                                                           | Accessibility standard (success criteria 1.4.1 use of colour, 1.4.3 contrast minimum, 1.4.12 text spacing, 2.5.8 target size)                                         | **no** (figures as reported in docs/01) |
+
+## Effect catalog (concrete CSS)
+
+Concrete CSS for rule actions. Direction of each effect comes from the evidence cited by the rules that use it. The MAGNITUDE (how much) is a design choice, kept deliberately modest, and must be tuned during the internal review (B8). Effects only use properties that cannot lower text contrast, shrink touch targets, hide content or move elements out of flow (checked by tests).
+
+- `density=compact`: `line-height: 1.4; gap: 0.5rem`
+  - Basis: Direction: Chinese homepages show higher visual density and more blocks (li2026); Chinese users prefer relatively high density (nng2016). Magnitude is a design choice.
+  - Constraints: Line height stays at or above 1.4 so text remains readable; no font-size change. gap only affects flex/grid containers, so non-grid layouts are untouched.
+  - Used by: visual.china.compact-density
+- `density=spacious`: `line-height: 1.7; gap: 1.5rem`
+  - Basis: Direction: Western homepages show lower visual density and fewer blocks (li2026); weak supporting evidence from nng2016 that foreign participants tolerated simple sites. Magnitude is a design choice.
+  - Constraints: No content is hidden; only spacing grows.
+  - Used by: visual.western.spacious-density
+- `spacing-scale=tight`: `padding-block: 0.5rem`
+  - Basis: Direction: less white space on Chinese sites (li2022). Magnitude is a design choice.
+  - Constraints: Block padding only; interactive targets keep their own size.
+  - Used by: visual.china.tight-spacing
+- `spacing-scale=airy`: `padding-block: 1.5rem`
+  - Basis: Direction: more white space on Western sites (li2022). Magnitude is a design choice.
+  - Constraints: Block padding only.
+  - Used by: visual.western.airy-spacing
+- `palette-saturation=muted`: `filter: saturate(0.8)`
+  - Basis: Direction: Chinese palettes are more saturated and brighter than Western ones (li2026). Magnitude is a design choice.
+  - Constraints: Saturation filter keeps luminance, so text contrast ratios (WCAG 1.4.3) are not lowered in any meaningful way. Hue is not changed (no red/gold stereotype).
+  - Used by: visual.western.muted-palette
+- `palette-saturation=vivid`: `filter: saturate(1.25)`
+  - Basis: Direction: Chinese palettes are wider, more saturated, brighter (li2026), and use more red and blue (li2022). Magnitude is a design choice.
+  - Constraints: Saturation only; hue untouched. Luminance preserved, so contrast ratios are not lowered meaningfully.
+  - Used by: visual.china.vivid-palette
+- `image-prominence=high@img`: `width: 100%; object-fit: cover`
+  - Basis: Direction: higher image diversity and visual density on Chinese homepages (li2026). Card-level application is an extrapolation, so this effect is provisional. Magnitude is a design choice.
+  - Constraints: Images keep their alt text; no image is hidden or replaced.
+  - Used by: visual.china.image-led
+- `link-affordance=underlined@a`: `text-decoration: underline`
+  - Basis: Direction: more underlined links on Western sites (li2022). Underlining also keeps links identifiable without relying on colour (WCAG 1.4.1).
+  - Constraints: Applies to links inside the marked blocks only; buttons and navigation chrome are not blocks the rule targets.
+  - Used by: visual.western.underlined-links
+- `de-emphasize=medium`: `filter: saturate(0.7)`
+  - Basis: Direction: promotions and carousels are more selective in Western designs (li2026 posters 66 vs 99, autoplay 39 vs 99). Weight is reduced through saturation, never opacity, so text contrast is not lowered (WCAG 1.4.3). Magnitude is a design choice.
+  - Constraints: Content stays fully visible and readable; no opacity change.
+  - Used by: visual.western.quiet-promos, visual.western.quiet-carousel
+- `emphasize=medium`: `filter: saturate(1.2)`
+  - Basis: Direction: banners, carousels and recommendations carry more weight in Chinese designs (li2026, project synthesis). Magnitude is a design choice.
+  - Constraints: Saturation only; luminance preserved.
+  - Used by: visual.china.prominent-promos, visual.china.prominent-carousel, visual.china.discovery-feed
+- `emphasize=high`: `outline: 2px solid currentColor; outline-offset: 2px`
+  - Basis: Provisional: the rule using it (search first) is a hypothesis. An outline in the text colour marks the element without altering any colour or layout.
+  - Constraints: currentColor keeps contrast equal to the text; outline does not affect layout.
+  - Used by: visual.western.search-first
+
+No effect (on purpose):
+
+- `visual-hierarchy=strong`: Rule visual.western.strong-hierarchy is a hypothesis with no direct measurement of visual hierarchy. No effect is invented; it becomes active only when validated.
+- `visual-hierarchy=flat`: Rule visual.china.flat-hierarchy links block count to visual weight only by interpretation. No effect is invented until validated.
 
 ## Rules
 
@@ -25,11 +80,11 @@ Every rule must be traceable to a real study or to stated observations, with its
 - **Why:** Chinese homepages show about three times the visual density and nearly twice the main content blocks; NN/G reports Chinese users prefer relatively high information density and perceive complexity through familiarity.
 - **Supported by:**
   - `li2026`, Section 2.2 table: visual density 38.21 vs 12.87; main content blocks 5.91 vs 3.14 — Higher density and more blocks on Chinese homepages
-  - `nng2016`, Section 2.3: Chinese users prefer relatively high information density — Preference for density (supporting)
+  - `nng2016`, Section 'Yes, Chinese Sites Are Often Complex': Chinese participants tolerated complexity and appreciated density, especially on portal and news sites (n=6 Chinese users, 12 total) — Chinese participants prefer fairly high information density (small qualitative study)
 - **Does not show:**
-  - Evidence comes from institutional (municipal) homepages; commercial sites are not covered.
-  - Preference evidence is not from a controlled study of this transformation.
-  - Both user groups struggle when complexity becomes excessive (NN/G).
+  - Sample is institutional (municipal) homepages; commercial sites are not covered.
+  - NN/G is small (6 Chinese users): Chinese users also met many usability problems on complex sites and some designs were judged too complicated.
+  - Chinese users were less accepting of the simple sites tested, but this is not a test of this transformation.
 - **Limits:** Tendency from research, not a universal rule; varies by site and sector. Touch targets must stay usable.
 - **Test results:** none yet
 
@@ -76,13 +131,13 @@ Every rule must be traceable to a real study or to stated observations, with its
 ### `visual.western.spacious-density` — moderate
 
 - **Action:** Use a spacious layout density with more whitespace. (western, visual, risk low)
-- **Why:** Western homepages in the sample show about a third of the visual density of Chinese ones and fewer content blocks; NN/G reports Western users prefer visual simplicity. Raising whitespace moves a dense page toward that convention without removing content.
+- **Why:** Western homepages in the sample show about a third of the visual density of Chinese ones and fewer content blocks (2026 study). NN/G found that foreign participants were less annoyed by problems on simple sites than on complex ones. Raising whitespace moves a dense page toward the sparser convention without removing content.
 - **Supported by:**
   - `li2026`, Section 2.2 table: visual density 12.87 vs 38.21 per 1,000 px; main content blocks 3.14 vs 5.91 — Lower density and fewer blocks on Western homepages
-  - `nng2016`, Section 2.3: Western users prefer visual simplicity — Preference for simplicity (supporting)
+  - `nng2016`, Section 'Yes, Chinese Sites Are Often Complex': foreign participants less likely to be annoyed by usability issues on simple sites than on complex ones (n=6 expatriates) — Weak support: tolerance of simple sites among non-Chinese participants
 - **Does not show:**
-  - Evidence comes from institutional (municipal) homepages; commercial sites are not covered.
-  - Preference evidence is not from a controlled study of this transformation.
+  - Sample is institutional (municipal) homepages; commercial sites are not covered.
+  - NN/G does not report a general Western preference for simplicity; its non-Chinese participants were 6 expatriates living in China.
   - Search-results and article pages are extrapolations from homepages.
 - **Limits:** Tendency from research, not a universal rule; varies by site and sector. Only spacing changes; content must not be hidden.
 - **Test results:** none yet

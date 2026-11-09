@@ -6,7 +6,7 @@
       "id": "visual.western.spacious-density",
       "title": "Spacious density",
       "description": "Use a spacious layout density with more whitespace.",
-      "rationale": "Western homepages in the sample show about a third of the visual density of Chinese ones and fewer content blocks; NN/G reports Western users prefer visual simplicity. Raising whitespace moves a dense page toward that convention without removing content.",
+      "rationale": "Western homepages in the sample show about a third of the visual density of Chinese ones and fewer content blocks (2026 study). NN/G found that foreign participants were less annoyed by problems on simple sites than on complex ones. Raising whitespace moves a dense page toward the sparser convention without removing content.",
       "profile": "western",
       "level": "visual",
       "mode": "visual",
@@ -25,7 +25,7 @@
       "fallback": "skip",
       "evidence": {
         "level": "moderate",
-        "summary": "Measured lower visual density and fewer content blocks on Western homepages, plus reported user preference for simplicity.",
+        "summary": "Measured lower visual density and fewer content blocks on Western homepages; weak supporting user evidence.",
         "sources": [
           {
             "id": "li2026",
@@ -34,13 +34,13 @@
           },
           {
             "id": "nng2016",
-            "locator": "Section 2.3: Western users prefer visual simplicity",
-            "supports": "Preference for simplicity (supporting)"
+            "locator": "Section 'Yes, Chinese Sites Are Often Complex': foreign participants less likely to be annoyed by usability issues on simple sites than on complex ones (n=6 expatriates)",
+            "supports": "Weak support: tolerance of simple sites among non-Chinese participants"
           }
         ],
         "gaps": [
-          "Evidence comes from institutional (municipal) homepages; commercial sites are not covered.",
-          "Preference evidence is not from a controlled study of this transformation.",
+          "Sample is institutional (municipal) homepages; commercial sites are not covered.",
+          "NN/G does not report a general Western preference for simplicity; its non-Chinese participants were 6 expatriates living in China.",
           "Search-results and article pages are extrapolations from homepages."
         ]
       },

@@ -25,6 +25,12 @@ Every rule must be traceable to a real study or to stated observations, with its
 for (const s of sources)
   out += `| ${s.id} | ${s.kind} | ${s.authors} (${s.year}), [${s.title}](${s.url}) | ${s.sample} | ${s.verified ? "yes" : "**no** (figures as reported in docs/01)"} |\n`;
 
+const fx = read("rules/effects.json");
+out += "\n## Effect catalog (concrete CSS)\n\n" + fx.note + "\n\n";
+for (const e of fx.effects)
+  out += `- \`${e.key}\`: \`${e.declarations.join("; ")}\`\n  - Basis: ${e.basis}\n  - Constraints: ${e.constraints.join(" ")}\n  - Used by: ${e.ruleIds.join(", ")}\n`;
+out += "\nNo effect (on purpose):\n\n";
+for (const e of fx.intentionallyEmpty) out += `- \`${e.key}\`: ${e.reason}\n`;
 out += "\n## Rules\n";
 for (const r of [...rules].sort(
   (a, b) => order[a.evidence.level] - order[b.evidence.level] || a.id.localeCompare(b.id),

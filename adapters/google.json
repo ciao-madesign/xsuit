@@ -1,0 +1,20 @@
+{
+  "id": "site.google",
+  "site": "Google Search",
+  "hosts": ["www.google.com"],
+  "status": "draft",
+  "pageTypeHints": [
+    { "pageType": "home", "urlPattern": "^/$" },
+    { "pageType": "search-results", "urlPattern": "^/search$" }
+  ],
+  "components": [
+    {
+      "component": "search-box",
+      "selectors": ["form[role='search']", "form[action='/search']"],
+      "confidence": "medium"
+    },
+    { "component": "sidebar", "selectors": ["#rhs"], "confidence": "low" },
+    { "component": "footer", "selectors": ["#footcnt", "footer"], "confidence": "low" }
+  ],
+  "notes": "DRAFT. Selectors written from general knowledge of the page structure; NOT verified against the live DOM (the session network cannot reach this site). urlPattern is matched against the URL path only. Verify in B5/B8 before changing status to tested."
+}

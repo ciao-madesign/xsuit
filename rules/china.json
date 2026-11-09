@@ -34,14 +34,14 @@
           },
           {
             "id": "nng2016",
-            "locator": "Section 2.3: Chinese users prefer relatively high information density",
-            "supports": "Preference for density (supporting)"
+            "locator": "Section 'Yes, Chinese Sites Are Often Complex': Chinese participants tolerated complexity and appreciated density, especially on portal and news sites (n=6 Chinese users, 12 total)",
+            "supports": "Chinese participants prefer fairly high information density (small qualitative study)"
           }
         ],
         "gaps": [
-          "Evidence comes from institutional (municipal) homepages; commercial sites are not covered.",
-          "Preference evidence is not from a controlled study of this transformation.",
-          "Both user groups struggle when complexity becomes excessive (NN/G)."
+          "Sample is institutional (municipal) homepages; commercial sites are not covered.",
+          "NN/G is small (6 Chinese users): Chinese users also met many usability problems on complex sites and some designs were judged too complicated.",
+          "Chinese users were less accepting of the simple sites tested, but this is not a test of this transformation."
         ]
       },
       "limits": [

@@ -1,0 +1,25 @@
+{
+  "id": "site.baidu",
+  "site": "Baidu Search",
+  "hosts": ["www.baidu.com"],
+  "status": "draft",
+  "pageTypeHints": [
+    { "pageType": "home", "urlPattern": "^/$" },
+    { "pageType": "search-results", "urlPattern": "^/s$" }
+  ],
+  "components": [
+    {
+      "component": "search-box",
+      "selectors": ["form#form", "form[action='/s']"],
+      "confidence": "medium"
+    },
+    { "component": "sidebar", "selectors": ["#content_right"], "confidence": "low" },
+    {
+      "component": "recommendations",
+      "selectors": ["#s-hotsearch-wrapper", "#hotsearch-content-wrapper"],
+      "confidence": "low"
+    },
+    { "component": "footer", "selectors": ["#bottom"], "confidence": "low" }
+  ],
+  "notes": "DRAFT. Selectors written from general knowledge of the page structure; NOT verified against the live DOM (the session network cannot reach this site). urlPattern is matched against the URL path only. Verify in B5/B8 before changing status to tested."
+}

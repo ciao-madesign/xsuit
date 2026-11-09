@@ -13,17 +13,36 @@ export function safeDeclaration(d: string): boolean {
  * CSS for the plan. Every selector starts with html[data-xsuit] so nothing can leak onto
  * the page, and only attributes set by the engine are matched.
  */
+const DESCENDANTS = ["img", "picture", "video", "a"];
+
+/** Splits "image-prominence=high@img" into its base key and optional allowed descendant. */
+export function parseEffectKey(key: string): { base: string; descendant: string | null } | null {
+  const [base, desc, ...rest] = key.split("@");
+  if (!base || rest.length) return null;
+  if (desc !== undefined && !DESCENDANTS.includes(desc)) return null;
+  return { base, descendant: desc ?? null };
+}
+
+/**
+ * CSS for the plan. Every selector starts with html[data-xsuit] so nothing can leak onto
+ * the page, and only attributes set by the engine are matched.
+ */
 export function buildCss(plan: Plan, effects: EffectCatalog): string {
   const seen = new Set<string>();
   const blocks: string[] = [];
-  const add = (selector: string, key: string) => {
-    if (seen.has(key)) return;
-    seen.add(key);
-    const decls = (effects[key] ?? []).filter(safeDeclaration);
-    if (decls.length)
+  const add = (attrSelector: string, baseKey: string) => {
+    if (seen.has(baseKey)) return;
+    seen.add(baseKey);
+    for (const [key, raw] of Object.entries(effects)) {
+      const parsed = parseEffectKey(key);
+      if (!parsed || parsed.base !== baseKey) continue;
+      const decls = raw.filter(safeDeclaration);
+      if (!decls.length) continue;
+      const target = parsed.descendant ? `${attrSelector} ${parsed.descendant}` : attrSelector;
       blocks.push(
-        `html[data-${NS}] ${selector} { ${decls.map((d) => `${d.trim()} !important`).join("; ")}; }`,
+        `html[data-${NS}] ${target} { ${decls.map((d) => `${d.trim()} !important`).join("; ")}; }`,
       );
+    }
   };
   for (const { rule } of plan.entries) {
     const a = rule.action;

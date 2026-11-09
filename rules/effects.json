@@ -1,0 +1,112 @@
+{
+  "version": "0.1.0",
+  "note": "Concrete CSS for rule actions. Direction of each effect comes from the evidence cited by the rules that use it. The MAGNITUDE (how much) is a design choice, kept deliberately modest, and must be tuned during the internal review (B8). Effects only use properties that cannot lower text contrast, shrink touch targets, hide content or move elements out of flow (checked by tests).",
+  "effects": [
+    {
+      "key": "density=compact",
+      "declarations": ["line-height: 1.4", "gap: 0.5rem"],
+      "basis": "Direction: Chinese homepages show higher visual density and more blocks (li2026); Chinese users prefer relatively high density (nng2016). Magnitude is a design choice.",
+      "constraints": [
+        "Line height stays at or above 1.4 so text remains readable; no font-size change.",
+        "gap only affects flex/grid containers, so non-grid layouts are untouched."
+      ],
+      "ruleIds": ["visual.china.compact-density"]
+    },
+    {
+      "key": "density=spacious",
+      "declarations": ["line-height: 1.7", "gap: 1.5rem"],
+      "basis": "Direction: Western homepages show lower visual density and fewer blocks (li2026); weak supporting evidence from nng2016 that foreign participants tolerated simple sites. Magnitude is a design choice.",
+      "constraints": ["No content is hidden; only spacing grows."],
+      "ruleIds": ["visual.western.spacious-density"]
+    },
+    {
+      "key": "spacing-scale=tight",
+      "declarations": ["padding-block: 0.5rem"],
+      "basis": "Direction: less white space on Chinese sites (li2022). Magnitude is a design choice.",
+      "constraints": ["Block padding only; interactive targets keep their own size."],
+      "ruleIds": ["visual.china.tight-spacing"]
+    },
+    {
+      "key": "spacing-scale=airy",
+      "declarations": ["padding-block: 1.5rem"],
+      "basis": "Direction: more white space on Western sites (li2022). Magnitude is a design choice.",
+      "constraints": ["Block padding only."],
+      "ruleIds": ["visual.western.airy-spacing"]
+    },
+    {
+      "key": "palette-saturation=muted",
+      "declarations": ["filter: saturate(0.8)"],
+      "basis": "Direction: Chinese palettes are more saturated and brighter than Western ones (li2026). Magnitude is a design choice.",
+      "constraints": [
+        "Saturation filter keeps luminance, so text contrast ratios (WCAG 1.4.3) are not lowered in any meaningful way.",
+        "Hue is not changed (no red/gold stereotype)."
+      ],
+      "ruleIds": ["visual.western.muted-palette"]
+    },
+    {
+      "key": "palette-saturation=vivid",
+      "declarations": ["filter: saturate(1.25)"],
+      "basis": "Direction: Chinese palettes are wider, more saturated, brighter (li2026), and use more red and blue (li2022). Magnitude is a design choice.",
+      "constraints": [
+        "Saturation only; hue untouched.",
+        "Luminance preserved, so contrast ratios are not lowered meaningfully."
+      ],
+      "ruleIds": ["visual.china.vivid-palette"]
+    },
+    {
+      "key": "image-prominence=high@img",
+      "declarations": ["width: 100%", "object-fit: cover"],
+      "basis": "Direction: higher image diversity and visual density on Chinese homepages (li2026). Card-level application is an extrapolation, so this effect is provisional. Magnitude is a design choice.",
+      "constraints": ["Images keep their alt text; no image is hidden or replaced."],
+      "ruleIds": ["visual.china.image-led"]
+    },
+    {
+      "key": "link-affordance=underlined@a",
+      "declarations": ["text-decoration: underline"],
+      "basis": "Direction: more underlined links on Western sites (li2022). Underlining also keeps links identifiable without relying on colour (WCAG 1.4.1).",
+      "constraints": [
+        "Applies to links inside the marked blocks only; buttons and navigation chrome are not blocks the rule targets."
+      ],
+      "ruleIds": ["visual.western.underlined-links"]
+    },
+    {
+      "key": "de-emphasize=medium",
+      "declarations": ["filter: saturate(0.7)"],
+      "basis": "Direction: promotions and carousels are more selective in Western designs (li2026 posters 66 vs 99, autoplay 39 vs 99). Weight is reduced through saturation, never opacity, so text contrast is not lowered (WCAG 1.4.3). Magnitude is a design choice.",
+      "constraints": ["Content stays fully visible and readable; no opacity change."],
+      "ruleIds": ["visual.western.quiet-promos", "visual.western.quiet-carousel"]
+    },
+    {
+      "key": "emphasize=medium",
+      "declarations": ["filter: saturate(1.2)"],
+      "basis": "Direction: banners, carousels and recommendations carry more weight in Chinese designs (li2026, project synthesis). Magnitude is a design choice.",
+      "constraints": ["Saturation only; luminance preserved."],
+      "ruleIds": [
+        "visual.china.prominent-promos",
+        "visual.china.prominent-carousel",
+        "visual.china.discovery-feed"
+      ]
+    },
+    {
+      "key": "emphasize=high",
+      "declarations": ["outline: 2px solid currentColor", "outline-offset: 2px"],
+      "basis": "Provisional: the rule using it (search first) is a hypothesis. An outline in the text colour marks the element without altering any colour or layout.",
+      "constraints": [
+        "currentColor keeps contrast equal to the text; outline does not affect layout."
+      ],
+      "ruleIds": ["visual.western.search-first"]
+    }
+  ],
+  "intentionallyEmpty": [
+    {
+      "key": "visual-hierarchy=strong",
+      "reason": "Rule visual.western.strong-hierarchy is a hypothesis with no direct measurement of visual hierarchy. No effect is invented; it becomes active only when validated.",
+      "ruleIds": ["visual.western.strong-hierarchy"]
+    },
+    {
+      "key": "visual-hierarchy=flat",
+      "reason": "Rule visual.china.flat-hierarchy links block count to visual weight only by interpretation. No effect is invented until validated.",
+      "ruleIds": ["visual.china.flat-hierarchy"]
+    }
+  ]
+}

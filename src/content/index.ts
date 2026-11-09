@@ -1,3 +1,5 @@
+import { buildContext, createResolver, findAdapter } from "../adapters";
+import { defaultEffects } from "../engine/effects";
 import { Engine } from "../engine/engine";
 import type { PageContext } from "../engine/types";
 import westernRules from "../../rules/western.json";
@@ -11,15 +13,18 @@ import { loadSettings, onSettingsChanged } from "../shared/storage";
 
 const ruleSets = [westernRules, chinaRules] as unknown as RuleSet[];
 
-// Until the analyzer (B5) and site adapters (B4) exist, no component can be recognized, so rules
-// that target components are skipped and nothing visible changes. The engine itself is complete.
-const context = (): PageContext => ({
-  pageType: "any",
-  components: {},
-  viewportWidth: window.innerWidth,
-});
+// Components come from the site adapter for now; the generic analyzer arrives in B5.
+// Sites without an adapter get an empty context, so nothing visible changes there.
+const adapter = findAdapter(location.hostname);
+const context = (): PageContext =>
+  buildContext(adapter, document, location.pathname, window.innerWidth);
 
-const engine = new Engine({ doc: document, resolve: () => [] });
+const engine = new Engine({
+  doc: document,
+  resolve: createResolver(adapter, document),
+  effects: defaultEffects,
+  getContext: context,
+});
 
 function sync(settings: Settings): void {
   const status = computeStatus(settings, location.href);

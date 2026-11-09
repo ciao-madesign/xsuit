@@ -1,12 +1,14 @@
 import { applyPlan, type AppliedState } from "./apply";
 import { Journal } from "./journal";
 import { buildPlan, type PlanInput } from "./plan";
-import type { ApplyReport, EffectCatalog, Plan, Resolver } from "./types";
+import type { ApplyReport, EffectCatalog, PageContext, Plan, Resolver } from "./types";
 
 export interface EngineOptions {
   doc: Document;
   resolve: Resolver;
   effects?: EffectCatalog;
+  /** Fresh view of the page on every run (components can appear later). */
+  getContext?: () => PageContext;
   /** Wait before re-applying after the page changes. */
   debounceMs?: number;
   /** Loop guard: more than maxRuns re-applications within windowMs stops the engine. */
@@ -37,7 +39,8 @@ export class Engine {
     plan: null,
     report: null,
   };
-  private readonly o: Required<Omit<EngineOptions, "doc" | "resolve" | "effects">> & EngineOptions;
+  private readonly o: Required<Omit<EngineOptions, "doc" | "resolve" | "effects" | "getContext">> &
+    EngineOptions;
 
   constructor(options: EngineOptions) {
     this.o = { debounceMs: 100, maxRuns: 20, windowMs: 2000, now: () => Date.now(), ...options };
@@ -68,6 +71,7 @@ export class Engine {
 
   private run(): void {
     if (!this.input) return;
+    if (this.o.getContext) this.input = { ...this.input, context: this.o.getContext() };
     const plan = buildPlan(this.input);
     this.s.plan = plan;
     this.s.report = applyPlan(

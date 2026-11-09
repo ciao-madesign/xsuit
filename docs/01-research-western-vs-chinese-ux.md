@@ -52,7 +52,7 @@ Other results: posters/infographics 99 vs 66; **QR codes 94 vs 2**; autoplay ele
 _Are Chinese Websites Too Complex?_
 
 - Chinese users: prefer relatively high information density.
-- Western users: prefer visual simplicity.
+- Western users: prefer visual simplicity. **[Correction 2026-11-09, after reading the primary text:** the article does not state this. Its non-Chinese participants were 6 expatriates living in China, who were less annoyed by problems on simple sites. Sample: 12 users, think-aloud, 8 of 14 sites.**]**
 - Both struggle when complexity becomes excessive.
 - **Familiarity with conventions** shapes perceived complexity.
 - Do not reduce Chinese design to a "less refined" version of Western design.
