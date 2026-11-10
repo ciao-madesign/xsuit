@@ -6,7 +6,7 @@ Every rule must be traceable to a real study or to stated observations, with its
 
 **Levels:** strong = two or more independent studies/reviews; moderate = at least one study/review; emerging = indirect or proxy measures; hypothesis = observation or design guess, to be validated (a validation plan is mandatory).
 
-**Totals:** 18 rules: 0 strong, 6 moderate, 7 emerging, 5 hypothesis.
+**Totals:** 19 rules: 0 strong, 6 moderate, 7 emerging, 6 hypothesis.
 
 ## Sources
 
@@ -272,6 +272,20 @@ No effect (on purpose):
   - Reordering may break expected flow on some sites.
 - **Validation plan:** Verify in B6 that the original order is fully recoverable and that the page still works; internal before/after review.
 - **Limits:** Structural; needs component recognition (B5). Must keep original order recoverable.
+- **Test results:** none yet
+
+### `structure.china.surface-shortcuts` — hypothesis
+
+- **Action:** Show a small strip of links to sections that already exist in the main navigation, just above the hero block. (china, structural, risk low)
+- **Why:** Chinese homepages show more main content blocks (5.91 vs 3.14 in Li 2026), which suggests more parallel entry points. A strip of links to existing sections makes several entry points reachable near the top without moving or removing anything; that it helps users is a design hypothesis.
+- **Supported by:**
+  - `li2026`, Section 2.2 table: main content blocks 5.91 vs 3.14 — More parallel content blocks on Chinese homepages
+- **Does not show:**
+  - Evidence comes from institutional (municipal) homepages; commercial sites are not covered.
+  - No evidence that a shortcut strip improves findability.
+  - Duplicated links add content; may be redundant where the navigation is already visible.
+- **Validation plan:** Internal before/after review on Baidu, Taobao and Bilibili homepages: strip appears only when 3+ safe links exist, original page restores exactly; later check with real users (deferred, decision #8).
+- **Limits:** Copies at most 6 existing links (text and address only); never creates new destinations. Skipped when fewer than 3 usable links are found.
 - **Test results:** none yet
 
 ### `structure.western.collapse-sidebar` — hypothesis

@@ -54,5 +54,19 @@ export function buildCss(plan: Plan, effects: EffectCatalog): string {
       add(`[data-${NS}-${attr}="${level}"]`, `${a.type}=${level}`);
     }
   }
+  const types = new Set(plan.entries.map((e) => e.rule.action.type));
+  if (types.has("collapse")) blocks.push(...COLLAPSE_CSS);
+  if (types.has("surface-shortcut")) blocks.push(...SHORTCUT_CSS);
   return blocks.join("\n");
 }
+
+// Fixed structural CSS (not catalog data): only engine-made attributes and elements are matched.
+// Collapsed content is hidden, never removed; the toggle and links keep a 24 px minimum target.
+const COLLAPSE_CSS = [
+  `html[data-${NS}] [data-${NS}-collapsed="1"] { display: none !important; }`,
+  `html[data-${NS}] [data-${NS}-toggle] { display: block; font: inherit; font-size: 0.875em; min-height: 24px; min-width: 24px; margin: 4px 0; padding: 2px 8px; cursor: pointer; }`,
+];
+const SHORTCUT_CSS = [
+  `html[data-${NS}] [data-${NS}-shortcuts] { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0; }`,
+  `html[data-${NS}] [data-${NS}-shortcuts] a { display: inline-block; min-height: 24px; padding: 2px 6px; }`,
+];

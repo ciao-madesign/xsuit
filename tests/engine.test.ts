@@ -205,17 +205,18 @@ describe("engine: apply, restore, idempotency", () => {
     engine.restore();
   });
 
-  it("reports structural actions as not yet supported instead of faking them", () => {
+  it("reports structural actions that are not implemented instead of faking them", () => {
     document.documentElement.innerHTML = `<head></head><body><aside data-test="sidebar">s</aside></body>`;
     const engine = new Engine({ doc: document, resolve: resolver, effects });
     engine.start(
       input({
         depth: "structural",
-        context: ctx({ pageType: "article", components: { sidebar: "high" } }),
+        profile: "china",
+        context: ctx({ components: { hero: "high", recommendations: "high" } }),
       }),
     );
     expect(engine.status.report!.unsupported.map((u) => u.ruleId)).toContain(
-      "structure.western.collapse-sidebar",
+      "structure.china.recommendations-up",
     );
     engine.restore();
   });

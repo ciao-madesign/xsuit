@@ -1,6 +1,6 @@
 {
   "profile": "china",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "rules": [
     {
       "id": "visual.china.compact-density",
@@ -431,6 +431,63 @@
       "limits": [
         "Structural; needs component recognition (B5).",
         "Must keep original order recoverable."
+      ],
+      "testResults": []
+    },
+    {
+      "id": "structure.china.surface-shortcuts",
+      "title": "Shortcut strip near the top",
+      "description": "Show a small strip of links to sections that already exist in the main navigation, just above the hero block.",
+      "rationale": "Chinese homepages show more main content blocks (5.91 vs 3.14 in Li 2026), which suggests more parallel entry points. A strip of links to existing sections makes several entry points reachable near the top without moving or removing anything; that it helps users is a design hypothesis.",
+      "profile": "china",
+      "level": "information-architecture",
+      "mode": "structural",
+      "pageTypes": ["home"],
+      "components": ["primary-nav", "hero"],
+      "conditions": [
+        {
+          "type": "confidence-min",
+          "value": "medium"
+        },
+        {
+          "type": "component-present",
+          "component": "hero"
+        },
+        {
+          "type": "component-present",
+          "component": "primary-nav"
+        }
+      ],
+      "action": {
+        "type": "surface-shortcut",
+        "target": "primary-nav",
+        "to": "hero"
+      },
+      "dependencies": [],
+      "priority": 35,
+      "reversible": true,
+      "risk": "low",
+      "fallback": "skip",
+      "evidence": {
+        "level": "hypothesis",
+        "summary": "More main content blocks measured on Chinese homepages; the shortcut strip is a design guess based on that observation.",
+        "sources": [
+          {
+            "id": "li2026",
+            "locator": "Section 2.2 table: main content blocks 5.91 vs 3.14",
+            "supports": "More parallel content blocks on Chinese homepages"
+          }
+        ],
+        "gaps": [
+          "Evidence comes from institutional (municipal) homepages; commercial sites are not covered.",
+          "No evidence that a shortcut strip improves findability.",
+          "Duplicated links add content; may be redundant where the navigation is already visible."
+        ],
+        "validationPlan": "Internal before/after review on Baidu, Taobao and Bilibili homepages: strip appears only when 3+ safe links exist, original page restores exactly; later check with real users (deferred, decision #8)."
+      },
+      "limits": [
+        "Copies at most 6 existing links (text and address only); never creates new destinations.",
+        "Skipped when fewer than 3 usable links are found."
       ],
       "testResults": []
     }

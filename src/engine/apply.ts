@@ -18,6 +18,72 @@ function markDone(el: Element, ruleId: string, state: AppliedState): void {
   state.set(el, done);
 }
 
+const MIN_SHORTCUTS = 3;
+const MAX_SHORTCUTS = 6;
+const collapsedAttr = `data-${NS}-collapsed`;
+
+/** Hides a block behind a small toggle; the content stays in the page and one click shows it. */
+function collapse(doc: Document, journal: Journal, el: Element, component: string, tag: string) {
+  const parent = el.parentNode;
+  if (!parent) return false;
+  journal.setAttr(el, `data-${NS}-c`, component, tag);
+  journal.setAttr(el, collapsedAttr, "1", tag);
+  const btn = doc.createElement("button");
+  btn.type = "button";
+  btn.setAttribute(`data-${NS}-toggle`, "");
+  const sync = () => {
+    const closed = el.getAttribute(collapsedAttr) === "1";
+    btn.setAttribute("aria-expanded", String(!closed));
+    btn.textContent = `${closed ? "Show" : "Hide"} ${component.replace(/-/g, " ")}`;
+  };
+  sync();
+  btn.addEventListener("click", () => {
+    journal.setAttr(el, collapsedAttr, el.getAttribute(collapsedAttr) === "1" ? "0" : "1", tag);
+    sync();
+  });
+  journal.insertBefore(parent, btn, el, tag);
+  return true;
+}
+
+/** Copies up to a few existing, safe links (text + address) from the source blocks. */
+function shortcutLinks(sources: Element[]): { text: string; href: string }[] {
+  const out: { text: string; href: string }[] = [];
+  const seen = new Set<string>();
+  for (const src of sources) {
+    for (const a of Array.from(src.querySelectorAll("a[href]"))) {
+      const text = (a.textContent ?? "").replace(/\s+/g, " ").trim();
+      const href = a.getAttribute("href") ?? "";
+      if (!text || text.length > 30 || seen.has(text)) continue;
+      if (/^\s*(javascript|data|vbscript):/i.test(href) || href === "#") continue;
+      seen.add(text);
+      out.push({ text, href });
+      if (out.length === MAX_SHORTCUTS) return out;
+    }
+  }
+  return out;
+}
+
+function insertShortcuts(
+  doc: Document,
+  journal: Journal,
+  before: Element,
+  links: { text: string; href: string }[],
+  tag: string,
+): void {
+  const parent = before.parentNode;
+  if (!parent) return;
+  const nav = doc.createElement("nav");
+  nav.setAttribute(`data-${NS}-shortcuts`, "");
+  nav.setAttribute("aria-label", "Shortcuts");
+  for (const l of links) {
+    const a = doc.createElement("a");
+    a.setAttribute("href", l.href);
+    a.textContent = l.text;
+    nav.appendChild(a);
+  }
+  journal.insertBefore(parent, nav, before, tag);
+}
+
 export function applyPlan(
   doc: Document,
   plan: Plan,
@@ -38,18 +104,24 @@ export function applyPlan(
 
   // 1. Decide what will be touched, and take the "before" measurements while the page is untouched.
   type Todo = { ruleId: string; els: { el: Element; component: string }[]; snaps: Snapshot[] };
+  const structural: Record<string, true> = { collapse: true, "surface-shortcut": true };
   const todo: Todo[] = [];
   for (const { rule } of plan.entries) {
     const a = rule.action;
     const visual = a.type === "set-token" || a.type === "emphasize" || a.type === "de-emphasize";
-    if (!visual) {
+    if (!visual && !structural[a.type]) {
       report.unsupported.push({
         ruleId: rule.id,
-        reason: `action "${a.type}" arrives in build B9`,
+        reason: `action "${a.type}" is not implemented in V1 (decision #37)`,
       });
       continue;
     }
-    const targets = a.type === "set-token" ? rule.components : [a.target!];
+    const targets =
+      a.type === "set-token"
+        ? rule.components
+        : a.type === "surface-shortcut"
+          ? [a.to!]
+          : [a.target!];
     const els: Todo["els"] = [];
     const seen = new Set<Element>();
     for (const component of targets) {
@@ -62,8 +134,11 @@ export function applyPlan(
         }
         if (!isDone(el, rule.id, state)) els.push({ el, component });
       }
+      if (a.type === "surface-shortcut") els.splice(1); // one strip per page
     }
-    const snaps = guard ? els.slice(0, MAX_CHECKED_PER_RULE).map((x) => guard.snapshot(x.el)) : [];
+    // Structural changes hide or add content; the contrast check has nothing to compare.
+    const snaps =
+      guard && visual ? els.slice(0, MAX_CHECKED_PER_RULE).map((x) => guard.snapshot(x.el)) : [];
     todo.push({ ruleId: rule.id, els, snaps });
   }
   const hadOverflow = guard?.overflowsHorizontally() ?? false;
@@ -75,6 +150,18 @@ export function applyPlan(
     const rule = ruleOf.get(t.ruleId)!;
     const a = rule.action;
     for (const { el, component } of t.els) {
+      if (a.type === "collapse") {
+        if (!collapse(doc, journal, el, component, rule.id)) continue;
+        markDone(el, rule.id, state);
+        continue;
+      }
+      if (a.type === "surface-shortcut") {
+        const links = shortcutLinks(resolve(a.target!));
+        if (links.length < MIN_SHORTCUTS) continue;
+        markDone(el, rule.id, state);
+        insertShortcuts(doc, journal, el, links, rule.id);
+        continue;
+      }
       markDone(el, rule.id, state);
       if (!el.hasAttribute(`data-${NS}-c`)) journal.setAttr(el, `data-${NS}-c`, component, rule.id);
       if (a.type === "set-token") journal.setAttr(el, `data-${NS}-${a.token}`, a.value!, rule.id);

@@ -15,9 +15,15 @@ export class Journal {
     el.setAttribute(name, value);
   }
 
-  insert(parent: Node, node: Node): void {
+  insert(parent: Node, node: Node, tag?: string): void {
     parent.appendChild(node);
-    this.ops.push({ kind: "node", node });
+    this.ops.push({ kind: "node", node, tag });
+  }
+
+  /** Inserts `node` right before `ref` (used for structural changes; undone by removal). */
+  insertBefore(parent: Node, node: Node, ref: Node, tag?: string): void {
+    parent.insertBefore(node, ref);
+    this.ops.push({ kind: "node", node, tag });
   }
 
   /** Undoes only the changes made under `tag`, newest first. */

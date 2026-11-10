@@ -33,8 +33,8 @@ V1 targets IX researchers, but the final product is a simple public toggle that 
 
 ## Next steps
 
-1. B8 done (see `docs/10-transparency-and-safety.md`). Ask the user to confirm decision #36 (Undo scope: this page until reload) or change it.
-2. Start **B9 (Structural transformations)**: propose design choices one at a time first (decision #25). Structural actions (collapse, reorder, group, surface-shortcut) are currently reported "arrive in build B9". Reversibility and the guard already support per-rule undo.
+1. B8 and B9 done. Decisions #36-#39 confirmed. B9: `collapse` + `surface-shortcut` (new rule `structure.china.surface-shortcuts`), 151 tests; checked in jsdom only, not yet in real Chromium.
+2. Next: B10 (comparison report, Hybrid editor, remaining adapters, equivalents panel, observation sheets), proposing choices one at a time first (decision #25).
 3. Known: effect magnitudes need tuning (vivid saturation lowers contrast on ~18% of passing pairs in the synthetic simulation); the guard handles it at runtime. Tune in B11 with real data.
 4. Evidence track (needs the user's PC): verify li2022 / li2026; collect measurements per `research/measurements/README.md`; replace provisional baselines. Do not spoof user agents.
 5. Not testable headless: permission prompt for "Personalize this site", toolbar popup click.
