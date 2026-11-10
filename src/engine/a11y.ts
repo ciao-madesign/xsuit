@@ -3,6 +3,7 @@
 // Things that cannot be measured (background image or gradient, no layout) are reported as
 // "not verifiable" and the rule is kept, never guessed.
 
+import { closestDeep, deepQueryAll, parentDeep } from "../analyzer/deep";
 import { parseColor } from "../metrics/metrics";
 
 type RGB = { r: number; g: number; b: number };
@@ -104,6 +105,7 @@ export function elementContrast(el: Element): ContrastResult {
 const INTERACTIVE = "a[href], button, input:not([type=hidden]), select, textarea, [role=button]";
 const FOCUSABLE = `${INTERACTIVE}, [tabindex]:not([tabindex^="-"])`;
 const CIRCLE_RADIUS = MIN_TARGET_PX / 2;
+const CELL = 64;
 
 interface Rect {
   left: number;
@@ -158,7 +160,7 @@ function isInlineInText(el: Element): boolean {
 /** True when the element renders and can take focus (not display:none / visibility:hidden). */
 function isRendered(el: Element): boolean {
   const win = el.ownerDocument.defaultView!;
-  for (let e: Element | null = el; e; e = e.parentElement) {
+  for (let e: Element | null = el; e; e = parentDeep(e)) {
     const cs = win.getComputedStyle(e);
     if (cs.display === "none" || cs.visibility === "hidden") return false;
   }
@@ -183,6 +185,8 @@ export interface Problem {
 export class A11yGuard {
   private win: Window;
   private all: { el: Element; rect: Rect }[] | null = null;
+  /** Targets bucketed by 64 px cells, so "who is near this one?" does not scan the whole page. */
+  private grid: Map<string, number[]> | null = null;
   constructor(private doc: Document) {
     this.win = doc.defaultView!;
   }
@@ -195,14 +199,38 @@ export class A11yGuard {
   /** Forget cached positions: call after the page changed (before comparing). */
   refresh(): void {
     this.all = null;
+    this.grid = null;
   }
 
   private page(): { el: Element; rect: Rect }[] {
-    return (this.all ??= [...this.doc.querySelectorAll(INTERACTIVE)]
+    if (this.all) return this.all;
+    this.all = deepQueryAll(this.doc, INTERACTIVE)
       .filter(isRendered)
       .slice(0, 2000)
       .map((el) => ({ el, rect: rectOf(el) }))
-      .filter((t) => t.rect.right > t.rect.left && t.rect.bottom > t.rect.top));
+      .filter((t) => t.rect.right > t.rect.left && t.rect.bottom > t.rect.top);
+    const grid = new Map<string, number[]>();
+    this.all.forEach((t, i) => {
+      for (let cx = Math.floor(t.rect.left / CELL); cx <= Math.floor(t.rect.right / CELL); cx++)
+        for (let cy = Math.floor(t.rect.top / CELL); cy <= Math.floor(t.rect.bottom / CELL); cy++) {
+          const k = `${cx},${cy}`;
+          const list = grid.get(k);
+          if (list) list.push(i);
+          else grid.set(k, [i]);
+        }
+    });
+    this.grid = grid;
+    return this.all;
+  }
+
+  /** Targets whose box is within reach of a point (cheap: only the nearby cells are looked at). */
+  private near(x: number, y: number, reach: number): { el: Element; rect: Rect }[] {
+    const all = this.page();
+    const seen = new Set<number>();
+    for (let cx = Math.floor((x - reach) / CELL); cx <= Math.floor((x + reach) / CELL); cx++)
+      for (let cy = Math.floor((y - reach) / CELL); cy <= Math.floor((y + reach) / CELL); cy++)
+        for (const i of this.grid?.get(`${cx},${cy}`) ?? []) seen.add(i);
+    return [...seen].map((i) => all[i]!).filter((t) => distanceToRect(x, y, t.rect) < reach);
   }
 
   /** Meets 2.5.8: big enough, or inline in text, or well separated from other targets. */
@@ -210,18 +238,14 @@ export class A11yGuard {
     const r = rectOf(el);
     if (sideOf(r) >= MIN_TARGET_PX) return true;
     if (isInlineInText(el)) return true;
-    const others = this.page()
+    const others = this.near((r.left + r.right) / 2, (r.top + r.bottom) / 2, MIN_TARGET_PX * 2)
       .filter((t) => t.el !== el && !t.el.contains(el) && !el.contains(t.el))
-      .map((t) => t.rect)
-      .filter(
-        (o) =>
-          distanceToRect((r.left + r.right) / 2, (r.top + r.bottom) / 2, o) < MIN_TARGET_PX * 2,
-      );
+      .map((t) => t.rect);
     return spacingException(r, others);
   }
 
   snapshot(el: Element, opts: { contrast?: boolean } = {}): Snapshot {
-    const inside = [el, ...el.querySelectorAll(FOCUSABLE)].filter((t) => t.matches(FOCUSABLE));
+    const inside = [el, ...deepQueryAll(el, FOCUSABLE)].filter((t) => t.matches(FOCUSABLE));
     const layout = this.hasLayout;
     const targets = layout
       ? inside
@@ -268,7 +292,7 @@ export class A11yGuard {
     } else unverifiable++;
     for (const f of before.focusables) {
       // Hidden on purpose behind a "Show" button (collapse) is fine: the button takes focus.
-      if (f.closest('[data-xsuit-collapsed="1"]')) continue;
+      if (closestDeep(f, '[data-xsuit-collapsed="1"]')) continue;
       if (!f.isConnected || !isRendered(f)) {
         problems.push({
           kind: "focus",

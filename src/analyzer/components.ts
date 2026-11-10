@@ -5,6 +5,7 @@
 // Everything here is read-only; the page is never changed.
 
 import type { Confidence } from "../engine/types";
+import { deepQueryAll, parentDeep, shadowRootsUnder } from "./deep";
 import type { Component } from "../rules/types";
 
 export interface Found {
@@ -16,8 +17,18 @@ export interface Found {
 export type Recognition = Partial<Record<Component, Found>>;
 
 const OWN = "[data-xsuit-ui]";
-const KNOWN_CAROUSELS =
-  /^(swiper|swiper-container|slick-slider|carousel|owl-carousel|glide|splide)$/;
+/** The same list as above, as a selector: lets the browser find them without scanning every element. */
+const KNOWN_CAROUSEL_SELECTOR = [
+  "swiper",
+  "swiper-container",
+  "slick-slider",
+  "carousel",
+  "owl-carousel",
+  "glide",
+  "splide",
+]
+  .map((c) => `.${c}`)
+  .join(",");
 const SEARCH_NAMES = /^(q|wd|query|keyword|keywords|search|s|kw|searchtext|search_query)$/i;
 const SEARCH_LABEL = /search|搜索|搜尋|buscar|recherche|suche/i;
 
@@ -33,17 +44,25 @@ export function makeHelpers(doc: Document) {
       cs.visibility === "hidden" ||
       el.hasAttribute("hidden") ||
       el.getAttribute("aria-hidden") === "true" ||
-      (el.parentElement !== null && hidden(el.parentElement));
+      (parentDeep(el) !== null && hidden(parentDeep(el)!));
     hiddenCache.set(el, r);
     return r;
   };
   const visible = (el: Element) => !el.closest(OWN) && !hidden(el);
-  const outermost = (els: Element[]) =>
-    els.filter((e) => !els.some((o) => o !== e && o.contains(e)));
+  // Keeps the elements that are not inside another element of the list. Walks each element's
+  // ancestors once, so it stays fast on pages with thousands of matches (it used to compare all pairs).
+  const outermost = (els: Element[]) => {
+    const set = new Set(els);
+    return els.filter((e) => {
+      for (let p = parentDeep(e); p; p = parentDeep(p)) if (set.has(p)) return false;
+      return true;
+    });
+  };
   const pageLevel = (el: Element) =>
     !el.parentElement?.closest("article, section, main, aside, [role=main], [role=article]");
   const links = (el: Element) => el.querySelectorAll("a[href]").length;
-  const all = (sel: string) => [...doc.querySelectorAll(sel)].filter(visible);
+  const roots = shadowRootsUnder(doc); // read once per analysis: web components are searched too
+  const all = (sel: string) => deepQueryAll(doc, sel, roots).filter(visible);
   const words = (el: Element) => (el.textContent ?? "").trim().split(/\s+/).filter(Boolean).length;
   return { visible, outermost, pageLevel, links, all, words };
 }
@@ -189,9 +208,7 @@ export function recognizeComponents(doc: Document): Recognition {
   // carousel: ARIA first, a short list of well-known widgets as heuristic
   {
     const aria = h.all("[aria-roledescription=carousel], [aria-roledescription=slider]");
-    const byClass = h
-      .all("[class]")
-      .filter((e) => [...e.classList].some((c) => KNOWN_CAROUSELS.test(c)));
+    const byClass = h.all(KNOWN_CAROUSEL_SELECTOR);
     const els = h.outermost([...aria, ...byClass]);
     if (els.length) {
       const el = els[0]!;

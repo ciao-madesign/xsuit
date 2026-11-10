@@ -44,7 +44,7 @@ Written 2026-11-10 after the merge of the security work and B11 and the privacy 
 - `docs/17-accessibility-testing.md` lists what is and is not automatically checked (the guard is not a full WCAG audit).
 - Checks (A): tests per check, including cases that must be undone and cases that must be kept. (P): keyboard and screen-reader pass on 3 pages.
 
-## B16 — Dynamic pages
+## B16 — Dynamic pages (DONE 2026-11-10, see docs/18-dynamic-pages.md)
 
 - Open Shadow DOM, same-origin iframes, SPA navigation, infinite scroll, partial DOM updates. Unsafe cases are skipped with a reason.
 - Performance budget (transform time, mutation-observer cost) written down and tested.

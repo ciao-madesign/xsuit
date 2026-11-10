@@ -28,7 +28,13 @@ export function parseEffectKey(key: string): { base: string; descendant: string 
  * CSS for the plan. Every selector starts with html[data-xsuit] so nothing can leak onto
  * the page, and only attributes set by the engine are matched.
  */
-export function buildCss(plan: Plan, effects: EffectCatalog): string {
+export function buildCss(
+  plan: Plan,
+  effects: EffectCatalog,
+  scope: "document" | "shadow" = "document",
+): string {
+  // Inside a shadow root the style only reaches that root, and there is no <html>: no prefix.
+  const prefix = scope === "shadow" ? "" : `html[data-${NS}] `;
   const seen = new Set<string>();
   const blocks: string[] = [];
   const add = (attrSelector: string, baseKey: string) => {
@@ -41,7 +47,7 @@ export function buildCss(plan: Plan, effects: EffectCatalog): string {
       if (!decls.length) continue;
       const target = parsed.descendant ? `${attrSelector} ${parsed.descendant}` : attrSelector;
       blocks.push(
-        `html[data-${NS}] ${target} { ${decls.map((d) => `${d.trim()} !important`).join("; ")}; }`,
+        `${prefix}${target} { ${decls.map((d) => `${d.trim()} !important`).join("; ")}; }`,
       );
     }
   };
@@ -55,6 +61,7 @@ export function buildCss(plan: Plan, effects: EffectCatalog): string {
       add(`[data-${NS}-${attr}="${level}"]`, `${a.type}=${level}`);
     }
   }
+  if (scope === "shadow") return blocks.join("\n"); // structural CSS is for the document only
   const types = new Set(plan.entries.map((e) => e.rule.action.type));
   if (types.has("collapse")) blocks.push(...COLLAPSE_CSS);
   if (types.has("group")) blocks.push(...GROUP_CSS);

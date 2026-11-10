@@ -1,4 +1,5 @@
 import type { A11yGuard, Snapshot } from "./a11y";
+import { isInShadow } from "../analyzer/deep";
 import { buildCss, NS, STYLE_ID } from "./css";
 import type { Journal } from "./journal";
 import { isProtected } from "./protect";
@@ -7,6 +8,19 @@ import type { ApplyReport, EffectCatalog, Plan, Resolver } from "./types";
 
 /** Remembers which (rule, element) pairs are done, so applying twice changes nothing. */
 export type AppliedState = WeakMap<Element, Set<string>>;
+
+/** Open shadow roots that received a style element, per document (so every run can refresh them). */
+const styledRoots = new WeakMap<Document, Set<ShadowRoot>>();
+
+export function forgetStyledRoots(doc: Document): void {
+  styledRoots.delete(doc);
+}
+
+/** True when the element sits in an OPEN shadow root (closed ones are read, never written). */
+function inOpenShadow(el: Element): boolean {
+  const root = el.getRootNode();
+  return root instanceof ShadowRoot && root.host.shadowRoot === root;
+}
 
 const MAX_CHECKED_PER_RULE = 100; // keeps the guard cheap on very large pages
 
@@ -180,6 +194,18 @@ export function applyPlan(
       for (const el of resolve(component)) {
         if (seen.has(el)) continue;
         seen.add(el);
+        // Web components: visual rules work inside OPEN shadow roots; structural changes and
+        // closed roots are skipped and said so (decision #51).
+        if (isInShadow(el) && (!visual || !inOpenShadow(el))) {
+          if (!report.unsupported.some((u) => u.ruleId === rule.id))
+            report.unsupported.push({
+              ruleId: rule.id,
+              reason: visual
+                ? "the element is inside a closed shadow DOM, which xsuit does not change"
+                : "structural changes inside a shadow DOM are not supported",
+            });
+          continue;
+        }
         if (isProtected(el) || (a.type !== "set-token" && isActionRisky(el))) {
           report.protectedSkipped++;
           continue;
@@ -258,6 +284,28 @@ export function applyPlan(
       journal.insert(doc.head ?? root, style);
     } else if (style && style.textContent !== css) {
       style.textContent = css;
+    }
+    // The same effects, scoped, inside each open shadow root that holds a changed element.
+    const roots = styledRoots.get(doc) ?? new Set<ShadowRoot>();
+    styledRoots.set(doc, roots);
+    for (const t of todo)
+      for (const { el } of t.els) {
+        const r = el.getRootNode();
+        if (r instanceof ShadowRoot && inOpenShadow(el)) roots.add(r);
+      }
+    const shadowCss = buildCss({ entries, skipped: [] }, effects, "shadow");
+    for (const r of roots) {
+      if (!r.host.isConnected) {
+        roots.delete(r);
+        continue;
+      }
+      let s = r.getElementById(STYLE_ID);
+      if (shadowCss && !s) {
+        s = doc.createElement("style");
+        s.id = STYLE_ID;
+        s.textContent = shadowCss;
+        journal.insert(r, s);
+      } else if (s && s.textContent !== shadowCss) s.textContent = shadowCss;
     }
   };
   writeCss(plan.entries);

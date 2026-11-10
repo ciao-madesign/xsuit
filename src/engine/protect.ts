@@ -1,3 +1,5 @@
+import { closestDeep, deepQuery } from "../analyzer/deep";
+
 // Protected elements are never touched (spec: passwords, payment, consent, authentication,
 // transactions, account deletion). The check is conservative: when in doubt, protect.
 
@@ -25,6 +27,6 @@ const SELECTOR = PROTECTED_SELECTORS.join(",");
 
 /** True if the element is protected, sits inside a protected area, or contains one. */
 export function isProtected(el: Element): boolean {
-  if (el.closest(SELECTOR)) return true; // itself or an ancestor
-  return el.querySelector(SELECTOR) !== null; // contains protected content
+  if (closestDeep(el, SELECTOR)) return true; // itself or an ancestor (also across shadow hosts)
+  return deepQuery(el, SELECTOR) !== null; // contains protected content (also inside shadow roots)
 }

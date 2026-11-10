@@ -3,7 +3,8 @@ import type { Confidence, PageContext, Resolver } from "../engine/types";
 import { createResolver } from "../adapters";
 import { recognizeComponents, type Recognition } from "./components";
 import { classifyPage, type Classification } from "./pageType";
-import { isSensitivePage } from "../engine/safety";
+import { countFrames, isSensitivePage } from "../engine/safety";
+import { resetShadowCache, shadowRootsUnder } from "./deep";
 import { plausible } from "./plausible";
 
 export interface RecognizedComponent {
@@ -26,6 +27,8 @@ export interface Analysis {
   context: Pick<PageContext, "pageType" | "components" | "sensitive">;
   recognized: RecognizedComponent[];
   adapterHits: AdapterHit[];
+  /** What kind of page structure was met: reported in the research tools. */
+  environment: { shadowRoots: number; frames: { readable: number; blocked: number } };
   classification: Classification;
   resolver: Resolver;
 }
@@ -46,6 +49,7 @@ export function analyzePage(
   pathname: string,
   search = "",
 ): Analysis {
+  resetShadowCache(doc); // web components may have appeared since the last analysis
   const generic: Recognition = recognizeComponents(doc);
   const fromAdapter = createResolver(adapter, doc);
   const classification = classifyPage(doc, pathname, search);
@@ -135,6 +139,7 @@ export function analyzePage(
     context: { pageType, components, sensitive: isSensitivePage(doc) },
     recognized,
     adapterHits,
+    environment: { shadowRoots: shadowRootsUnder(doc).length, frames: countFrames(doc) },
     classification,
     resolver: (component) => chosen.get(component) ?? [],
   };

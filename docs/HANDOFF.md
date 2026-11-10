@@ -14,7 +14,7 @@ A browser extension (Chrome, TypeScript, MV3) that adapts a web page's UX to the
 - Security and privacy are enforced by tests (`tests/security.test.ts`, `tests/privacy.test.ts`); model in `docs/14-security-model.md`, policy in `SECURITY.md`.
 - Measurement files (`xsuit.metrics/2`) hold numbers, host, page type and language only; no URL path.
 - Not validated: adapters on real sites, replication on real measurements, behaviour with real users, Li 2022 / Li 2026 / WCAG 2.2 primary texts (see `rules/sources.json`, `attempts`).
-- Plan: `docs/15-build-plan.md`. B12, B13, B15 and the automatic part of B14 done. **Remaining in B14 needs a person with Chrome:** verify adapters (`adapters/VERIFY.md`) and measure real pages (`docs/13-pc-guide.md`). Next automatic build: B15.
+- Plan: `docs/15-build-plan.md`. B12, B13, B15, B16 and the automatic part of B14 done. **Remaining in B14 needs a person with Chrome:** verify adapters (`adapters/VERIFY.md`) and measure real pages (`docs/13-pc-guide.md`). Next automatic build: B17 (privacy and data governance).
 
 ## How the user wants to work
 
@@ -40,7 +40,7 @@ Adapters are optional hints. xsuit must work (or safely do nothing) on any site;
 
 ## Next steps
 
-1. B15 per `docs/15-build-plan.md` (B14 real-site checks in parallel, by a person). Li 2022 / Li 2026 remain unverified (WCAG 2.2 was read on 2026-11-10); Sage and IEEE need a person.
+1. B17 per `docs/15-build-plan.md` (B14 real-site checks and the B15 keyboard/screen-reader pass in parallel, by a person). Li 2022 / Li 2026 remain unverified (WCAG 2.2 was read on 2026-11-10); Sage and IEEE need a person.
 2. Evidence track (needs the user's PC): measurements, `npm run replication`, adapter verification (`adapters/VERIFY.md`), verify Li 2022/2026 and WCAG 2.2 by hand. Do not spoof user agents.
 3. Not testable headless: permission prompt, toolbar popup click.
 

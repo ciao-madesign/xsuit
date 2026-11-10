@@ -60,6 +60,18 @@ export class Journal {
     this.ops = keep;
   }
 
+  /**
+   * Forgets changes to nodes the page itself removed (feeds that recycle items, SPA re-renders).
+   * Nothing is left to undo there, and keeping them would hold the dead nodes in memory forever.
+   */
+  prune(): number {
+    const before = this.ops.length;
+    this.ops = this.ops.filter((op) =>
+      op.kind === "attr" ? op.el.isConnected : op.node.isConnected,
+    );
+    return before - this.ops.length;
+  }
+
   get size(): number {
     return this.ops.length;
   }

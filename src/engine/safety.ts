@@ -1,3 +1,5 @@
+import { closestDeep, deepQuery, deepQueryAll } from "../analyzer/deep";
+
 // Anti-abuse rules (docs/14-security-model.md). xsuit must never become a mask for scams:
 // it must not push users toward clicks they did not choose, hide warnings, or make forms
 // for credentials, payment or file transfer look friendlier. When in doubt, do nothing.
@@ -18,8 +20,37 @@ const SENSITIVE_PAGE = [
   'form[action*="signin" i]',
 ].join(",");
 
-export function isSensitivePage(doc: Document): boolean {
-  return doc.querySelector(SENSITIVE_PAGE) !== null;
+/** The document inside a same-origin frame, or null when it cannot be read (other origin). */
+export function frameDocument(frame: HTMLIFrameElement | HTMLFrameElement): Document | null {
+  try {
+    return frame.contentDocument;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Credential or payment fields anywhere xsuit can read: the page, its shadow roots, and frames of
+ * the same origin (a login form embedded in an iframe still makes the page sensitive).
+ */
+export function isSensitivePage(doc: Document, depth = 0): boolean {
+  if (deepQuery(doc, SENSITIVE_PAGE) !== null) return true;
+  if (depth >= 2) return false;
+  for (const f of [...doc.querySelectorAll("iframe, frame")].slice(0, 20)) {
+    const inner = frameDocument(f as HTMLIFrameElement);
+    if (inner && isSensitivePage(inner, depth + 1)) return true;
+  }
+  return false;
+}
+
+/** How many frames the page has, and how many of them xsuit can read. Frames are never changed. */
+export function countFrames(doc: Document): { readable: number; blocked: number } {
+  let readable = 0;
+  let blocked = 0;
+  for (const f of doc.querySelectorAll("iframe, frame"))
+    if (frameDocument(f as HTMLIFrameElement)?.documentElement) readable++;
+    else blocked++;
+  return { readable, blocked };
 }
 
 /** Notices a user must not miss: alerts, dialogs, live announcements. Never hidden, never moved past. */
@@ -45,15 +76,15 @@ export function isSearchForm(form: Element): boolean {
  * as a source of shortcuts. (Visual spacing/typography tokens are still allowed.)
  */
 export function isActionRisky(el: Element): boolean {
-  const inForm = el.closest("form");
+  const inForm = closestDeep(el, "form");
   if (inForm && !isSearchForm(inForm)) return true;
-  if (el.closest(NOTICE) || el.querySelector(NOTICE)) return true;
-  for (const f of el.querySelectorAll("form")) if (!isSearchForm(f)) return true;
-  return el.querySelector('input[type="file"], [download]') !== null;
+  if (closestDeep(el, NOTICE) || deepQuery(el, NOTICE)) return true;
+  for (const f of deepQueryAll(el, "form")) if (!isSearchForm(f)) return true;
+  return deepQuery(el, 'input[type="file"], [download]') !== null;
 }
 
 export function isNotice(el: Element): boolean {
-  return el.matches(NOTICE) || el.querySelector(NOTICE) !== null;
+  return el.matches(NOTICE) || deepQuery(el, NOTICE) !== null;
 }
 
 // ---- links that xsuit is allowed to surface -------------------------------------------------

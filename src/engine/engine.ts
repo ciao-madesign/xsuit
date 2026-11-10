@@ -1,5 +1,6 @@
 import { A11yGuard } from "./a11y";
-import { applyPlan, type AppliedState } from "./apply";
+import { resetShadowCache, shadowRootsUnder } from "../analyzer/deep";
+import { applyPlan, forgetStyledRoots, type AppliedState } from "./apply";
 import { Journal } from "./journal";
 import { buildPlan, type PlanInput } from "./plan";
 import type { ApplyReport, EffectCatalog, PageContext, Plan, Resolver } from "./types";
@@ -20,11 +21,19 @@ export interface EngineOptions {
   maxRuns?: number;
   windowMs?: number;
   now?: () => number;
+  /** Performance budget: a run slower than this makes the engine wait longer before the next one. */
+  budgetMs?: number;
+  /** A single run slower than this means the page is too heavy: everything is undone. */
+  abortMs?: number;
+  /** Called when the engine gave up and restored the page (changes too often, or too heavy). */
+  onStop?: (reason: string) => void;
 }
 
 export interface EngineStatus {
   active: boolean;
   guardTripped: boolean;
+  /** Why the engine gave up on this page, when it did. */
+  stopReason?: string;
   runs: number;
   plan: Plan | null;
   report: ApplyReport | null;
@@ -39,6 +48,10 @@ export class Engine {
   private state: AppliedState = new WeakMap();
   private observer: MutationObserver | null = null;
   private timer: ReturnType<typeof setTimeout> | null = null;
+  /** Open shadow roots watched in addition to the document. */
+  private roots: ShadowRoot[] = [];
+  /** Current wait before re-applying: grows when runs are slow, so xsuit never hogs the page. */
+  private delay = 0;
   private input: PlanInput | null = null;
   private recent: number[] = [];
   private blocked: Record<string, string> = {};
@@ -53,12 +66,23 @@ export class Engine {
     reverted: [],
   };
   private readonly o: Required<
-    Omit<EngineOptions, "doc" | "resolve" | "effects" | "getContext" | "onRun" | "a11yGuard">
+    Omit<
+      EngineOptions,
+      "doc" | "resolve" | "effects" | "getContext" | "onRun" | "a11yGuard" | "onStop"
+    >
   > &
     EngineOptions;
 
   constructor(options: EngineOptions) {
-    this.o = { debounceMs: 100, maxRuns: 20, windowMs: 2000, now: () => Date.now(), ...options };
+    this.o = {
+      debounceMs: 100,
+      maxRuns: 20,
+      windowMs: 2000,
+      budgetMs: 150,
+      abortMs: 2000,
+      now: () => Date.now(),
+      ...options,
+    };
   }
 
   get status(): EngineStatus {
@@ -69,10 +93,13 @@ export class Engine {
   start(input: PlanInput): void {
     this.input = input;
     this.s.guardTripped = false;
+    this.s.stopReason = undefined;
+    this.delay = 0;
     this.recent = [];
     this.blocked = {};
     this.totals = new Map();
     this.run();
+    if (this.s.stopReason) return; // the first run was already too heavy: the page was restored
     this.observe();
     this.s.active = true;
   }
@@ -81,6 +108,7 @@ export class Engine {
   restore(): void {
     this.stopObserving();
     this.journal.rollback();
+    forgetStyledRoots(this.o.doc);
     this.state = new WeakMap();
     this.input = null;
     this.blocked = {};
@@ -121,6 +149,9 @@ export class Engine {
 
   private run(): void {
     if (!this.input) return;
+    this.journal.prune(); // forget changes to nodes the page already removed
+    resetShadowCache(this.o.doc);
+    const t0 = this.o.now();
     if (this.o.getContext) this.input = { ...this.input, context: this.o.getContext() };
     const input = { ...this.input, blockedRules: this.blocked };
     const plan = buildPlan(input);
@@ -153,19 +184,41 @@ export class Engine {
     this.s.changes = [...this.totals].map(([ruleId, elements]) => ({ ruleId, elements }));
     this.s.reverted = Object.entries(this.blocked).map(([ruleId, reason]) => ({ ruleId, reason }));
     this.o.onRun?.({ ...this.s });
+    // Performance budget: slow runs make the next one wait (about 17 % of the time at most);
+    // an extremely slow one means this page is too heavy and xsuit steps aside.
+    const took = this.o.now() - t0;
+    this.delay = Math.min(2000, Math.max(this.o.debounceMs, took * 5));
+    if (took > this.o.abortMs)
+      this.giveUp("this page is too heavy for xsuit, so the original page was restored");
+  }
+
+  /** Puts the page back and records why, so the user is never left with a half-changed page. */
+  private giveUp(reason: string): void {
+    this.restore();
+    this.s.guardTripped = true;
+    this.s.stopReason = reason;
+    this.o.onStop?.(reason);
   }
 
   private observe(): void {
     const win = this.o.doc.defaultView;
     if (!win || this.observer) return;
-    this.observer = new win.MutationObserver(() => this.schedule());
+    this.observer = new win.MutationObserver((records) => {
+      if (records.every(irrelevant)) return;
+      this.schedule();
+    });
     this.connect();
   }
 
   // Only child additions/removals are watched. The engine itself only sets attributes and adds one
   // style element, and that happens while the observer is disconnected, so it cannot trigger itself.
   private connect(): void {
+    if (!this.observer) return;
     this.observer?.observe(this.o.doc.documentElement, { childList: true, subtree: true });
+    // Web components keep their content in shadow roots, which the document observer cannot see.
+    resetShadowCache(this.o.doc);
+    this.roots = shadowRootsUnder(this.o.doc);
+    for (const sr of this.roots) this.observer?.observe(sr, { childList: true, subtree: true });
   }
 
   private stopObserving(): void {
@@ -177,20 +230,34 @@ export class Engine {
 
   private schedule(): void {
     if (this.timer) return;
-    this.timer = setTimeout(() => {
-      this.timer = null;
-      const t = this.o.now();
-      this.recent = this.recent.filter((x) => t - x < this.o.windowMs);
-      if (this.recent.length >= this.o.maxRuns) {
-        // Something keeps changing the page faster than is reasonable: stop instead of looping.
-        this.stopObserving();
-        this.s.guardTripped = true;
-        return;
-      }
-      this.recent.push(t);
-      this.observer?.disconnect();
-      this.run();
-      this.connect();
-    }, this.o.debounceMs);
+    this.timer = setTimeout(
+      () => {
+        this.timer = null;
+        const t = this.o.now();
+        this.recent = this.recent.filter((x) => t - x < this.o.windowMs);
+        if (this.recent.length >= this.o.maxRuns) {
+          // Something keeps changing the page faster than is reasonable: give up and restore, so the
+          // page is never left half adapted (new content would not be adapted).
+          this.giveUp("this page changes too often, so the original page was restored");
+          return;
+        }
+        this.recent.push(t);
+        this.observer?.disconnect();
+        this.run();
+        this.connect();
+      },
+      Math.max(this.o.debounceMs, this.delay),
+    );
   }
 }
+
+const SKIP_TAGS = new Set(["SCRIPT", "STYLE", "LINK", "META", "NOSCRIPT", "TEMPLATE"]);
+const inertNode = (n: Node): boolean =>
+  n.nodeType === 3 ||
+  n.nodeType === 8 ||
+  (n.nodeType === 1 &&
+    (SKIP_TAGS.has((n as Element).tagName) || (n as Element).hasAttribute("data-xsuit-ui")));
+
+/** A change that cannot affect what xsuit looks at: only text, comments, scripts, styles or xsuit's own label. */
+const irrelevant = (r: MutationRecord): boolean =>
+  [...r.addedNodes, ...r.removedNodes].every(inertNode);

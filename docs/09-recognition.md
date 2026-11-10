@@ -44,6 +44,6 @@ On 34 varied synthetic pages the generic analyzer is measured with no adapter; r
 
 ## Known limits
 
-- Desktop web only. Shadow DOM, iframes and closed shadow roots are not searched (listed for the B11 compatibility tests; not yet handled).
+- Desktop web only. Since B16 open shadow roots are searched (and closed ones where the browser allows); frames are never read for recognition or changed. See `18-dynamic-pages.md`.
 - Signals are generic web conventions, not market-specific; they work the same for Western and Chinese sites, but Chinese sites often skip semantic tags, so expect more "not recognized" there.
 - Thresholds (100 words, 3 links, 200 px) are simple design choices, to be reviewed against real pages in B11.

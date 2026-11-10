@@ -76,6 +76,8 @@ Notes:
 
 | 50 | Anti-misuse | Adapters locate blocks only (never links/buttons/inputs/frames, except the search box); apply to their listed host only; elements must be plausible for their role; rules/adapters are locked by hash and bundled only. Shortcut links: visible, same site, plain text, no actions or downloads. Warnings, non-search forms and file/download blocks are never hidden or moved. Credential/payment pages: spacing and typography only. The label cannot be silenced: if the page hides it, everything is undone; structural changes force it visible. | 2026-11-10 |
 
+| 51 | Dynamic pages | Read through open (and, where the browser allows, closed) shadow roots and same-origin frames for safety; write only visual rules inside open shadow roots; never write in frames or closed roots. Pages that change too often or are too heavy are restored to the original with a stated reason. Slow runs back off. | 2026-11-10 |
+
 ## Still open
 
 None. All initial decisions are made.

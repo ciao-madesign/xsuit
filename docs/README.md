@@ -24,4 +24,6 @@ Foundations of the **Cross-Market UX Localization Extension**. Reading order:
 
 - `17-accessibility-testing.md`: B15 what the accessibility guard checks, what it does not, and what a person should check.
 
+- `18-dynamic-pages.md`: B16 shadow DOM, frames, single-page apps, infinite scroll, give-up rules and performance budget.
+
 Repository root: [README](../README.md), [SECURITY](../SECURITY.md).

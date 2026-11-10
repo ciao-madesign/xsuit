@@ -105,6 +105,7 @@ function main(): void {
     effects: defaultEffects,
     getContext: context,
     onRun,
+    onStop: () => overlay.hide(),
   });
 
   function sync(settings: Settings): void {

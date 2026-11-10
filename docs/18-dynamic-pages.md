@@ -1,0 +1,43 @@
+# 18 — Dynamic pages (B16): shadow DOM, frames, SPAs, infinite scroll, performance
+
+Modern pages are not one static document. This page says what xsuit does with each kind of page structure, what it deliberately does **not** do, and the performance budget. Rule of thumb (decision #51): **read as much as is needed to stay safe, write only where it is reliable, and when a page is too unusual or too heavy, put the original back.**
+
+## What happens with each case
+
+| Case                                 | Reading (recognition, safety)                                                                                                                                                                                                                                                        | Writing (changes)                                                                                                                                                                                                                                                                     |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Open shadow DOM** (web components) | Searched, nested roots included (capped at 100 roots).                                                                                                                                                                                                                               | **Visual rules only**: the element gets its `data-xsuit-*` attribute and the root gets its own scoped `<style>`, both journaled and removed on restore. Structural rules (collapse, reorder, group, shortcuts) are skipped inside shadow roots, with the reason in the explain panel. |
+| **Closed shadow DOM**                | Read through the extension API `chrome.dom.openOrClosedShadowRoot` where the browser provides it (custom elements only), so a password field hidden there still marks the page sensitive. Otherwise it is a known limit.                                                             | Never written.                                                                                                                                                                                                                                                                        |
+| **Same-origin iframes**              | Scanned (two levels, 20 frames) for credential or payment fields: a login form in a frame makes the page sensitive.                                                                                                                                                                  | Never changed: xsuit does not run inside frames.                                                                                                                                                                                                                                      |
+| **Other-origin frames**              | Cannot be read; only counted ("N frame(s) are never changed" in the compatibility note).                                                                                                                                                                                             | Never changed.                                                                                                                                                                                                                                                                        |
+| **Single-page apps**                 | After a route change (Navigation API, `popstate`; the manifest requires Chrome 120+) the page is restored, measured again and re-adapted.                                                                                                                                            | Same as a normal page.                                                                                                                                                                                                                                                                |
+| **Infinite scroll, partial updates** | A mutation observer (document and every open shadow root) re-runs the engine, ignoring changes that cannot matter (text, comments, scripts, styles, xsuit's own label). Journal entries of nodes the page removed are dropped, so a recycling list cannot grow memory without bound. | New items get the same rules.                                                                                                                                                                                                                                                         |
+
+## Safety limits (give up cleanly)
+
+- **Changes too often** (more than 20 re-applications in 2 s): xsuit **restores the original page** and records the reason ("this page changes too often…"). It never leaves a half-adapted page where new content would not be adapted.
+- **Too heavy** (one run slower than 2 s): same, with the reason "this page is too heavy for xsuit…".
+- **Slow runs back off**: a run slower than the budget (150 ms) makes the next one wait five times as long (up to 2 s), so xsuit uses at most about one sixth of the page's time.
+- On any of these the on-page label disappears with the page restored; the reason is available to the research tools (`stopReason`).
+
+## Performance budget
+
+| What                                                                   | Budget                                                                                                          | Where checked                                           |
+| ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Work grows in step with page size (not with its square)                | `getComputedStyle` calls for 1000 blocks < 2.6 × those for 500                                                  | `tests/b16-dynamic.test.ts` (automatic)                 |
+| 3000 repeated blocks                                                   | < 6 s in jsdom (slow environment)                                                                               | same                                                    |
+| Real Chromium, ordinary pages                                          | about 4–16 ms per application (fixtures)                                                                        | `npm run validate:browser`                              |
+| Real Chromium, extreme page (5000 paragraphs, 5000 links, 5000 images) | 50–60 ms for visual rules, up to about 400 ms for structural rules with the accessibility check (one-time cost) | `npm run validate:browser` (36 runs, 0 failures at B16) |
+
+What was made faster in B16: carousel detection no longer scans every element with a class; "outermost" filtering no longer compares all pairs; shadow roots are scanned once per run; target-spacing checks use a grid instead of comparing every target with every other.
+
+## Not covered (be honest)
+
+- Writing inside shadow roots beyond visual rules; any change inside frames.
+- Measurement (`Measure this page`) reads the light DOM only; metrics for pages built mostly from shadow components undercount. Do not use such pages for the replication check.
+- Closed shadow roots in browsers without `chrome.dom`, and custom elements that are not custom (a plain `<div>` hosting a closed root) cannot be read.
+- Real-site behaviour: these cases are tested on synthetic pages and in real Chromium on fixtures, not yet on live sites (B14, a person with Chrome).
+
+## Where it lives
+
+`src/analyzer/deep.ts` (reading through shadow DOM), `src/engine/safety.ts` (sensitive page, frames), `src/engine/apply.ts` (scoped styles in open roots), `src/engine/engine.ts` (observer on roots, budget, give-up), `src/engine/journal.ts` (`prune`). Tests: `tests/b16-dynamic.test.ts`.
