@@ -23,7 +23,7 @@ Every rule must be traceable to a real study or to stated observations, with its
 |---|---|---|---|---|
 `;
 for (const s of sources)
-  out += `| ${s.id} | ${s.kind} | ${s.authors} (${s.year}), [${s.title}](${s.url}) | ${s.sample} | ${s.verified ? "yes" : "**no** (figures as reported in docs/01)"} |\n`;
+  out += `| ${s.id} | ${s.kind} | ${s.authors} (${s.year}), [${s.title}](${s.url}) | ${s.sample} | ${s.verified ? `yes (${s.checkedOn})` : `**no** (${(s.attempts ?? ["not yet attempted"]).join(" ")})`} |\n`;
 
 const fx = read("rules/effects.json");
 out += "\n## Effect catalog (concrete CSS)\n\n" + fx.note + "\n\n";

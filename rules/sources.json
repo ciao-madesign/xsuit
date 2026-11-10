@@ -8,7 +8,10 @@
     "url": "https://ieeexplore.ieee.org/document/9881630",
     "sample": "Literature review of 17 comparative studies",
     "verified": false,
-    "notes": "Findings taken from docs/01 section 2.1. The authors note that definitions and methods are not uniform across the reviewed studies."
+    "notes": "Findings taken from docs/01 section 2.1. The authors note that definitions and methods are not uniform across the reviewed studies.",
+    "attempts": [
+      "2026-11-10: primary text could not be read from the build environment (IEEE page returned no content). Kept unverified; verify by hand."
+    ]
   },
   {
     "id": "li2026",
@@ -19,7 +22,10 @@
     "url": "https://journals.sagepub.com/doi/full/10.1177/00472816261460385",
     "sample": "100 Chinese and 100 Western municipal homepages (institutional sites, not commercial apps)",
     "verified": false,
-    "notes": "Figures taken from docs/01 section 2.2. Shows differences in this sample, not universal user preferences."
+    "notes": "Figures taken from docs/01 section 2.2. Shows differences in this sample, not universal user preferences.",
+    "attempts": [
+      "2026-11-10: primary text could not be read from the build environment (SAGE returned HTTP 403). Kept unverified; verify by hand."
+    ]
   },
   {
     "id": "nng2016",
@@ -30,7 +36,8 @@
     "url": "https://www.nngroup.com/articles/china-website-complexity/",
     "sample": "Think-aloud usability testing with 12 participants (6 native Chinese users, 6 expatriates living in China), 2 tasks each on 8 of 14 Chinese sites; small, qualitative",
     "verified": true,
-    "notes": "Primary text read on 2026-11-09 (nngroup.com). It reports that Chinese participants tolerate and prefer fairly high information density, especially on portal and news sites, but also hit many usability problems on complex sites and found some too complicated. It does NOT report a general Western preference for simplicity: its foreign participants were expatriates in China, who were less annoyed by problems on simple sites than on complex ones."
+    "notes": "Primary text read on 2026-11-09 (nngroup.com). It reports that Chinese participants tolerate and prefer fairly high information density, especially on portal and news sites, but also hit many usability problems on complex sites and found some too complicated. It does NOT report a general Western preference for simplicity: its foreign participants were expatriates in China, who were less annoyed by problems on simple sites than on complex ones.",
+    "checkedOn": "2026-11-09"
   },
   {
     "id": "project-synthesis",
@@ -41,7 +48,8 @@
     "url": "docs/01-research-western-vs-chinese-ux.md",
     "sample": "Narrative synthesis (docs/01 sections 3-6, docs/02), not independent data",
     "verified": true,
-    "notes": "Own synthesis of the cited studies and observed platforms. Cannot raise an evidence level on its own."
+    "notes": "Own synthesis of the cited studies and observed platforms. Cannot raise an evidence level on its own.",
+    "checkedOn": "2026-11-10"
   },
   {
     "id": "wcag22",
@@ -52,6 +60,9 @@
     "url": "https://www.w3.org/TR/WCAG22/",
     "sample": "Accessibility standard (success criteria 1.4.1 use of colour, 1.4.3 contrast minimum, 1.4.12 text spacing, 2.5.8 target size)",
     "verified": false,
-    "notes": "Used only as a constraint on effects, never as evidence of cultural difference. Criteria cited from general knowledge; text not re-read in this project."
+    "notes": "Used only as a constraint on effects, never as evidence of cultural difference. Criteria cited from general knowledge; text not re-read in this project.",
+    "attempts": [
+      "2026-11-10: primary text could not be read from the build environment (w3.org not reachable from the session network). Kept unverified; verify by hand."
+    ]
   }
 ]

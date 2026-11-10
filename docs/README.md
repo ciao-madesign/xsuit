@@ -17,6 +17,7 @@ Foundations of the **Cross-Market UX Localization Extension**. Reading order:
 - `11-observation-sheets.md`: how to fill observation sheets for login-gated platforms (B10).
 - `12-validation-report.md`: B11 internal validation results, go/no-go criteria and the PC-side evidence protocol.
 - `13-pc-guide.md`: step-by-step guide for the measurements and checks to do on a PC.
+- `14-security-model.md`: anti-abuse rules, enforced by tests.
+- `15-build-plan.md`: builds after B11 (B11b done, B12–B22 planned) with checks.
 
-- [15 — Build plan after B11](15-build-plan.md)
-- [14 — Security model](14-security-model.md)
+Repository root: [README](../README.md), [SECURITY](../SECURITY.md).
