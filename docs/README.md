@@ -28,4 +28,6 @@ Foundations of the **Cross-Market UX Localization Extension**. Reading order:
 
 - `19-privacy-and-data-governance.md`: B17 what is kept, what a research file may contain, consent, retention, rules for developers.
 
+- `20-market-profile-model.md`: B18 dimensions, poles, configurations, rule versions, how to add a market.
+
 Repository root: [README](../README.md), [SECURITY](../SECURITY.md).

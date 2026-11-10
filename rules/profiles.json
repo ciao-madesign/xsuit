@@ -3,34 +3,50 @@
     "id": "western",
     "name": "Western",
     "description": "Conventions typical of Western-oriented web UX: lower density, more whitespace, clear single focal path, search-led entry. Tendencies, not rules.",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "reliability": "moderate",
-    "evidenceRefs": ["li2022", "li2026", "nng2016"]
+    "evidenceRefs": ["li2022", "li2026", "nng2016"],
+    "configuration": {
+      "density": "spacious",
+      "spacing": "airy",
+      "palette": "muted",
+      "hierarchy": "strong",
+      "promotions": "quiet",
+      "carousels": "quiet",
+      "search-entry": "prominent",
+      "link-affordance": "underlined",
+      "sidebar": "collapsed"
+    }
   },
   {
     "id": "china",
     "name": "China",
     "description": "Conventions typical of mainland-China-oriented web UX: higher density, image-led cards, parallel entry points, discovery feeds. Tendencies, not rules.",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "reliability": "moderate",
-    "evidenceRefs": ["li2022", "li2026", "nng2016"]
+    "evidenceRefs": ["li2022", "li2026", "nng2016"],
+    "configuration": {
+      "density": "compact",
+      "spacing": "tight",
+      "palette": "vivid",
+      "hierarchy": "flat",
+      "promotions": "prominent",
+      "carousels": "prominent",
+      "imagery": "image-led",
+      "discovery": "central",
+      "entry-points": "surfaced"
+    }
   },
   {
     "id": "hybrid",
     "name": "Hybrid",
     "description": "Explicit, user-defined composition of rules from other profiles. Preliminary.",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "reliability": "hypothesis",
     "evidenceRefs": ["project-synthesis"],
-    "composition": [
-      {
-        "profile": "western",
-        "ruleIds": ["visual.western.search-first"]
-      },
-      {
-        "profile": "china",
-        "ruleIds": ["visual.china.image-led"]
-      }
-    ]
+    "configuration": {
+      "search-entry": "prominent",
+      "imagery": "image-led"
+    }
   }
 ]

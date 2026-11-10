@@ -18,6 +18,32 @@ Every rule must be traceable to a real study or to stated observations, with its
 | project-synthesis | synthesis | xsuit project (2026), [Project synthesis of Western vs Chinese interface composition](docs/01-research-western-vs-chinese-ux.md)                                                                       | Narrative synthesis (docs/01 sections 3-6, docs/02), not independent data                                                                                             | yes (2026-11-10)                                                                                                                                 |
 | wcag22            | standard  | W3C (2023), [Web Content Accessibility Guidelines (WCAG) 2.2](https://www.w3.org/TR/WCAG22/)                                                                                                           | Accessibility standard (success criteria 1.4.1 use of colour, 1.4.3 contrast minimum, 1.4.12 text spacing, 2.5.8 target size)                                         | yes (2026-11-10)                                                                                                                                 |
 
+## Dimensions, poles and rules
+
+A profile is a configuration: one pole per dimension, or nothing (the page stays as it is). Each rule belongs to one pole of one dimension and has its own version.
+
+| dimension           | pole       | rule                               | version | evidence   | last reviewed | in profiles     |
+| ------------------- | ---------- | ---------------------------------- | ------- | ---------- | ------------- | --------------- |
+| Information density | Spacious   | visual.western.spacious-density    | 1.0.0   | moderate   | never         | western         |
+| Information density | Compact    | visual.china.compact-density       | 1.0.0   | moderate   | never         | china           |
+| Spacing scale       | Airy       | visual.western.airy-spacing        | 1.0.0   | moderate   | never         | western         |
+| Spacing scale       | Tight      | visual.china.tight-spacing         | 1.0.0   | moderate   | never         | china           |
+| Colour palette      | Muted      | visual.western.muted-palette       | 1.0.0   | emerging   | never         | western         |
+| Colour palette      | Vivid      | visual.china.vivid-palette         | 1.0.0   | moderate   | never         | china           |
+| Visual hierarchy    | Strong     | visual.western.strong-hierarchy    | 1.0.0   | hypothesis | never         | western         |
+| Visual hierarchy    | Flat       | visual.china.flat-hierarchy        | 1.0.0   | emerging   | never         | china           |
+| Promotions          | Quiet      | visual.western.quiet-promos        | 1.0.0   | emerging   | never         | western         |
+| Promotions          | Prominent  | visual.china.prominent-promos      | 1.0.0   | emerging   | never         | china           |
+| Carousels           | Quiet      | visual.western.quiet-carousel      | 1.0.0   | emerging   | never         | western         |
+| Carousels           | Prominent  | visual.china.prominent-carousel    | 1.0.0   | emerging   | never         | china           |
+| Search entry        | Prominent  | visual.western.search-first        | 1.0.0   | hypothesis | never         | western, hybrid |
+| Link affordance     | Underlined | visual.western.underlined-links    | 1.0.0   | moderate   | never         | western         |
+| Imagery             | Image-led  | visual.china.image-led             | 1.0.0   | emerging   | never         | china, hybrid   |
+| Sidebar             | Collapsed  | structure.western.collapse-sidebar | 1.0.0   | hypothesis | never         | western         |
+| Discovery feed      | Central    | visual.china.discovery-feed        | 1.0.0   | hypothesis | never         | china           |
+| Discovery feed      | Central    | structure.china.recommendations-up | 1.0.0   | hypothesis | never         | china           |
+| Entry points        | Surfaced   | structure.china.surface-shortcuts  | 1.0.0   | hypothesis | never         | china           |
+
 ## Effect catalog (concrete CSS)
 
 Concrete CSS for rule actions. Direction of each effect comes from the evidence cited by the rules that use it. The MAGNITUDE (how much) is a design choice, kept deliberately modest, and must be tuned during the internal review (B11). Effects only use properties that cannot hide content, move elements or shrink targets (checked by tests). Saturation filters CAN lower text contrast (see contrastSimulation, a correction made in B8): every changed element is therefore checked at runtime by the accessibility guard, which undoes a rule that measurably worsens contrast, target size or horizontal scroll.

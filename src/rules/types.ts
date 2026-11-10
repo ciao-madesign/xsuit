@@ -77,7 +77,12 @@ export interface Rule {
   title: string;
   description: string;
   rationale: string; // why this action follows from the evidence
+  /** The reference profile this rule was first written for (not a restriction: see dimension/pole). */
   profile: ProfileId;
+  /** Dimension of a market configuration this rule acts on (rules/dimensions.json). */
+  dimension: string;
+  /** Which pole of that dimension the rule implements. */
+  pole: string;
   level: V<typeof LEVELS>;
   mode: V<typeof MODES>;
   pageTypes: PageType[];
@@ -92,6 +97,12 @@ export interface Rule {
   evidence: Evidence;
   limits: string[];
   testResults: TestResult[];
+  /** Version of this rule (semantic). */
+  version: string;
+  introduced: string;
+  /** Date a person last reviewed the rule against its sources; null = never reviewed. */
+  lastReviewed: string | null;
+  history: { version: string; date: string; change: string }[];
 }
 
 export interface RuleSet {
@@ -107,8 +118,8 @@ export interface Profile {
   version: string;
   reliability: V<typeof EVIDENCE_LEVELS>;
   evidenceRefs: string[];
-  // Hybrid only: explicit composition, never an automatic average.
-  composition?: { profile: ProfileId; ruleIds: string[] }[];
+  /** One pole per dimension; a missing dimension keeps the page as it is. Never an automatic average. */
+  configuration: Record<string, string>;
 }
 
 export interface Adapter {

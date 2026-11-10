@@ -17,7 +17,9 @@ export interface Settings {
   /** Rules the user turned off (all sites). */
   disabledRules: string[];
   labelPosition: LabelPosition;
-  /** Hybrid composition chosen by the user (rule ids); null = the default composition. */
+  /** Hybrid composition chosen by the user: one pole per dimension; null = the default. */
+  hybridChoices: Record<string, string> | null;
+  /** Legacy (before dimensions): Hybrid rules picked one by one. Used only when no choices exist. */
   hybridRules: string[] | null;
 }
 
@@ -28,6 +30,7 @@ export const DEFAULT_SETTINGS: Settings = {
   enabledSites: [],
   disabledRules: [],
   labelPosition: "bottom-left",
+  hybridChoices: null,
   hybridRules: null,
 };
 
@@ -116,6 +119,23 @@ export function normalizeSettings(raw: unknown): Settings {
           .filter((x): x is string => typeof x === "string" && RULE_ID_RE.test(x)),
       ),
     ].sort();
+  }
+  if (
+    typeof r.hybridChoices === "object" &&
+    r.hybridChoices !== null &&
+    !Array.isArray(r.hybridChoices)
+  ) {
+    // Shape only here (ids made of lowercase letters, digits, hyphens); the dimensions list itself
+    // is applied where it is known, so this small module stays free of the rules data.
+    const choices: Record<string, string> = {};
+    for (const [k, v] of Object.entries(r.hybridChoices).slice(0, 50))
+      if (
+        typeof v === "string" &&
+        /^[a-z][a-z0-9-]{0,40}$/.test(k) &&
+        /^[a-z][a-z0-9-]{0,40}$/.test(v)
+      )
+        choices[k] = v;
+    s.hybridChoices = choices;
   }
   if (Array.isArray(r.hybridRules)) {
     s.hybridRules = [

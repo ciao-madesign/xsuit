@@ -2,7 +2,15 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "xsuit Market Profile",
   "type": "object",
-  "required": ["id", "name", "description", "version", "reliability", "evidenceRefs"],
+  "required": [
+    "id",
+    "name",
+    "description",
+    "version",
+    "reliability",
+    "evidenceRefs",
+    "configuration"
+  ],
   "properties": {
     "id": {
       "enum": ["western", "china", "hybrid"]
@@ -30,24 +38,17 @@
         "minLength": 1
       }
     },
-    "composition": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["profile", "ruleIds"],
-        "properties": {
-          "profile": {
-            "enum": ["western", "china"]
-          },
-          "ruleIds": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      }
+    "configuration": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9-]{0,40}$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]{0,40}$"
+      },
+      "description": "One pole per dimension (see dimensions.schema.json). A dimension that is missing keeps the page as it is."
     }
   }
 }

@@ -56,7 +56,7 @@ Written 2026-11-10 after the merge of the security work and B11 and the privacy 
 - Export UI shows exactly what will be saved before download.
 - Checks (A): schema validates good files and rejects bad ones; test that the export contains no field outside the schema.
 
-## B18 — Profile model by dimensions
+## B18 — Profile model by dimensions (DONE 2026-11-10, see docs/20-market-profile-model.md)
 
 - Replace the two rigid profiles with independent parameters (density, hierarchy, navigation, discovery, interaction, language/typography, mobile). "Western" and "China" become reference configurations with evidence labels, not cultural labels.
 - Rule versioning: version, introduced, sources, evidence level, tests, last review.

@@ -1,3 +1,4 @@
+import { rulesForConfiguration } from "../rules/configuration";
 import type { Profile, Rule, RuleSet } from "../rules/types";
 import type { Confidence, PageContext, Plan, SkippedRule } from "./types";
 import type { Depth, ProfileChoice } from "../shared/settings";
@@ -10,7 +11,9 @@ export interface PlanInput {
   profile: ProfileChoice;
   depth: Depth;
   context: PageContext;
-  /** Hybrid only: the rules the user composed. Missing = the default composition of the profile. */
+  /** Hybrid only: the user's choice of one pole per dimension. Missing = the profile's own configuration. */
+  hybridChoices?: Record<string, string> | null;
+  /** Hybrid only, legacy: rules picked one by one (before dimensions). Used when no choices exist. */
   hybridRuleIds?: string[] | null;
   /** Rules the user turned off. */
   disabledRules?: string[];
@@ -18,23 +21,29 @@ export interface PlanInput {
   blockedRules?: Record<string, string>;
 }
 
-/** Rules a profile selects. Hybrid is an explicit composition, never an automatic mix. */
+/**
+ * Rules a profile selects: those of its configuration (one pole per dimension). Hybrid is the same
+ * thing with the user's own choices, never an automatic mix.
+ */
 export function selectCandidates(
-  input: Pick<PlanInput, "ruleSets" | "profiles" | "profile" | "hybridRuleIds">,
+  input: Pick<PlanInput, "ruleSets" | "profiles" | "profile" | "hybridRuleIds" | "hybridChoices">,
 ): Rule[] {
   const all = input.ruleSets.flatMap((s) => s.rules);
   if (input.profile === "original") return [];
-  if (input.profile !== "hybrid") return all.filter((r) => r.profile === input.profile);
-  const hybrid = input.profiles.find((p) => p.id === "hybrid");
-  const wanted = new Set(
-    input.hybridRuleIds ?? (hybrid?.composition ?? []).flatMap((c) => c.ruleIds),
-  );
-  return all.filter((r) => wanted.has(r.id));
+  const profile = input.profiles.find((p) => p.id === input.profile);
+  if (input.profile === "hybrid") {
+    if (input.hybridChoices) return rulesForConfiguration(input.hybridChoices, all);
+    if (input.hybridRuleIds) {
+      const wanted = new Set(input.hybridRuleIds);
+      return all.filter((r) => wanted.has(r.id));
+    }
+  }
+  return profile ? rulesForConfiguration(profile.configuration, all) : [];
 }
 
 /** True if any rule of this profile depends on a measured metric, so measuring is worth its cost. */
 export function needsMetrics(
-  input: Pick<PlanInput, "ruleSets" | "profiles" | "profile" | "hybridRuleIds">,
+  input: Pick<PlanInput, "ruleSets" | "profiles" | "profile" | "hybridRuleIds" | "hybridChoices">,
 ): boolean {
   return selectCandidates(input).some((r) =>
     r.conditions.some((c) => c.type === "metric-above" || c.type === "metric-below"),

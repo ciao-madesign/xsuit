@@ -1,8 +1,9 @@
 import chinaRules from "../../rules/china.json";
 import westernRules from "../../rules/western.json";
 import profiles from "../../rules/profiles.json";
-import { hybridBlockedBy } from "../engine/hybrid";
-import type { Rule, RuleSet } from "../rules/types";
+import dimensionData from "../../rules/dimensions.json";
+import type { Dimension } from "../rules/configuration";
+import type { Profile, Rule, RuleSet } from "../rules/types";
 import {
   DEFAULT_SETTINGS,
   LABEL_POSITIONS,
@@ -77,43 +78,53 @@ function renderRules(): void {
   }
 }
 
-function defaultHybrid(): string[] {
-  const h = (profiles as { id: string; composition?: { ruleIds: string[] }[] }[]).find(
-    (p) => p.id === "hybrid",
-  );
-  return (h?.composition ?? []).flatMap((c) => c.ruleIds);
+/** The configuration Hybrid uses when the person has not chosen: its own, from profiles.json. */
+function defaultChoices(): Record<string, string> {
+  return (profiles as unknown as Profile[]).find((p) => p.id === "hybrid")?.configuration ?? {};
 }
 
+/** Hybrid: one choice per dimension (a pole, or keep the page as it is). Conflicts cannot occur. */
 function renderHybrid(): void {
   const box = $("hybrid-rules");
   box.replaceChildren();
   const all = sets.flatMap((s) => s.rules) as Rule[];
-  const selected = settings.hybridRules ?? defaultHybrid();
-  for (const rule of all) {
-    const on = selected.includes(rule.id);
-    const by = on ? null : hybridBlockedBy(rule.id, selected, all);
+  const choices = settings.hybridChoices ?? defaultChoices();
+  for (const dim of (dimensionData as { dimensions: Dimension[] }).dimensions) {
     const row = document.createElement("div");
     row.className = "row";
     const label = document.createElement("label");
-    const cb = document.createElement("input");
-    cb.type = "checkbox";
-    cb.checked = on;
-    cb.disabled = by !== null;
-    cb.addEventListener("change", () => {
-      const rest = selected.filter((x) => x !== rule.id);
-      void update({ ...settings, hybridRules: cb.checked ? [...rest, rule.id] : rest });
-    });
-    const text = document.createElement("span");
-    const origin = rule.profile === "china" ? "China" : "Western";
-    text.textContent = ` ${rule.title} (${origin}) `;
+    const name = document.createElement("span");
+    name.textContent = `${dim.name}: `;
+    const select = document.createElement("select");
+    const keep = document.createElement("option");
+    keep.value = "";
+    keep.textContent = "Keep the page as it is";
+    select.append(keep);
+    for (const pole of dim.poles) {
+      const o = document.createElement("option");
+      o.value = pole.id;
+      o.textContent = pole.name;
+      select.append(o);
+    }
+    select.value = choices[dim.id] ?? "";
     const note = document.createElement("span");
     note.className = "muted";
-    note.textContent = by
-      ? `conflicts with "${all.find((r) => r.id === by)?.title}"`
-      : `(${LEVEL[rule.evidence.level] ?? rule.evidence.level})`;
-    label.append(cb, text, note);
-    row.append(label);
-    row.title = rule.description;
+    const describe = () => {
+      const pole = dim.poles.find((p) => p.id === select.value);
+      const rules = all.filter((r) => r.dimension === dim.id && r.pole === select.value);
+      note.textContent = pole
+        ? ` ${pole.description} Rules: ${rules.map((r) => `${r.title} (${LEVEL[r.evidence.level] ?? r.evidence.level})`).join(", ")}.`
+        : " No rule from this dimension is used.";
+    };
+    describe();
+    select.addEventListener("change", () => {
+      const next = { ...(settings.hybridChoices ?? defaultChoices()) };
+      if (select.value) next[dim.id] = select.value;
+      else delete next[dim.id];
+      void update({ ...settings, hybridChoices: next, hybridRules: null });
+    });
+    label.append(name, select);
+    row.append(label, note);
     box.append(row);
   }
 }
@@ -142,7 +153,13 @@ async function init(): Promise<void> {
   $("reset").addEventListener("click", async () => {
     for (const d of settings.enabledSites)
       await chrome.permissions.remove({ origins: sitePatterns(d) }).catch(() => false);
-    await update({ ...DEFAULT_SETTINGS, enabledSites: [], disabledRules: [], hybridRules: null });
+    await update({
+      ...DEFAULT_SETTINGS,
+      enabledSites: [],
+      disabledRules: [],
+      hybridChoices: null,
+      hybridRules: null,
+    });
     pos.value = settings.labelPosition;
     renderRules();
   });
@@ -153,13 +170,21 @@ async function init(): Promise<void> {
       await chrome.permissions.remove({ origins: sitePatterns(d) }).catch(() => false);
     await chrome.storage.local.clear();
     await chrome.storage.session.clear().catch(() => undefined);
-    settings = { ...DEFAULT_SETTINGS, enabledSites: [], disabledRules: [], hybridRules: null };
+    settings = {
+      ...DEFAULT_SETTINGS,
+      enabledSites: [],
+      disabledRules: [],
+      hybridChoices: null,
+      hybridRules: null,
+    };
     pos.value = settings.labelPosition;
     renderSites();
     renderRules();
     $("delete-note").textContent = "All xsuit data was deleted.";
   });
-  $("hybrid-default").addEventListener("click", () => update({ ...settings, hybridRules: null }));
+  $("hybrid-default").addEventListener("click", () =>
+    update({ ...settings, hybridChoices: null, hybridRules: null }),
+  );
   if (location.hash === "#hybrid") $<HTMLDetailsElement>("hybrid").open = true;
   renderSites();
   renderRules();

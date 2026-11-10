@@ -8,6 +8,8 @@
       "description": "Use a compact layout density with more content per screen.",
       "rationale": "Chinese homepages show about three times the visual density and nearly twice the main content blocks; NN/G reports Chinese users prefer relatively high information density and perceive complexity through familiarity. It fires only when the measured page is sparser than the midpoint between the two sample means, so pages that are already dense are left alone.",
       "profile": "china",
+      "dimension": "density",
+      "pole": "compact",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["home", "product-list", "feed"],
@@ -56,7 +58,17 @@
         "Touch targets must stay usable.",
         "Does nothing on pages already at or above the threshold; also does nothing if the page could not be measured."
       ],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "visual.china.tight-spacing",
@@ -64,6 +76,8 @@
       "description": "Reduce spacing between blocks.",
       "rationale": "The literature review reports less dominant white space on Chinese sites, consistent with denser layouts; doc 01 section 3.3 lists white space as less dominant.",
       "profile": "china",
+      "dimension": "spacing",
+      "pole": "tight",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["any"],
@@ -100,7 +114,17 @@
         ]
       },
       "limits": ["Tendency from research, not a universal rule; varies by site and sector."],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "visual.china.vivid-palette",
@@ -108,6 +132,8 @@
       "description": "Increase colour saturation for a livelier look.",
       "rationale": "The 2026 study finds Chinese palettes wider, more saturated and brighter, and the 2022 review reports more red and blue. Doc 02 warns against the red+gold stereotype, so this rule changes saturation only, not hue.",
       "profile": "china",
+      "dimension": "palette",
+      "pole": "vivid",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["any"],
@@ -149,7 +175,17 @@
         "Must keep text contrast at or above WCAG AA.",
         "Never apply a red/gold stereotype."
       ],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "visual.china.image-led",
@@ -157,6 +193,8 @@
       "description": "Give images more prominence in cards.",
       "rationale": "The 2026 study measures higher image diversity (6.32 vs 4.34) and visual density on Chinese homepages. Extending this to product and feed cards is an extrapolation from institutional homepages, so the level is emerging.",
       "profile": "china",
+      "dimension": "imagery",
+      "pole": "image-led",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["product-list", "feed", "home"],
@@ -192,7 +230,17 @@
         "Tendency from research, not a universal rule; varies by site and sector.",
         "Images must keep alt text."
       ],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "visual.china.flat-hierarchy",
@@ -200,6 +248,8 @@
       "description": "Present many parallel entry points at similar weight.",
       "rationale": "Chinese homepages show more main content blocks (5.91 vs 3.14) and the project synthesis describes hierarchy as distributed across modules rather than absent (doc 02). The link between block count and flat visual weight is interpretive.",
       "profile": "china",
+      "dimension": "hierarchy",
+      "pole": "flat",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["home", "product-list"],
@@ -240,7 +290,17 @@
         "Tendency from research, not a universal rule; varies by site and sector.",
         "Distributed hierarchy is not absence of hierarchy; keep headings and semantics intact."
       ],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "visual.china.prominent-promos",
@@ -248,6 +308,8 @@
       "description": "Emphasize promotional banners.",
       "rationale": "Doc 01 section 3.3 describes numerous, dynamic banners in the Chinese model, and the 2026 study finds more posters and infographics (99 vs 66). Institutional posters are only a proxy for commercial promotions.",
       "profile": "china",
+      "dimension": "promotions",
+      "pole": "prominent",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["home", "product-list"],
@@ -288,7 +350,17 @@
         "Tendency from research, not a universal rule; varies by site and sector.",
         "Does not add or invent promotions."
       ],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "visual.china.prominent-carousel",
@@ -296,6 +368,8 @@
       "description": "Emphasize the main carousel/banner area.",
       "rationale": "The 2026 study counts autoplay elements on 99 vs 39 homepages (China vs West). Autoplay is a proxy for carousels, so support is partial.",
       "profile": "china",
+      "dimension": "carousels",
+      "pole": "prominent",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["home"],
@@ -331,7 +405,17 @@
         "Tendency from research, not a universal rule; varies by site and sector.",
         "Does not alter carousel behaviour."
       ],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "visual.china.discovery-feed",
@@ -339,6 +423,8 @@
       "description": "Emphasize recommendation areas.",
       "rationale": "The project synthesis describes feeds and recommendations as central to Chinese homepages and journeys (doc 01 sections 3.2, 3.3, 6). This is observational; it relies on platform observation, not on a measured study.",
       "profile": "china",
+      "dimension": "discovery",
+      "pole": "central",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["home", "feed"],
@@ -379,7 +465,17 @@
         "Tendency from research, not a universal rule; varies by site and sector.",
         "Only if a recommendations area is detected."
       ],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "structure.china.recommendations-up",
@@ -387,6 +483,8 @@
       "description": "Move recommendations just below the hero on home pages.",
       "rationale": "Builds on the observed centrality of feeds in Chinese homepages. The specific reordering has no direct evidence, so it remains a hypothesis.",
       "profile": "china",
+      "dimension": "discovery",
+      "pole": "central",
       "level": "information-architecture",
       "mode": "structural",
       "pageTypes": ["home"],
@@ -432,7 +530,17 @@
         "Structural; needs component recognition (B5).",
         "Must keep original order recoverable."
       ],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "structure.china.surface-shortcuts",
@@ -440,6 +548,8 @@
       "description": "Show a small strip of links to sections that already exist in the main navigation, just above the hero block.",
       "rationale": "Chinese homepages show more main content blocks (5.91 vs 3.14 in Li 2026), which suggests more parallel entry points. A strip of links to existing sections makes several entry points reachable near the top without moving or removing anything; that it helps users is a design hypothesis.",
       "profile": "china",
+      "dimension": "entry-points",
+      "pole": "surfaced",
       "level": "information-architecture",
       "mode": "structural",
       "pageTypes": ["home"],
@@ -489,7 +599,17 @@
         "Copies at most 6 existing links (text and address only); never creates new destinations.",
         "Skipped when fewer than 3 usable links are found."
       ],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     }
   ]
 }

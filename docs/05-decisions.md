@@ -80,6 +80,8 @@ Notes:
 
 | 52 | Data governance | Research files are closed-schema (measurement, report); every export goes through a "Check before saving" box showing the whole file, and the shown text is the saved text; files with a private/local host, extra fields or personal-data patterns cannot be saved; screenshots never leave the device; observers use initials; `npm run privacy` checks committed research data. | 2026-11-10 |
 
+| 53 | Market profile model | A profile is a configuration: one pole per dimension (density, palette, hierarchy, promotions...), or nothing. Rules belong to one pole of one dimension and are versioned. Western and China stay as reference configurations with identical behaviour (proven by a golden recording from before the change); Hybrid = the person's choice of pole per dimension. Validated by the user. | 2026-11-10 |
+
 ## Still open
 
 None. All initial decisions are made.

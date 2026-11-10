@@ -1,6 +1,6 @@
 {
   "profile": "western",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "rules": [
     {
       "id": "visual.western.spacious-density",
@@ -8,6 +8,8 @@
       "description": "Use a spacious layout density with more whitespace.",
       "rationale": "Western homepages in the sample show about a third of the visual density of Chinese ones and fewer content blocks (2026 study). NN/G found that foreign participants were less annoyed by problems on simple sites than on complex ones. Raising whitespace moves a dense page toward the sparser convention without removing content. It fires only when the measured page is denser than the midpoint between the two sample means, so pages that are already sparse are left alone.",
       "profile": "western",
+      "dimension": "density",
+      "pole": "spacious",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["home", "search-results", "article"],
@@ -56,7 +58,17 @@
         "Only spacing changes; content must not be hidden.",
         "Does nothing on pages already at or below the threshold; also does nothing if the page could not be measured."
       ],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "visual.western.airy-spacing",
@@ -64,6 +76,8 @@
       "description": "Increase spacing between blocks.",
       "rationale": "Literature review reports more white space on Western sites; white space acts as a structural element in the Western model (doc 01 section 3.3).",
       "profile": "western",
+      "dimension": "spacing",
+      "pole": "airy",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["any"],
@@ -100,7 +114,17 @@
         ]
       },
       "limits": ["Tendency from research, not a universal rule; varies by site and sector."],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "visual.western.muted-palette",
@@ -108,6 +132,8 @@
       "description": "Reduce colour saturation for a calmer look.",
       "rationale": "The 2026 study finds Chinese palettes wider, more saturated and brighter, so Western palettes are comparatively more restrained. The finding is indirect: it measures Chinese sites against Western ones, not Western palettes in absolute terms.",
       "profile": "western",
+      "dimension": "palette",
+      "pole": "muted",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["any"],
@@ -148,7 +174,17 @@
         "Tendency from research, not a universal rule; varies by site and sector.",
         "Must keep text contrast at or above WCAG AA."
       ],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "visual.western.strong-hierarchy",
@@ -156,6 +192,8 @@
       "description": "Make one primary focus per view clearer.",
       "rationale": "The project synthesis describes the Western model as hierarchical with few competing elements. No measurement directly supports this: the headings measure in the 2026 study is HTML semantics, which doc 01 section 3.4 warns must not be confused with visual hierarchy. Kept as a hypothesis to test.",
       "profile": "western",
+      "dimension": "hierarchy",
+      "pole": "strong",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["home", "article", "product-detail"],
@@ -193,7 +231,17 @@
         "validationPlan": "Compare before/after screenshots on the Western test sites and check that the main task is found faster in internal review; add real-user test later."
       },
       "limits": ["Tendency from research, not a universal rule; varies by site and sector."],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "visual.western.quiet-promos",
@@ -201,6 +249,8 @@
       "description": "De-emphasize promotional banners.",
       "rationale": "Doc 01 section 3.3 contrasts selective Western banners with numerous Chinese ones, and the 2026 study finds fewer posters and infographics on Western homepages (66 vs 99). Reducing prominence moves toward the selective convention.",
       "profile": "western",
+      "dimension": "promotions",
+      "pole": "quiet",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["home", "product-list"],
@@ -241,7 +291,17 @@
         "Tendency from research, not a universal rule; varies by site and sector.",
         "Never hide legally required notices."
       ],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "visual.western.quiet-carousel",
@@ -249,6 +309,8 @@
       "description": "De-emphasize auto-advancing carousels.",
       "rationale": "The 2026 study counts autoplay elements on 39 vs 99 homepages (West vs China). Autoplay is a proxy for carousels and banners, so the support is partial.",
       "profile": "western",
+      "dimension": "carousels",
+      "pole": "quiet",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["home"],
@@ -284,7 +346,17 @@
         "Tendency from research, not a universal rule; varies by site and sector.",
         "Does not stop or alter carousel behaviour."
       ],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "visual.western.search-first",
@@ -292,6 +364,8 @@
       "description": "Make the search box the most prominent control on search-led pages.",
       "rationale": "Observation of Google, Bing and Western ecosystems shows search as a primary, separate entry point (doc 01 section 4-5). No study tests whether emphasizing the search box helps users; this is a hypothesis drawn from observed product design.",
       "profile": "western",
+      "dimension": "search-entry",
+      "pole": "prominent",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["home", "search-results"],
@@ -332,7 +406,17 @@
         "Tendency from research, not a universal rule; varies by site and sector.",
         "Only on pages where a search box is detected."
       ],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "visual.western.underlined-links",
@@ -340,6 +424,8 @@
       "description": "Make links visibly underlined so they read as links.",
       "rationale": "The literature review reports more underlined links on Western sites. Underlining is also a well-established affordance, and it keeps links identifiable without relying on colour alone.",
       "profile": "western",
+      "dimension": "link-affordance",
+      "pole": "underlined",
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["any"],
@@ -374,7 +460,17 @@
         "Tendency from research, not a universal rule; varies by site and sector.",
         "Must not underline buttons or navigation chrome."
       ],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     },
     {
       "id": "structure.western.collapse-sidebar",
@@ -382,6 +478,8 @@
       "description": "Collapse secondary sidebar blocks to focus on main content.",
       "rationale": "The 2026 study finds fewer peripheral blocks on Western homepages (0.61 vs 1.61). Applying this to article pages is an extrapolation, so the rule is a hypothesis.",
       "profile": "western",
+      "dimension": "sidebar",
+      "pole": "collapsed",
       "level": "information-architecture",
       "mode": "structural",
       "pageTypes": ["home", "article"],
@@ -422,7 +520,17 @@
         "Structural; needs component recognition (B5).",
         "Content stays reachable via expand."
       ],
-      "testResults": []
+      "testResults": [],
+      "version": "1.0.0",
+      "introduced": "2026-11-09",
+      "lastReviewed": null,
+      "history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Dimension and pole assigned and versioning started (B18). Content unchanged from rule set 0.3.0; earlier changes are in the git history."
+        }
+      ]
     }
   ]
 }

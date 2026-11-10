@@ -1,4 +1,5 @@
 import { normalizeHost } from "../shared/settings";
+import { checkConfiguration, type Dimension } from "./configuration";
 import type {
   Adapter,
   Profile,
@@ -32,6 +33,8 @@ import {
 } from "./vocab";
 
 type Obj = Record<string, unknown>;
+const PART_RE = /^[a-z][a-z0-9-]{0,40}$/;
+const SEMVER_RE = /^\d+\.\d+\.\d+$/;
 const ID_RE = /^[a-z0-9]+(\.[a-z0-9-]+)+$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const HOST_RE = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/;
@@ -152,6 +155,30 @@ export function validateRule(input: unknown): ValidationResult<Rule> {
       "must explain in at least a sentence why this action follows from the evidence",
     );
   c.oneOf("profile", r.profile, PROFILE_IDS);
+  if (!isStr(r.dimension) || !PART_RE.test(r.dimension))
+    c.add("dimension", "must name a dimension, e.g. density (rules/dimensions.json)");
+  if (!isStr(r.pole) || !PART_RE.test(r.pole))
+    c.add("pole", "must name a pole of the dimension, e.g. compact");
+  if (!isStr(r.version) || !SEMVER_RE.test(r.version)) c.add("version", "must be like 1.0.0");
+  if (!isStr(r.introduced) || !DATE_RE.test(r.introduced))
+    c.add("introduced", "must be YYYY-MM-DD");
+  if (r.lastReviewed !== null && (!isStr(r.lastReviewed) || !DATE_RE.test(r.lastReviewed)))
+    c.add("lastReviewed", "must be YYYY-MM-DD, or null when no person has reviewed the rule yet");
+  if (!Array.isArray(r.history) || r.history.length === 0)
+    c.add("history", "must list at least one entry (version, date, change)");
+  else {
+    r.history.forEach((h, i) => {
+      if (!isObj(h)) return c.add(`history[${i}]`, "must be an object");
+      if (!isStr(h.version) || !SEMVER_RE.test(h.version))
+        c.add(`history[${i}].version`, "must be like 1.0.0");
+      if (!isStr(h.date) || !DATE_RE.test(h.date))
+        c.add(`history[${i}].date`, "must be YYYY-MM-DD");
+      c.str(`history[${i}].change`, h.change);
+    });
+    const last = r.history[r.history.length - 1];
+    if (isObj(last) && last.version !== r.version)
+      c.add("history", "the last entry must be the current version");
+  }
   c.oneOf("level", r.level, LEVELS);
   c.oneOf("mode", r.mode, MODES);
   if (r.mode === "deep") c.add("mode", 'mode "deep" is not available in V1');
@@ -225,7 +252,10 @@ export function validateRule(input: unknown): ValidationResult<Rule> {
   return c.result(input);
 }
 
-export function validateProfile(input: unknown): ValidationResult<Profile> {
+export function validateProfile(
+  input: unknown,
+  dimensions?: Dimension[],
+): ValidationResult<Profile> {
   const c = new Collector();
   if (!isObj(input)) {
     c.add("", "profile must be an object");
@@ -237,17 +267,45 @@ export function validateProfile(input: unknown): ValidationResult<Profile> {
   c.str("version", input.version);
   c.oneOf("reliability", input.reliability, EVIDENCE_LEVELS);
   c.strArray("evidenceRefs", input.evidenceRefs, { min: 1 });
-  if (input.id === "hybrid") {
-    if (!Array.isArray(input.composition) || input.composition.length === 0)
-      c.add("composition", "hybrid must explicitly list which rules it takes from which profile");
-    else
-      input.composition.forEach((x, i) => {
-        if (!isObj(x)) return c.add(`composition[${i}]`, "must be an object");
-        c.oneOf(`composition[${i}].profile`, x.profile, ["western", "china"]);
-        c.strArray(`composition[${i}].ruleIds`, x.ruleIds, { min: 1 });
-      });
-  } else if (input.composition !== undefined)
-    c.add("composition", "only the hybrid profile has a composition");
+  if (input.composition !== undefined)
+    c.add("composition", "replaced by configuration: choose one pole per dimension");
+  if (!isObj(input.configuration) || Object.keys(input.configuration).length === 0)
+    c.add("configuration", "must choose at least one pole of one dimension");
+  else if (dimensions)
+    for (const m of checkConfiguration(input.configuration, dimensions)) c.add("configuration", m);
+  return c.result(input);
+}
+
+/** The dimensions registry: unique ids, known families, at least one pole each. */
+export function validateDimensions(input: unknown): ValidationResult<Dimension[]> {
+  const c = new Collector();
+  if (!Array.isArray(input) || input.length === 0) {
+    c.add("", "dimensions must be a non-empty array");
+    return c.result(input);
+  }
+  const seen = new Set<string>();
+  input.forEach((d, i) => {
+    const p = `[${i}]`;
+    if (!isObj(d)) return c.add(p, "must be an object");
+    if (!isStr(d.id) || !PART_RE.test(d.id)) c.add(`${p}.id`, "must be a short lowercase id");
+    else if (seen.has(d.id)) c.add(`${p}.id`, `duplicate dimension "${d.id}"`);
+    else seen.add(d.id);
+    c.str(`${p}.name`, d.name);
+    c.str(`${p}.description`, d.description);
+    c.oneOf(`${p}.family`, d.family, ["visual", "information-architecture"]);
+    if (!Array.isArray(d.poles) || d.poles.length === 0)
+      return c.add(`${p}.poles`, "needs at least one pole");
+    const poles = new Set<string>();
+    d.poles.forEach((x, k) => {
+      if (!isObj(x)) return c.add(`${p}.poles[${k}]`, "must be an object");
+      if (!isStr(x.id) || !PART_RE.test(x.id))
+        c.add(`${p}.poles[${k}].id`, "must be a short lowercase id");
+      else if (poles.has(x.id)) c.add(`${p}.poles[${k}].id`, `duplicate pole "${x.id}"`);
+      else poles.add(x.id);
+      c.str(`${p}.poles[${k}].name`, x.name);
+      c.str(`${p}.poles[${k}].description`, x.description);
+    });
+  });
   return c.result(input);
 }
 
@@ -341,7 +399,11 @@ export function validateAdapter(input: unknown): ValidationResult<Adapter> {
 }
 
 // Set-level checks: unique ids, profile consistency, dependencies exist, no cycles.
-export function validateRuleSet(input: unknown, registry?: Source[]): ValidationResult<RuleSet> {
+export function validateRuleSet(
+  input: unknown,
+  registry?: Source[],
+  dimensions?: Dimension[],
+): ValidationResult<RuleSet> {
   const c = new Collector();
   if (!isObj(input)) {
     c.add("", "rule set must be an object");
@@ -367,6 +429,12 @@ export function validateRuleSet(input: unknown, registry?: Source[]): Validation
         `rules[${i}].profile`,
         `rule profile "${rule.profile}" does not match set profile "${String(input.profile)}"`,
       );
+    if (dimensions) {
+      const d = dimensions.find((x) => x.id === rule.dimension);
+      if (!d) c.add(`rules[${i}].dimension`, `unknown dimension "${rule.dimension}"`);
+      else if (!d.poles.some((p) => p.id === rule.pole))
+        c.add(`rules[${i}].pole`, `dimension "${rule.dimension}" has no pole "${rule.pole}"`);
+    }
     deps.set(rule.id, rule.dependencies);
     if (registry) checkEvidenceAgainstRegistry(c, `rules[${i}]`, rule, registry);
   });

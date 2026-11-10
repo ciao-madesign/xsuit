@@ -38,11 +38,8 @@ describe("shipped data", () => {
   });
   it("profiles validate and hybrid references existing rules", () => {
     const ids = new Set([...westernSet.rules, ...chinaSet.rules].map((r: { id: string }) => r.id));
-    for (const p of profiles) {
-      expect(validateProfile(p).ok).toBe(true);
-      for (const c of p.composition ?? [])
-        for (const id of c.ruleIds) expect(ids.has(id)).toBe(true);
-    }
+    expect(ids.size).toBeGreaterThan(0);
+    for (const p of profiles) expect(validateProfile(p).ok).toBe(true);
   });
 });
 
@@ -159,9 +156,12 @@ describe("rule set validation", () => {
 });
 
 describe("profile and adapter validation", () => {
-  it("hybrid must list its composition; others must not", () => {
-    expect(validateProfile({ ...profiles[2], composition: undefined }).ok).toBe(false);
-    expect(validateProfile({ ...profiles[0], composition: [] }).ok).toBe(false);
+  it("every profile needs a configuration, and the old composition is gone", () => {
+    for (const p of profiles) {
+      expect(validateProfile({ ...p, configuration: undefined }).ok, p.id).toBe(false);
+      expect(validateProfile({ ...p, configuration: {} }).ok, p.id).toBe(false);
+      expect(validateProfile({ ...p, composition: [] }).ok, p.id).toBe(false);
+    }
   });
   const adapter = {
     id: "site.example",

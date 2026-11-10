@@ -1,0 +1,192 @@
+{
+  "version": "0.1.0",
+  "note": "Dimensions of a market configuration. A rule belongs to one pole of one dimension. A profile is a configuration: one pole per dimension, or nothing (keep the page as it is). Tendencies observed in the cited studies, never universal truths about people.",
+  "dimensions": [
+    {
+      "id": "density",
+      "name": "Information density",
+      "family": "visual",
+      "description": "How much content a page packs per screen.",
+      "poles": [
+        {
+          "id": "spacious",
+          "name": "Spacious",
+          "description": "Fewer items per screen, more room around them."
+        },
+        {
+          "id": "compact",
+          "name": "Compact",
+          "description": "More items per screen, tighter layout."
+        }
+      ]
+    },
+    {
+      "id": "spacing",
+      "name": "Spacing scale",
+      "family": "visual",
+      "description": "Space between blocks and around headers and footers.",
+      "poles": [
+        {
+          "id": "airy",
+          "name": "Airy",
+          "description": "Generous gaps."
+        },
+        {
+          "id": "tight",
+          "name": "Tight",
+          "description": "Small gaps."
+        }
+      ]
+    },
+    {
+      "id": "palette",
+      "name": "Colour palette",
+      "family": "visual",
+      "description": "How saturated and bright the colours are.",
+      "poles": [
+        {
+          "id": "muted",
+          "name": "Muted",
+          "description": "Calmer, less saturated colours."
+        },
+        {
+          "id": "vivid",
+          "name": "Vivid",
+          "description": "Richer, more saturated colours."
+        }
+      ]
+    },
+    {
+      "id": "hierarchy",
+      "name": "Visual hierarchy",
+      "family": "visual",
+      "description": "How strongly one element stands out over the rest.",
+      "poles": [
+        {
+          "id": "strong",
+          "name": "Strong",
+          "description": "A clear focal point; clear steps between levels."
+        },
+        {
+          "id": "flat",
+          "name": "Flat",
+          "description": "Many elements of similar weight."
+        }
+      ]
+    },
+    {
+      "id": "promotions",
+      "name": "Promotions",
+      "family": "visual",
+      "description": "The visual weight of promotional banners.",
+      "poles": [
+        {
+          "id": "quiet",
+          "name": "Quiet",
+          "description": "Promotions are visually reduced."
+        },
+        {
+          "id": "prominent",
+          "name": "Prominent",
+          "description": "Promotions carry more weight."
+        }
+      ]
+    },
+    {
+      "id": "carousels",
+      "name": "Carousels",
+      "family": "visual",
+      "description": "The visual weight of carousels.",
+      "poles": [
+        {
+          "id": "quiet",
+          "name": "Quiet",
+          "description": "Carousels are visually reduced."
+        },
+        {
+          "id": "prominent",
+          "name": "Prominent",
+          "description": "Carousels carry more weight."
+        }
+      ]
+    },
+    {
+      "id": "search-entry",
+      "name": "Search entry",
+      "family": "visual",
+      "description": "How much the search box stands out.",
+      "poles": [
+        {
+          "id": "prominent",
+          "name": "Prominent",
+          "description": "The search box is the visible main entry."
+        }
+      ]
+    },
+    {
+      "id": "link-affordance",
+      "name": "Link affordance",
+      "family": "visual",
+      "description": "How links show that they are links.",
+      "poles": [
+        {
+          "id": "underlined",
+          "name": "Underlined",
+          "description": "Text links are underlined."
+        }
+      ]
+    },
+    {
+      "id": "imagery",
+      "name": "Imagery",
+      "family": "visual",
+      "description": "How much images lead the content cards.",
+      "poles": [
+        {
+          "id": "image-led",
+          "name": "Image-led",
+          "description": "Images are prominent in cards and feed items."
+        }
+      ]
+    },
+    {
+      "id": "sidebar",
+      "name": "Sidebar",
+      "family": "information-architecture",
+      "description": "What happens to side content.",
+      "poles": [
+        {
+          "id": "collapsed",
+          "name": "Collapsed",
+          "description": "Side content sits behind a Show button."
+        }
+      ]
+    },
+    {
+      "id": "discovery",
+      "name": "Discovery feed",
+      "family": "information-architecture",
+      "description": "How central recommendations are.",
+      "poles": [
+        {
+          "id": "central",
+          "name": "Central",
+          "description": "Recommendations carry weight and sit closer to the top."
+        }
+      ]
+    },
+    {
+      "id": "entry-points",
+      "name": "Entry points",
+      "family": "information-architecture",
+      "description": "Whether main destinations are repeated near the top.",
+      "poles": [
+        {
+          "id": "surfaced",
+          "name": "Surfaced",
+          "description": "A strip of shortcuts to existing destinations."
+        }
+      ]
+    }
+  ]
+}

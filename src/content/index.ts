@@ -120,6 +120,7 @@ function main(): void {
       ruleSets,
       profiles: profiles as unknown as Profile[],
       profile: settings.profile,
+      hybridChoices: settings.hybridChoices,
       hybridRuleIds: settings.hybridRules,
     };
     if (needsMetrics(input))

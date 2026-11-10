@@ -25,6 +25,22 @@ Every rule must be traceable to a real study or to stated observations, with its
 for (const s of sources)
   out += `| ${s.id} | ${s.kind} | ${s.authors} (${s.year}), [${s.title}](${s.url}) | ${s.sample} | ${s.verified ? `yes (${s.checkedOn})` : `**no** (${(s.attempts ?? ["not yet attempted"]).join(" ")})`} |\n`;
 
+const dims = read("rules/dimensions.json").dimensions;
+const profilesData = read("rules/profiles.json");
+out +=
+  "\n## Dimensions, poles and rules\n\nA profile is a configuration: one pole per dimension, or nothing (the page stays as it is). Each rule belongs to one pole of one dimension and has its own version.\n\n| dimension | pole | rule | version | evidence | last reviewed | in profiles |\n|---|---|---|---|---|---|---|\n";
+for (const d of dims)
+  for (const p of d.poles) {
+    const rs = rules.filter((r) => r.dimension === d.id && r.pole === p.id);
+    const inProfiles =
+      profilesData
+        .filter((x) => x.configuration[d.id] === p.id)
+        .map((x) => x.id)
+        .join(", ") || "none";
+    for (const r of rs)
+      out += `| ${d.name} | ${p.name} | ${r.id} | ${r.version} | ${r.evidence.level} | ${r.lastReviewed ?? "never"} | ${inProfiles} |\n`;
+  }
+
 const fx = read("rules/effects.json");
 out += "\n## Effect catalog (concrete CSS)\n\n" + fx.note + "\n\n";
 for (const e of fx.effects)
