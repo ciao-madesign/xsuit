@@ -33,7 +33,7 @@ V1 targets IX researchers, but the final product is a simple public toggle that 
 
 ## Next steps
 
-1. B8 and B9 done. Decisions #36-#39 confirmed. B9: `collapse` + `surface-shortcut` (new rule `structure.china.surface-shortcuts`), 151 tests; checked in jsdom only, not yet in real Chromium.
+1. B8 and B9 done. Decisions #36-#39 confirmed. B9: collapse, surface-shortcut, reorder, group (reorder/group only when reliable, #40); 153 tests; collapse and exact restore checked in real Chromium (Chromium itself adds `style=""` after screenshots: ignore it when comparing HTML).
 2. Next: B10 (comparison report, Hybrid editor, remaining adapters, equivalents panel, observation sheets), proposing choices one at a time first (decision #25).
 3. Known: effect magnitudes need tuning (vivid saturation lowers contrast on ~18% of passing pairs in the synthetic simulation); the guard handles it at runtime. Tune in B11 with real data.
 4. Evidence track (needs the user's PC): verify li2022 / li2026; collect measurements per `research/measurements/README.md`; replace provisional baselines. Do not spoof user agents.
