@@ -77,9 +77,9 @@ Written 2026-11-10 after the merge of the security work and B11 and the privacy 
 - Firefox and Edge manifests/build targets; feature checks for APIs that differ. `docs/23-cross-browser.md`.
 - Checks (A): build per target + manifest tests (same security invariants). (P): manual smoke test in each browser.
 
-## B22 — Validation with people and go / no-go
+## B22 — Validation with people and go / no-go (automatic part DONE 2026-11-10, see docs/24-ux-validation-methodology.md; the study itself needs people)
 
-- `docs/18-ux-validation-methodology.md`: tasks, measures (time to find a function, steps, errors, preference), sample, ethics and consent; A/B mode for the researcher.
+- `docs/24-ux-validation-methodology.md`: tasks, measures (time to find a function, steps, errors, preference), sample, ethics and consent; A/B mode for the researcher.
 - Run a small study; record results and limits; decide on Deep Mode and any smarter recognition **only after** this.
 - Checks (P): study report with raw anonymized data. (A): the A/B recorder produces files that pass the privacy gate.
 

@@ -1,0 +1,38 @@
+{
+  "schema": "xsuit.study/1",
+  "studyId": "",
+  "profileTested": "western",
+  "siteCategory": "",
+  "consent": { "obtained": false, "version": "", "withdrawalExplained": false },
+  "tasks": [
+    {
+      "id": "t1",
+      "description": "",
+      "successCriterion": "",
+      "maxSeconds": 120
+    }
+  ],
+  "criteria": {
+    "registeredOn": "YYYY-MM-DD",
+    "maxSlowdown": 0.1,
+    "maxSuccessDrop": 0,
+    "minPreferenceShare": 0.5,
+    "minParticipants": 12
+  },
+  "limits": "",
+  "sessions": [
+    {
+      "participant": "P01",
+      "market": "western",
+      "familiarity": "none",
+      "date": "YYYY-MM-DD",
+      "order": "AB",
+      "trials": [
+        { "task": "t1", "condition": "A", "seconds": 0, "steps": 0, "errors": 0, "success": false },
+        { "task": "t1", "condition": "B", "seconds": 0, "steps": 0, "errors": 0, "success": false }
+      ],
+      "preference": { "chosen": "none", "reason": "" },
+      "incidents": []
+    }
+  ]
+}

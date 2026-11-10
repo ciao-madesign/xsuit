@@ -36,3 +36,4 @@ Repository root: [README](../README.md), [SECURITY](../SECURITY.md).
 
 - `22-language-typography-responsive.md`: B20 language, script and direction handling, CJK line height, right-to-left safety, phone widths.
 - `23-cross-browser.md`: B21 Chrome, Edge and Firefox builds, security invariants, feature checks, smoke test.
+- `24-ux-validation-methodology.md`: B22 A/B study method with people, consent and privacy, registered go / no-go criteria.

@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { validateObservation } from "./observation";
 import { scanForPersonalData } from "./personal";
 import { checkMeasurementFile } from "./privacy";
+import { validateStudy } from "./study";
 
 const files = (d: string): string[] =>
   !existsSync(d)
@@ -26,6 +27,8 @@ const read = (f: string): unknown => JSON.parse(readFileSync(f, "utf8"));
 for (const f of files("research/measurements")) report(f, checkMeasurementFile(read(f)).problems);
 for (const f of files("research/observations").filter((x) => !x.endsWith("template.json")))
   report(f, validateObservation(read(f)));
+for (const f of files("research/studies").filter((x) => !x.endsWith("template.json")))
+  report(f, validateStudy(read(f)));
 for (const f of files("research/adapter-verification").filter((x) => !x.endsWith("template.json")))
   report(f, scanForPersonalData(readFileSync(f, "utf8")));
 console.log(

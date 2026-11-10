@@ -20,6 +20,7 @@
     "replication": "node scripts/replication.mjs",
     "corpus": "node scripts/corpus-report.mjs",
     "lock": "node scripts/lock-data.mjs",
+    "study": "node scripts/run-ts.mjs src/research/study-cli.ts",
     "privacy": "node scripts/run-ts.mjs src/research/privacy-cli.ts",
     "adapters": "node scripts/run-ts.mjs src/research/adapters-cli.ts",
     "validate:browser": "npm run build && node scripts/validate-browser.cjs"
