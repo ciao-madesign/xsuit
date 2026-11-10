@@ -8,6 +8,7 @@ const opts = {
     content: "src/content/index.ts",
     popup: "src/popup/index.ts",
     options: "src/options/index.ts",
+    report: "src/report/index.ts",
   },
   outdir: "dist",
   bundle: true,

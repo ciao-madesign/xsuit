@@ -16,11 +16,13 @@ import type {
   MeasureReply,
   Message,
   PingReply,
+  ReportReply,
   RestoreReply,
 } from "../shared/messages";
 import type { Settings } from "../shared/settings";
 import { computeStatus } from "../shared/state";
 import { loadSettings, onSettingsChanged } from "../shared/storage";
+import { buildReport } from "../report/report";
 import { Overlay } from "../ui/overlay";
 import { summarizeChanges } from "../ui/summary";
 
@@ -147,6 +149,33 @@ function main(): void {
         const measurement = measurePage(document);
         if (wasActive && current) sync(current);
         sendResponse({ ok: true, measurement } satisfies MeasureReply);
+        break;
+      }
+      case "xsuit/report": {
+        // "After" is measured with the changes in place, "before" on the restored original page.
+        const wasActive = engine.status.active;
+        const st = engine.status;
+        const after = wasActive ? measurePage(document) : null;
+        const { changes, reverted } = st;
+        const skipped = st.plan?.skipped ?? [];
+        engine.restore();
+        overlay.hide();
+        const before = measurePage(document);
+        if (wasActive && current) sync(current);
+        sendResponse({
+          ok: true,
+          report: buildReport({
+            profile: current?.profile ?? "original",
+            depth: current?.depth ?? "visual",
+            pageType: (analysis ?? analyze()).context.pageType,
+            before,
+            after,
+            changes,
+            reverted,
+            skipped,
+            allRules,
+          }),
+        } satisfies ReportReply);
         break;
       }
       case "xsuit/inspect": {

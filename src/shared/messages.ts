@@ -1,5 +1,6 @@
 import type { RecognizedComponent } from "../analyzer";
 import type { Compatibility } from "../analyzer/compatibility";
+import type { Report } from "../report/report";
 import type { Measurement } from "../metrics/metrics";
 
 export type Message =
@@ -7,7 +8,8 @@ export type Message =
   | { type: "xsuit/restore" }
   | { type: "xsuit/apply-once" }
   | { type: "xsuit/measure" }
-  | { type: "xsuit/inspect" };
+  | { type: "xsuit/inspect" }
+  | { type: "xsuit/report" };
 
 export interface PingReply {
   ok: true;
@@ -43,4 +45,9 @@ export interface InspectReply {
   skipped: { ruleId: string; reason: string }[];
   reverted: { ruleId: string; reason: string }[];
   compatibility: Compatibility;
+}
+
+export interface ReportReply {
+  ok: true;
+  report: Report;
 }

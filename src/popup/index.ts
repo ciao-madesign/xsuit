@@ -4,6 +4,7 @@ import type {
   InspectReply,
   MeasureReply,
   Message,
+  ReportReply,
   RestoreReply,
 } from "../shared/messages";
 import {
@@ -41,7 +42,7 @@ function render(): void {
   const always = $<HTMLInputElement>("always");
   always.disabled = !supported;
   always.checked = status.kind === "active";
-  for (const id of ["restore", "measure", "inspect"])
+  for (const id of ["restore", "measure", "inspect", "compare"])
     $<HTMLButtonElement>(id).disabled = !supported;
   $<HTMLButtonElement>("apply").disabled =
     !supported || !settings.enabled || settings.profile === "original";
@@ -138,6 +139,31 @@ async function inspect(): Promise<void> {
   box.hidden = false;
 }
 
+/** Before/after report: numbers from the page, plus two screenshots of the visible area. */
+async function compare(): Promise<void> {
+  say("Preparing the report…");
+  const r = await send<ReportReply>({ type: "xsuit/report" });
+  if (!r) return;
+  const images: { before: string | null; after: string | null } = { before: null, after: null };
+  const shot = () =>
+    chrome.tabs.captureVisibleTab(tab!.windowId, { format: "png" }).catch(() => null);
+  if (r.report.transformed) {
+    images.after = await shot();
+    await send<RestoreReply>({ type: "xsuit/restore" });
+    await new Promise((res) => setTimeout(res, 300));
+    images.before = await shot();
+    await send<ApplyReply>({ type: "xsuit/apply-once" });
+  }
+  try {
+    await chrome.storage.session.set({ report: { report: r.report, images } });
+  } catch {
+    await chrome.storage.session.set({
+      report: { report: r.report, images: { before: null, after: null } },
+    });
+  }
+  await chrome.tabs.create({ url: chrome.runtime.getURL("report.html") });
+}
+
 function download(): void {
   if (!last) return;
   const url = URL.createObjectURL(
@@ -195,6 +221,7 @@ async function init(): Promise<void> {
   $("inspect").addEventListener("click", inspect);
   $("measure").addEventListener("click", measure);
   $("download").addEventListener("click", download);
+  $("compare").addEventListener("click", compare);
   render();
 }
 

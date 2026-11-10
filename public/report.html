@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>xsuit comparison report</title>
+    <link rel="stylesheet" href="ui.css" />
+    <style>
+      body {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+      .shots {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .shots img {
+        max-width: 100%;
+        border: 1px solid #8884;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 8px 0;
+      }
+      td,
+      th {
+        text-align: left;
+        padding: 3px 8px;
+        border-bottom: 1px solid #8883;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Comparison report</h1>
+      <p id="empty" hidden>
+        No report to show. Open the popup, then Research tools, then "Comparison report". Reports
+        are shown once and not stored.
+      </p>
+      <div id="content" hidden>
+        <h2 id="title"></h2>
+        <p id="meta" class="muted"></p>
+        <p id="not-transformed" hidden>
+          Nothing was applied on this page, so there is nothing to compare.
+        </p>
+        <h3>Before and after</h3>
+        <div class="shots">
+          <figure>
+            <figcaption>Before (original)</figcaption>
+            <div id="img-before"></div>
+          </figure>
+          <figure>
+            <figcaption>After (xsuit)</figcaption>
+            <div id="img-after"></div>
+          </figure>
+        </div>
+        <p class="muted">
+          Screenshots show only what was visible and may contain personal data. They stay on this
+          device and are not included in the downloaded file.
+        </p>
+        <h3>Rules applied</h3>
+        <table id="rules">
+          <tr>
+            <th>Rule</th>
+            <th>Evidence</th>
+            <th>Elements</th>
+          </tr>
+        </table>
+        <div id="undone-box" hidden>
+          <h3>Undone by the accessibility check</h3>
+          <ul id="undone"></ul>
+        </div>
+        <h3>Metrics</h3>
+        <table id="metrics">
+          <tr>
+            <th>Metric</th>
+            <th>Before</th>
+            <th>After</th>
+            <th>Change</th>
+          </tr>
+        </table>
+        <ul id="notes" class="muted"></ul>
+        <button id="download" class="primary" type="button">Download report (JSON)</button>
+      </div>
+    </main>
+    <script src="report.js"></script>
+  </body>
+</html>
