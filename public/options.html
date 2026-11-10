@@ -7,14 +7,36 @@
     <link rel="stylesheet" href="ui.css" />
   </head>
   <body>
-    <main style="max-width: 520px">
+    <main style="max-width: 640px">
       <h1>xsuit options</h1>
+
+      <h2>On-page label</h2>
+      <p class="muted">
+        A small semi-transparent label appears in a corner when xsuit has changed a page.
+      </p>
+      <div class="row">
+        <label for="label-position">Position</label>
+        <select id="label-position">
+          <option value="bottom-left">Bottom left</option>
+          <option value="bottom-right">Bottom right</option>
+          <option value="hidden">Hidden</option>
+        </select>
+      </div>
+
       <h2>Sites where xsuit always runs</h2>
       <p class="muted">
         xsuit runs automatically only on these sites. Everywhere else it acts only when you press a
-        button in the popup. Add a site from the popup ("Always on this site").
+        button in the popup. Add a site from the popup ("Personalize this site").
       </p>
       <ul id="sites"></ul>
+
+      <h2>Rules</h2>
+      <p class="muted">
+        Turn off any rule for all sites. Every rule shows how strong its evidence is. The full
+        justification of each rule is in docs/07-evidence-audit.md.
+      </p>
+      <div id="rules"></div>
+
       <h2>Reset</h2>
       <button id="reset" type="button">Restore default settings</button>
       <h2>Privacy</h2>

@@ -1,5 +1,11 @@
 import { measurementFileName, type Measurement } from "../metrics/metrics";
-import type { ApplyReply, MeasureReply, Message, RestoreReply } from "../shared/messages";
+import type {
+  ApplyReply,
+  InspectReply,
+  MeasureReply,
+  Message,
+  RestoreReply,
+} from "../shared/messages";
 import {
   DEPTHS,
   PROFILE_CHOICES,
@@ -35,7 +41,8 @@ function render(): void {
   const always = $<HTMLInputElement>("always");
   always.disabled = !supported;
   always.checked = status.kind === "active";
-  for (const id of ["restore", "measure"]) $<HTMLButtonElement>(id).disabled = !supported;
+  for (const id of ["restore", "measure", "inspect"])
+    $<HTMLButtonElement>(id).disabled = !supported;
   $<HTMLButtonElement>("apply").disabled =
     !supported || !settings.enabled || settings.profile === "original";
   const box = $("status");
@@ -81,6 +88,11 @@ async function setAlways(on: boolean): Promise<void> {
       return;
     }
     await update(withSite(settings, host, true));
+    // No style chosen yet: ask in plain words instead of deciding for the user (decision #30).
+    if (settings.profile === "original") {
+      $("picker").hidden = false;
+      return;
+    }
     await send<ApplyReply>({ type: "xsuit/apply-once" });
   } else {
     await chrome.permissions.remove({ origins }).catch(() => false);
@@ -101,6 +113,29 @@ async function measure(): Promise<void> {
   }
   table.hidden = false;
   $<HTMLButtonElement>("download").disabled = false;
+}
+
+const LEVEL_TEXT = { full: "Full", partial: "Partial", minimal: "Minimal" } as const;
+
+async function inspect(): Promise<void> {
+  const r = await send<InspectReply>({ type: "xsuit/inspect" });
+  if (!r) return;
+  const box = $("compat");
+  box.replaceChildren();
+  const add = (text: string, strong = false) => {
+    const p = document.createElement("p");
+    if (strong) p.style.fontWeight = "600";
+    p.textContent = text;
+    box.append(p);
+  };
+  add(`Compatibility: ${LEVEL_TEXT[r.compatibility.level]}`, true);
+  add(r.compatibility.reason);
+  add(`Page type: ${r.pageType} (${r.classificationNote})`);
+  for (const c of r.recognized)
+    add(`${c.component}: ${c.confidence}, from ${c.source} (${c.signals.join("; ")})`);
+  if (r.skipped.length) add(`Skipped rules: ${r.skipped.length}`);
+  for (const s of r.skipped.slice(0, 8)) add(`- ${s.ruleId}: ${s.reason}`);
+  box.hidden = false;
 }
 
 function download(): void {
@@ -149,6 +184,15 @@ async function init(): Promise<void> {
     const r = await send<RestoreReply>({ type: "xsuit/restore" });
     if (r) say(r.note);
   });
+  for (const b of document.querySelectorAll<HTMLButtonElement>("#picker button")) {
+    b.addEventListener("click", async () => {
+      const style = b.dataset.style as ProfileChoice;
+      $("picker").hidden = true;
+      await update({ ...settings, profile: style });
+      await send<ApplyReply>({ type: "xsuit/apply-once" });
+    });
+  }
+  $("inspect").addEventListener("click", inspect);
   $("measure").addEventListener("click", measure);
   $("download").addEventListener("click", download);
   render();

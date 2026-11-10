@@ -10,6 +10,10 @@ export interface PlanInput {
   profile: ProfileChoice;
   depth: Depth;
   context: PageContext;
+  /** Rules the user turned off. */
+  disabledRules?: string[];
+  /** Rules undone on this page by the accessibility guard, with the reason. */
+  blockedRules?: Record<string, string>;
 }
 
 /** Rules a profile selects. Hybrid is an explicit composition, never an automatic mix. */
@@ -90,7 +94,9 @@ export function buildPlan(input: PlanInput): Plan {
   const skipped: SkippedRule[] = [];
   let pool: Rule[] = [];
   for (const rule of selectCandidates(input)) {
-    const why = blocker(rule, input);
+    const why = input.disabledRules?.includes(rule.id)
+      ? "turned off by you in the options"
+      : (input.blockedRules?.[rule.id] ?? blocker(rule, input));
     if (why) skipped.push({ ruleId: rule.id, reason: why });
     else pool.push(rule);
   }

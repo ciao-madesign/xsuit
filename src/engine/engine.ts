@@ -1,3 +1,4 @@
+import { A11yGuard } from "./a11y";
 import { applyPlan, type AppliedState } from "./apply";
 import { Journal } from "./journal";
 import { buildPlan, type PlanInput } from "./plan";
@@ -9,6 +10,10 @@ export interface EngineOptions {
   effects?: EffectCatalog;
   /** Fresh view of the page on every run (components can appear later). */
   getContext?: () => PageContext;
+  /** Called after every run, with the observer paused (safe place to update on-page UI). */
+  onRun?: (status: EngineStatus) => void;
+  /** Turn the accessibility guard off (tests only). Default: on. */
+  a11yGuard?: boolean;
   /** Wait before re-applying after the page changes. */
   debounceMs?: number;
   /** Loop guard: more than maxRuns re-applications within windowMs stops the engine. */
@@ -23,6 +28,10 @@ export interface EngineStatus {
   runs: number;
   plan: Plan | null;
   report: ApplyReport | null;
+  /** Everything applied so far on this page (cumulative across runs), reverted rules removed. */
+  changes: { ruleId: string; elements: number }[];
+  /** Rules the accessibility guard undid on this page, with reasons. */
+  reverted: { ruleId: string; reason: string }[];
 }
 
 export class Engine {
@@ -32,14 +41,20 @@ export class Engine {
   private timer: ReturnType<typeof setTimeout> | null = null;
   private input: PlanInput | null = null;
   private recent: number[] = [];
+  private blocked: Record<string, string> = {};
+  private totals = new Map<string, number>();
   private s: EngineStatus = {
     active: false,
     guardTripped: false,
     runs: 0,
     plan: null,
     report: null,
+    changes: [],
+    reverted: [],
   };
-  private readonly o: Required<Omit<EngineOptions, "doc" | "resolve" | "effects" | "getContext">> &
+  private readonly o: Required<
+    Omit<EngineOptions, "doc" | "resolve" | "effects" | "getContext" | "onRun" | "a11yGuard">
+  > &
     EngineOptions;
 
   constructor(options: EngineOptions) {
@@ -55,6 +70,8 @@ export class Engine {
     this.input = input;
     this.s.guardTripped = false;
     this.recent = [];
+    this.blocked = {};
+    this.totals = new Map();
     this.run();
     this.observe();
     this.s.active = true;
@@ -66,15 +83,37 @@ export class Engine {
     this.journal.rollback();
     this.state = new WeakMap();
     this.input = null;
-    this.s = { active: false, guardTripped: false, runs: 0, plan: null, report: null };
+    this.blocked = {};
+    this.totals = new Map();
+    this.s = {
+      active: false,
+      guardTripped: false,
+      runs: 0,
+      plan: null,
+      report: null,
+      changes: [],
+      reverted: [],
+    };
+  }
+
+  /** Runs `fn` without the observer seeing our own page changes (on-page UI, style updates). */
+  quietly(fn: () => void): void {
+    const watching = this.observer !== null;
+    this.observer?.disconnect();
+    try {
+      fn();
+    } finally {
+      if (watching) this.connect();
+    }
   }
 
   private run(): void {
     if (!this.input) return;
     if (this.o.getContext) this.input = { ...this.input, context: this.o.getContext() };
-    const plan = buildPlan(this.input);
-    this.s.plan = plan;
-    this.s.report = applyPlan(
+    const input = { ...this.input, blockedRules: this.blocked };
+    const plan = buildPlan(input);
+    const guard = this.o.a11yGuard === false ? null : new A11yGuard(this.o.doc);
+    const report = applyPlan(
       this.o.doc,
       plan,
       this.o.resolve,
@@ -82,8 +121,26 @@ export class Engine {
       this.journal,
       this.state,
       this.input.profile,
+      guard,
     );
+    for (const r of report.guard.reverted) {
+      this.blocked[r.ruleId] = r.reason;
+      this.totals.delete(r.ruleId);
+    }
+    for (const a of report.applied)
+      this.totals.set(a.ruleId, (this.totals.get(a.ruleId) ?? 0) + a.elements);
+    this.s.plan = {
+      entries: plan.entries.filter((e) => !(e.rule.id in this.blocked)),
+      skipped: [
+        ...plan.skipped,
+        ...Object.entries(this.blocked).map(([ruleId, reason]) => ({ ruleId, reason })),
+      ],
+    };
+    this.s.report = report;
     this.s.runs++;
+    this.s.changes = [...this.totals].map(([ruleId, elements]) => ({ ruleId, elements }));
+    this.s.reverted = Object.entries(this.blocked).map(([ruleId, reason]) => ({ ruleId, reason }));
+    this.o.onRun?.({ ...this.s });
   }
 
   private observe(): void {

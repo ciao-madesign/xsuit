@@ -42,6 +42,8 @@ describe("normalizeSettings", () => {
       profile: "china",
       depth: "structural",
       enabledSites: ["a.com", "b.com"],
+      disabledRules: [],
+      labelPosition: "bottom-left",
     });
   });
 });

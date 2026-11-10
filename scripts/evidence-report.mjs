@@ -29,6 +29,11 @@ const fx = read("rules/effects.json");
 out += "\n## Effect catalog (concrete CSS)\n\n" + fx.note + "\n\n";
 for (const e of fx.effects)
   out += `- \`${e.key}\`: \`${e.declarations.join("; ")}\`\n  - Basis: ${e.basis}\n  - Constraints: ${e.constraints.join(" ")}\n  - Used by: ${e.ruleIds.join(", ")}\n`;
+const cs = fx.contrastSimulation;
+out += `\nContrast simulation: ${cs.what}\n\n- Method: ${cs.method}\n`;
+for (const r of cs.results)
+  out += `- ${r.filter}: ${r.fallBelow4_5Percent}% of passing pairs fall below 4.5:1\n`;
+out += `- Correction: ${cs.correction}\n- Caveat: ${cs.caveat}\n`;
 out += "\nNo effect (on purpose):\n\n";
 for (const e of fx.intentionallyEmpty) out += `- \`${e.key}\`: ${e.reason}\n`;
 out += "\n## Rules\n";

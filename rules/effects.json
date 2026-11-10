@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "note": "Concrete CSS for rule actions. Direction of each effect comes from the evidence cited by the rules that use it. The MAGNITUDE (how much) is a design choice, kept deliberately modest, and must be tuned during the internal review (B8). Effects only use properties that cannot lower text contrast, shrink touch targets, hide content or move elements out of flow (checked by tests).",
+  "note": "Concrete CSS for rule actions. Direction of each effect comes from the evidence cited by the rules that use it. The MAGNITUDE (how much) is a design choice, kept deliberately modest, and must be tuned during the internal review (B11). Effects only use properties that cannot hide content, move elements or shrink targets (checked by tests). Saturation filters CAN lower text contrast (see contrastSimulation, a correction made in B8): every changed element is therefore checked at runtime by the accessibility guard, which undoes a rule that measurably worsens contrast, target size or horizontal scroll.",
   "effects": [
     {
       "key": "density=compact",
@@ -38,8 +38,8 @@
       "declarations": ["filter: saturate(0.8)"],
       "basis": "Direction: Chinese palettes are more saturated and brighter than Western ones (li2026). Magnitude is a design choice.",
       "constraints": [
-        "Saturation filter keeps luminance, so text contrast ratios (WCAG 1.4.3) are not lowered in any meaningful way.",
-        "Hue is not changed (no red/gold stereotype)."
+        "Hue is not changed (no red/gold stereotype).",
+        "Can lower text contrast on some colour pairs (see contrastSimulation): the runtime accessibility guard undoes the rule on any element where contrast measurably gets worse."
       ],
       "ruleIds": ["visual.western.muted-palette"]
     },
@@ -49,7 +49,7 @@
       "basis": "Direction: Chinese palettes are wider, more saturated, brighter (li2026), and use more red and blue (li2022). Magnitude is a design choice.",
       "constraints": [
         "Saturation only; hue untouched.",
-        "Luminance preserved, so contrast ratios are not lowered meaningfully."
+        "Can lower text contrast on some colour pairs (see contrastSimulation): the runtime accessibility guard undoes the rule on any element where contrast measurably gets worse."
       ],
       "ruleIds": ["visual.china.vivid-palette"]
     },
@@ -72,15 +72,20 @@
     {
       "key": "de-emphasize=medium",
       "declarations": ["filter: saturate(0.7)"],
-      "basis": "Direction: promotions and carousels are more selective in Western designs (li2026 posters 66 vs 99, autoplay 39 vs 99). Weight is reduced through saturation, never opacity, so text contrast is not lowered (WCAG 1.4.3). Magnitude is a design choice.",
-      "constraints": ["Content stays fully visible and readable; no opacity change."],
+      "basis": "Direction: promotions and carousels are more selective in Western designs (li2026 posters 66 vs 99, autoplay 39 vs 99). Weight is reduced through saturation, never opacity (opacity lowers contrast on every pair); saturation can still lower contrast on some pairs, so it is guarded at runtime. Magnitude is a design choice.",
+      "constraints": [
+        "Content stays fully visible and readable; no opacity change.",
+        "Can lower text contrast on some colour pairs (see contrastSimulation): the runtime accessibility guard undoes the rule on any element where contrast measurably gets worse."
+      ],
       "ruleIds": ["visual.western.quiet-promos", "visual.western.quiet-carousel"]
     },
     {
       "key": "emphasize=medium",
       "declarations": ["filter: saturate(1.2)"],
       "basis": "Direction: banners, carousels and recommendations carry more weight in Chinese designs (li2026, project synthesis). Magnitude is a design choice.",
-      "constraints": ["Saturation only; luminance preserved."],
+      "constraints": [
+        "Can lower text contrast on some colour pairs (see contrastSimulation): the runtime accessibility guard undoes the rule on any element where contrast measurably gets worse."
+      ],
       "ruleIds": [
         "visual.china.prominent-promos",
         "visual.china.prominent-carousel",
@@ -108,5 +113,29 @@
       "reason": "Rule visual.china.flat-hierarchy links block count to visual weight only by interpretation. No effect is invented until validated.",
       "ruleIds": ["visual.china.flat-hierarchy"]
     }
-  ]
+  ],
+  "contrastSimulation": {
+    "what": "Share of text/background colour pairs that pass WCAG 4.5:1 and fall below it after the CSS saturate() filter.",
+    "method": "All pairs of a 5x5x5 RGB grid (levels 0, 64, 128, 192, 255) with contrast >= 4.5 before; text and background both filtered (worst case: they belong to the same filtered element). Reproduced by tests/b8.test.ts.",
+    "results": [
+      {
+        "filter": "saturate(0.7)",
+        "fallBelow4_5Percent": 3.93
+      },
+      {
+        "filter": "saturate(0.8)",
+        "fallBelow4_5Percent": 2.67
+      },
+      {
+        "filter": "saturate(1.2)",
+        "fallBelow4_5Percent": 14.12
+      },
+      {
+        "filter": "saturate(1.25)",
+        "fallBelow4_5Percent": 17.63
+      }
+    ],
+    "correction": "Until B7 this file claimed that saturation filters keep luminance and therefore do not lower contrast. That was wrong: the filter works on sRGB values, so relative luminance changes. The claim was removed and the runtime guard added.",
+    "caveat": "Synthetic grid, not real pages; real sites use few distinct colours, so the real share is unknown until B11."
+  }
 }

@@ -5,12 +5,18 @@ export type ProfileChoice = (typeof PROFILE_CHOICES)[number];
 export const DEPTHS = ["visual", "structural"] as const;
 export type Depth = (typeof DEPTHS)[number];
 
+export const LABEL_POSITIONS = ["bottom-left", "bottom-right", "hidden"] as const;
+export type LabelPosition = (typeof LABEL_POSITIONS)[number];
+
 export interface Settings {
   enabled: boolean;
   profile: ProfileChoice;
   depth: Depth;
   /** Sites where xsuit runs automatically. Everywhere else it runs only on request. */
   enabledSites: string[];
+  /** Rules the user turned off (all sites). */
+  disabledRules: string[];
+  labelPosition: LabelPosition;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -18,8 +24,11 @@ export const DEFAULT_SETTINGS: Settings = {
   profile: "original",
   depth: "visual",
   enabledSites: [],
+  disabledRules: [],
+  labelPosition: "bottom-left",
 };
 
+const RULE_ID_RE = /^[a-z0-9]+(\.[a-z0-9-]+)+$/;
 const HOST_RE = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/;
 
 /** Accepts "https://www.Example.com/x", "WWW.example.com", "example.com". Returns null if not a host. */
@@ -39,12 +48,21 @@ export function normalizeHost(input: string): string | null {
 
 /** Makes any stored value safe: unknown or corrupted data falls back to defaults. */
 export function normalizeSettings(raw: unknown): Settings {
-  const s: Settings = { ...DEFAULT_SETTINGS, enabledSites: [] };
+  const s: Settings = { ...DEFAULT_SETTINGS, enabledSites: [], disabledRules: [] };
   if (typeof raw !== "object" || raw === null) return s;
   const r = raw as Record<string, unknown>;
   if (typeof r.enabled === "boolean") s.enabled = r.enabled;
   if (PROFILE_CHOICES.includes(r.profile as ProfileChoice)) s.profile = r.profile as ProfileChoice;
   if (DEPTHS.includes(r.depth as Depth)) s.depth = r.depth as Depth;
+  if (LABEL_POSITIONS.includes(r.labelPosition as LabelPosition))
+    s.labelPosition = r.labelPosition as LabelPosition;
+  if (Array.isArray(r.disabledRules)) {
+    s.disabledRules = [
+      ...new Set(
+        r.disabledRules.filter((x): x is string => typeof x === "string" && RULE_ID_RE.test(x)),
+      ),
+    ].sort();
+  }
   if (Array.isArray(r.enabledSites)) {
     const set = new Set<string>();
     for (const d of r.enabledSites) {

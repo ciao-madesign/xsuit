@@ -47,6 +47,9 @@
           </select>
         </div>
         <div class="row">
+          <label><input type="radio" name="profile" value="hybrid" /> Hybrid (preliminary)</label>
+        </div>
+        <div class="row">
           <button id="apply" class="primary" type="button">Apply now</button>
           <button id="restore" type="button">Restore original</button>
         </div>
@@ -63,6 +66,10 @@
           <button id="download" type="button" disabled>Download JSON</button>
         </div>
         <table id="metrics" class="metrics" hidden></table>
+        <div class="row">
+          <button id="inspect" type="button">Check compatibility</button>
+        </div>
+        <div id="compat" class="muted" hidden></div>
         <p class="muted">Runs locally. Nothing is sent anywhere.</p>
       </details>
     </main>

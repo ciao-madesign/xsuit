@@ -7,7 +7,7 @@ export async function loadSettings(): Promise<Settings> {
     const data = await chrome.storage.local.get(KEY);
     return normalizeSettings(data[KEY]);
   } catch {
-    return { ...DEFAULT_SETTINGS, enabledSites: [] };
+    return { ...DEFAULT_SETTINGS, enabledSites: [], disabledRules: [] };
   }
 }
 

@@ -20,7 +20,7 @@ Every rule must be traceable to a real study or to stated observations, with its
 
 ## Effect catalog (concrete CSS)
 
-Concrete CSS for rule actions. Direction of each effect comes from the evidence cited by the rules that use it. The MAGNITUDE (how much) is a design choice, kept deliberately modest, and must be tuned during the internal review (B8). Effects only use properties that cannot lower text contrast, shrink touch targets, hide content or move elements out of flow (checked by tests).
+Concrete CSS for rule actions. Direction of each effect comes from the evidence cited by the rules that use it. The MAGNITUDE (how much) is a design choice, kept deliberately modest, and must be tuned during the internal review (B11). Effects only use properties that cannot hide content, move elements or shrink targets (checked by tests). Saturation filters CAN lower text contrast (see contrastSimulation, a correction made in B8): every changed element is therefore checked at runtime by the accessibility guard, which undoes a rule that measurably worsens contrast, target size or horizontal scroll.
 
 - `density=compact`: `line-height: 1.4; gap: 0.5rem`
   - Basis: Direction: Chinese homepages show higher visual density and more blocks (li2026); Chinese users prefer relatively high density (nng2016). Magnitude is a design choice.
@@ -40,11 +40,11 @@ Concrete CSS for rule actions. Direction of each effect comes from the evidence 
   - Used by: visual.western.airy-spacing
 - `palette-saturation=muted`: `filter: saturate(0.8)`
   - Basis: Direction: Chinese palettes are more saturated and brighter than Western ones (li2026). Magnitude is a design choice.
-  - Constraints: Saturation filter keeps luminance, so text contrast ratios (WCAG 1.4.3) are not lowered in any meaningful way. Hue is not changed (no red/gold stereotype).
+  - Constraints: Hue is not changed (no red/gold stereotype). Can lower text contrast on some colour pairs (see contrastSimulation): the runtime accessibility guard undoes the rule on any element where contrast measurably gets worse.
   - Used by: visual.western.muted-palette
 - `palette-saturation=vivid`: `filter: saturate(1.25)`
   - Basis: Direction: Chinese palettes are wider, more saturated, brighter (li2026), and use more red and blue (li2022). Magnitude is a design choice.
-  - Constraints: Saturation only; hue untouched. Luminance preserved, so contrast ratios are not lowered meaningfully.
+  - Constraints: Saturation only; hue untouched. Can lower text contrast on some colour pairs (see contrastSimulation): the runtime accessibility guard undoes the rule on any element where contrast measurably gets worse.
   - Used by: visual.china.vivid-palette
 - `image-prominence=high@img`: `width: 100%; object-fit: cover`
   - Basis: Direction: higher image diversity and visual density on Chinese homepages (li2026). Card-level application is an extrapolation, so this effect is provisional. Magnitude is a design choice.
@@ -55,17 +55,27 @@ Concrete CSS for rule actions. Direction of each effect comes from the evidence 
   - Constraints: Applies to links inside the marked blocks only; buttons and navigation chrome are not blocks the rule targets.
   - Used by: visual.western.underlined-links
 - `de-emphasize=medium`: `filter: saturate(0.7)`
-  - Basis: Direction: promotions and carousels are more selective in Western designs (li2026 posters 66 vs 99, autoplay 39 vs 99). Weight is reduced through saturation, never opacity, so text contrast is not lowered (WCAG 1.4.3). Magnitude is a design choice.
-  - Constraints: Content stays fully visible and readable; no opacity change.
+  - Basis: Direction: promotions and carousels are more selective in Western designs (li2026 posters 66 vs 99, autoplay 39 vs 99). Weight is reduced through saturation, never opacity (opacity lowers contrast on every pair); saturation can still lower contrast on some pairs, so it is guarded at runtime. Magnitude is a design choice.
+  - Constraints: Content stays fully visible and readable; no opacity change. Can lower text contrast on some colour pairs (see contrastSimulation): the runtime accessibility guard undoes the rule on any element where contrast measurably gets worse.
   - Used by: visual.western.quiet-promos, visual.western.quiet-carousel
 - `emphasize=medium`: `filter: saturate(1.2)`
   - Basis: Direction: banners, carousels and recommendations carry more weight in Chinese designs (li2026, project synthesis). Magnitude is a design choice.
-  - Constraints: Saturation only; luminance preserved.
+  - Constraints: Can lower text contrast on some colour pairs (see contrastSimulation): the runtime accessibility guard undoes the rule on any element where contrast measurably gets worse.
   - Used by: visual.china.prominent-promos, visual.china.prominent-carousel, visual.china.discovery-feed
 - `emphasize=high`: `outline: 2px solid currentColor; outline-offset: 2px`
   - Basis: Provisional: the rule using it (search first) is a hypothesis. An outline in the text colour marks the element without altering any colour or layout.
   - Constraints: currentColor keeps contrast equal to the text; outline does not affect layout.
   - Used by: visual.western.search-first
+
+Contrast simulation: Share of text/background colour pairs that pass WCAG 4.5:1 and fall below it after the CSS saturate() filter.
+
+- Method: All pairs of a 5x5x5 RGB grid (levels 0, 64, 128, 192, 255) with contrast >= 4.5 before; text and background both filtered (worst case: they belong to the same filtered element). Reproduced by tests/b8.test.ts.
+- saturate(0.7): 3.93% of passing pairs fall below 4.5:1
+- saturate(0.8): 2.67% of passing pairs fall below 4.5:1
+- saturate(1.2): 14.12% of passing pairs fall below 4.5:1
+- saturate(1.25): 17.63% of passing pairs fall below 4.5:1
+- Correction: Until B7 this file claimed that saturation filters keep luminance and therefore do not lower contrast. That was wrong: the filter works on sRGB values, so relative luminance changes. The claim was removed and the runtime guard added.
+- Caveat: Synthetic grid, not real pages; real sites use few distinct colours, so the real share is unknown until B11.
 
 No effect (on purpose):
 

@@ -1,11 +1,13 @@
 import type { RecognizedComponent } from "../analyzer";
+import type { Compatibility } from "../analyzer/compatibility";
 import type { Measurement } from "../metrics/metrics";
 
 export type Message =
   | { type: "xsuit/ping" }
   | { type: "xsuit/restore" }
   | { type: "xsuit/apply-once" }
-  | { type: "xsuit/measure" };
+  | { type: "xsuit/measure" }
+  | { type: "xsuit/inspect" };
 
 export interface PingReply {
   ok: true;
@@ -26,8 +28,19 @@ export interface ApplyReply {
   /** What was recognized on the page, from which source and why (explain panel). */
   recognized: RecognizedComponent[];
   pageType: string;
+  reverted: { ruleId: string; reason: string }[];
 }
 export interface MeasureReply {
   ok: true;
   measurement: Measurement;
+}
+
+export interface InspectReply {
+  ok: true;
+  pageType: string;
+  classificationNote: string;
+  recognized: RecognizedComponent[];
+  skipped: { ruleId: string; reason: string }[];
+  reverted: { ruleId: string; reason: string }[];
+  compatibility: Compatibility;
 }

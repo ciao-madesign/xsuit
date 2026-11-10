@@ -39,4 +39,10 @@ export interface ApplyReport {
   applied: { ruleId: string; elements: number }[];
   unsupported: SkippedRule[];
   protectedSkipped: number;
+  guard: {
+    checked: number;
+    /** Elements that could not be measured (background image, no layout...): kept, but not verified. */
+    unverifiable: number;
+    reverted: SkippedRule[];
+  };
 }

@@ -1,7 +1,8 @@
-import { analyzePage, type Analysis } from "../analyzer";
 import { findAdapter } from "../adapters";
+import { analyzePage, type Analysis } from "../analyzer";
+import { compatibility } from "../analyzer/compatibility";
 import { defaultEffects } from "../engine/effects";
-import { Engine } from "../engine/engine";
+import { Engine, type EngineStatus } from "../engine/engine";
 import { needsMetrics } from "../engine/plan";
 import type { PageContext, Resolver } from "../engine/types";
 import { measurePage } from "../metrics/metrics";
@@ -11,6 +12,7 @@ import profiles from "../../rules/profiles.json";
 import type { Profile, RuleSet } from "../rules/types";
 import type {
   ApplyReply,
+  InspectReply,
   MeasureReply,
   Message,
   PingReply,
@@ -19,6 +21,8 @@ import type {
 import type { Settings } from "../shared/settings";
 import { computeStatus } from "../shared/state";
 import { loadSettings, onSettingsChanged } from "../shared/storage";
+import { Overlay } from "../ui/overlay";
+import { summarizeChanges } from "../ui/summary";
 
 declare global {
   interface Window {
@@ -28,6 +32,7 @@ declare global {
 
 function main(): void {
   const ruleSets = [westernRules, chinaRules] as unknown as RuleSet[];
+  const allRules = ruleSets.flatMap((s) => s.rules);
 
   // Recognition: the site adapter first, the generic analyzer for what it does not cover.
   // It is re-run on every engine run (cheap, read-only) because components can appear later.
@@ -43,20 +48,43 @@ function main(): void {
     metrics,
   });
   const resolve: Resolver = (component) => (analysis ?? analyze()).resolver(component);
+
+  let once = false; // user asked to apply on this page without enabling the site
+  let suspended = false; // user pressed Undo on the page: stay original until reload
+  let current: Settings | null = null;
+
+  const overlay = new Overlay(document, {
+    onUndo: () => {
+      suspended = true;
+      engine.restore();
+      overlay.hide();
+    },
+  });
+
+  // Runs after every engine run, while the page observer is paused.
+  const onRun = (st: EngineStatus) => {
+    const summary = summarizeChanges(st.changes, st.reverted, allRules);
+    overlay.show(
+      summary,
+      current?.labelPosition ?? "bottom-left",
+      st.report?.guard.unverifiable ?? 0,
+    );
+  };
+
   const engine = new Engine({
     doc: document,
     resolve,
     effects: defaultEffects,
     getContext: context,
+    onRun,
   });
-
-  let once = false; // user asked to apply on this page without enabling the site
-  let current: Settings | null = null;
 
   function sync(settings: Settings): void {
     current = settings;
     engine.restore(); // the page is original again, so it can be measured
+    overlay.hide();
     metrics = undefined;
+    if (suspended) return;
     if (computeStatus(settings, location.href, once).kind !== "active") return;
     if (settings.profile === "original") return;
     const input = {
@@ -68,9 +96,9 @@ function main(): void {
       metrics = measurePage(document).metrics as unknown as Partial<Record<string, number | null>>;
     engine.start({
       ...input,
-      profile: settings.profile,
       depth: settings.depth,
       context: context(),
+      disabledRules: settings.disabledRules,
     });
   }
 
@@ -87,6 +115,7 @@ function main(): void {
         const wasActive = engine.status.active;
         once = false;
         engine.restore();
+        overlay.hide();
         sendResponse({
           ok: true,
           restored: wasActive,
@@ -98,6 +127,7 @@ function main(): void {
       }
       case "xsuit/apply-once":
         once = true;
+        suspended = false;
         if (current) sync(current);
         sendResponse({
           ok: true,
@@ -106,15 +136,30 @@ function main(): void {
           skipped: engine.status.plan?.skipped ?? [],
           recognized: analysis?.recognized ?? [],
           pageType: analysis?.context.pageType ?? "any",
+          reverted: engine.status.reverted,
         } satisfies ApplyReply);
         break;
       case "xsuit/measure": {
         // Measure the ORIGINAL page: undo our changes first, then put them back.
         const wasActive = engine.status.active;
         engine.restore();
+        overlay.hide();
         const measurement = measurePage(document);
         if (wasActive && current) sync(current);
         sendResponse({ ok: true, measurement } satisfies MeasureReply);
+        break;
+      }
+      case "xsuit/inspect": {
+        const a = analysis ?? analyze();
+        sendResponse({
+          ok: true,
+          pageType: a.context.pageType,
+          classificationNote: a.classification.note,
+          recognized: a.recognized,
+          skipped: engine.status.plan?.skipped ?? [],
+          reverted: engine.status.reverted,
+          compatibility: compatibility(a, adapter),
+        } satisfies InspectReply);
         break;
       }
     }

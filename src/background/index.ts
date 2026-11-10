@@ -34,7 +34,8 @@ const hostsOf = (origins: string[] | undefined) =>
   ].filter((h): h is string => h !== null);
 
 chrome.runtime.onInstalled.addListener(async (details) => {
-  if (details.reason === "install") await saveSettings({ ...DEFAULT_SETTINGS, enabledSites: [] });
+  if (details.reason === "install")
+    await saveSettings({ ...DEFAULT_SETTINGS, enabledSites: [], disabledRules: [] });
   await syncRegistration(await loadSettings());
 });
 chrome.runtime.onStartup.addListener(async () => syncRegistration(await loadSettings()));
