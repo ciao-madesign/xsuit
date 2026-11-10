@@ -83,6 +83,7 @@ Notes:
 | 53 | Market profile model | A profile is a configuration: one pole per dimension (density, palette, hierarchy, promotions...), or nothing. Rules belong to one pole of one dimension and are versioned. Western and China stay as reference configurations with identical behaviour (proven by a golden recording from before the change); Hybrid = the person's choice of pole per dimension. Validated by the user. | 2026-11-10 |
 
 | 54 | Scorecard and explanation | The scorecard is descriptive: per dimension, measured metrics and, only where the sources give sample means, the page's position between the two samples (one visible formula). No quality score, grade or ranking; no invented references. Every change is explained (what, dimension and pole, evidence, sources, rule version, recognition confidence, limit, how to turn off) in the on-page panel and the report (xsuit.report/3). | 2026-11-10 |
+| 55 | Language, typography, responsive | xsuit reads language, script and direction locally (counts only) and uses them only to keep its own changes safe: line height never under 1.5 on CJK text (W3C clreq, jlreq); effects use logical properties only so they cannot break right-to-left pages; text xsuit adds is English and marked `lang="en" dir="ltr"`; rules that compare a measurement with a desktop threshold do not run under 600 px (device is not market). No machine translation, no rewriting of numbers, dates or prices, no font changes. Labels stay English until a native reviewer approves translations. | 2026-11-10 |
 
 ## Still open
 

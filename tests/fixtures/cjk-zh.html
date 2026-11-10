@@ -1,0 +1,51 @@
+<!doctype html>
+<!-- Synthetic page for tests. NOT a capture of a real site. Simplified Chinese text. -->
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>测试页面</title>
+    <meta property="og:type" content="article" />
+    <style>
+      body {
+        margin: 0;
+        font-family: sans-serif;
+      }
+      main {
+        display: flex;
+        gap: 16px;
+        padding: 16px;
+      }
+      article {
+        flex: 1;
+        min-width: 0;
+      }
+      aside {
+        width: 220px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/a">首页</a><a href="/b">新闻</a><a href="/c">体育</a><a href="/d">科技</a>
+      </nav>
+      <form role="search"><input type="search" name="q" aria-label="搜索" /></form>
+    </header>
+    <main>
+      <article>
+        <h1>测试文章标题</h1>
+        <p>
+          这是一个用于测试的页面，里面的文字全部是中文。我们用它来确认调整页面时不会让行距变得过小，也不会让页面出现横向滚动条。
+        </p>
+        <p>
+          第二段文字同样是中文，用来保证页面有足够多的文字，使脚本检测能够正确识别出汉字，而不需要任何翻译功能。
+        </p>
+      </article>
+      <aside>
+        <p>相关阅读</p>
+        <a href="/r1">文章一</a> <a href="/r2">文章二</a>
+      </aside>
+    </main>
+    <footer><a href="/1">关于我们</a><a href="/2">联系我们</a><a href="/3">使用条款</a></footer>
+  </body>
+</html>

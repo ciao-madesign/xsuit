@@ -1,0 +1,52 @@
+<!doctype html>
+<!-- Synthetic page for tests. NOT a capture of a real site. Japanese text. -->
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>テストページ</title>
+    <meta property="og:type" content="article" />
+    <style>
+      body {
+        margin: 0;
+        font-family: sans-serif;
+      }
+      main {
+        display: flex;
+        gap: 16px;
+        padding: 16px;
+      }
+      article {
+        flex: 1;
+        min-width: 0;
+      }
+      aside {
+        width: 220px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/a">ホーム</a><a href="/b">ニュース</a><a href="/c">スポーツ</a
+        ><a href="/d">科学</a>
+      </nav>
+      <form role="search"><input type="search" name="q" aria-label="検索" /></form>
+    </header>
+    <main>
+      <article>
+        <h1>テスト記事の見出し</h1>
+        <p>
+          これはテスト用のページで、本文はすべて日本語で書かれています。ページを調整しても行間が狭くなりすぎないこと、横スクロールが出ないことを確認するために使います。
+        </p>
+        <p>
+          二つ目の段落も日本語です。文字の種類を正しく見分けられるように、ある程度の長さの文章を入れています。翻訳機能は使いません。
+        </p>
+      </article>
+      <aside>
+        <p>関連記事</p>
+        <a href="/r1">記事その一</a> <a href="/r2">記事その二</a>
+      </aside>
+    </main>
+    <footer><a href="/1">会社概要</a><a href="/2">お問い合わせ</a><a href="/3">利用規約</a></footer>
+  </body>
+</html>

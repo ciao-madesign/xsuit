@@ -6,6 +6,7 @@ import { classifyPage, type Classification } from "./pageType";
 import { countFrames, isSensitivePage } from "../engine/safety";
 import { resetShadowCache, shadowRootsUnder } from "./deep";
 import { plausible } from "./plausible";
+import { detectLanguage } from "./language";
 
 export interface RecognizedComponent {
   component: Component;
@@ -24,7 +25,7 @@ export interface AdapterHit {
 }
 
 export interface Analysis {
-  context: Pick<PageContext, "pageType" | "components" | "sensitive">;
+  context: Pick<PageContext, "pageType" | "components" | "sensitive" | "language">;
   recognized: RecognizedComponent[];
   adapterHits: AdapterHit[];
   /** What kind of page structure was met: reported in the research tools. */
@@ -136,7 +137,12 @@ export function analyzePage(
     } else if (entry) hit("no-match");
   }
   return {
-    context: { pageType, components, sensitive: isSensitivePage(doc) },
+    context: {
+      pageType,
+      components,
+      sensitive: isSensitivePage(doc),
+      language: detectLanguage(doc),
+    },
     recognized,
     adapterHits,
     environment: { shadowRoots: shadowRootsUnder(doc).length, frames: countFrames(doc) },

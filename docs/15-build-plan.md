@@ -67,7 +67,7 @@ Written 2026-11-10 after the merge of the security work and B11 and the privacy 
 - Descriptive scorecard: distance of a page from a reference configuration per dimension, never a "quality" score. Explanation per change: what, why, evidence, confidence, switch-off.
 - Checks (A): scorecard is deterministic on fixtures; every change in the report links to a rule version and a source.
 
-## B20 — Language, typography, responsive
+## B20 — Language, typography, responsive (DONE 2026-11-10, see docs/22-language-typography-responsive.md)
 
 - CJK and RTL handling, text expansion, font fallbacks, number/date format hints; separate device-driven differences (mobile vs desktop) from market conventions. No machine translation.
 - Checks (A): RTL and CJK fixtures keep layout without overflow; mobile-width fixtures.

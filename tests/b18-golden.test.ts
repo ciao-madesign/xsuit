@@ -72,7 +72,7 @@ function record(): Record<string, unknown> {
         skipped: (st.plan?.skipped ?? []).map((s) => `${s.ruleId}: ${s.reason}`).sort(),
         changes: [...st.changes].sort((x, y) => x.ruleId.localeCompare(y.ruleId)),
         reverted: st.reverted,
-        dom: sha(document.documentElement.outerHTML),
+        dom: sha(withoutB20Marks(document.documentElement.outerHTML)),
       };
       engine.restore();
     }
@@ -125,6 +125,18 @@ function record(): Record<string, unknown> {
           };
         }
   return out;
+}
+
+/**
+ * B20 added lang and dir attributes to the few elements xsuit injects (the English toggle and
+ * shortcut labels). The recording was made before that, so those attributes are removed before the
+ * hash: everything else on the page must still be byte-identical. The attributes themselves are
+ * checked in b20-language.test.ts.
+ */
+function withoutB20Marks(html: string): string {
+  return html.replace(/<(button|nav|span|a)([^>]*data-xsuit-(?:toggle|shortcuts)[^>]*)>/g, (m) =>
+    m.replace(/ (lang|dir)="[^"]*"/g, ""),
+  );
 }
 
 describe("B18 golden: profiles behave exactly as before the move to dimensions", () => {

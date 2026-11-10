@@ -1,0 +1,62 @@
+<!doctype html>
+<!-- Synthetic page for tests. NOT a capture of a real site. Long compound words in narrow columns (text expansion). -->
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>Testseite</title>
+    <meta property="og:type" content="article" />
+    <style>
+      body {
+        margin: 0;
+        font-family: sans-serif;
+      }
+      main {
+        display: flex;
+        gap: 16px;
+        padding: 16px;
+      }
+      article {
+        flex: 1;
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+      aside {
+        width: 200px;
+        overflow-wrap: anywhere;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/a">Startseite</a><a href="/b">Nachrichten</a
+        ><a href="/c">Wirtschaftsnachrichten</a><a href="/d">Veranstaltungskalender</a>
+      </nav>
+      <form role="search"><input type="search" name="q" aria-label="Suche" /></form>
+    </header>
+    <main>
+      <article>
+        <h1>Donaudampfschifffahrtsgesellschaftskapitänsmütze</h1>
+        <p>
+          Dieser Testtext enthält sehr lange zusammengesetzte Wörter wie
+          Geschwindigkeitsbegrenzungsüberschreitung und Rechtsschutzversicherungsgesellschaften,
+          damit wir prüfen können, dass Änderungen am Abstand keinen seitlichen Bildlauf
+          verursachen.
+        </p>
+        <p>
+          Ein zweiter Absatz mit Arbeitsunfähigkeitsbescheinigungsformularen und
+          Bundesausbildungsförderungsgesetzesänderungen, jeweils ohne Leerzeichen und deshalb schwer
+          umzubrechen.
+        </p>
+      </article>
+      <aside>
+        <p>Verwandte Beiträge</p>
+        <a href="/r1">Beitrag eins</a> <a href="/r2">Beitrag zwei</a>
+      </aside>
+    </main>
+    <footer>
+      <a href="/1">Impressum</a><a href="/2">Datenschutzerklärung</a
+      ><a href="/3">Allgemeine Geschäftsbedingungen</a>
+    </footer>
+  </body>
+</html>

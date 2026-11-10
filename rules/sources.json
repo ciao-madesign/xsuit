@@ -58,9 +58,33 @@
     "authors": "W3C",
     "year": 2023,
     "url": "https://www.w3.org/TR/WCAG22/",
-    "sample": "Accessibility standard (success criteria 1.4.1 use of colour, 1.4.3 contrast minimum, 1.4.12 text spacing, 2.5.8 target size)",
+    "sample": "Accessibility standard (success criteria 1.4.1 use of colour, 1.4.3 contrast minimum, 1.4.12 text spacing, 2.5.8 target size, 3.1.2 language of parts)",
     "verified": true,
-    "notes": "Primary text read on 2026-11-10 (w3.org/TR/WCAG22). Criteria read: 1.4.1 (colour not the only means), 1.4.3 (4.5:1; 3:1 for large text; exceptions: incidental, logotypes), 1.4.12, 2.5.8 (24 by 24 CSS px, with exceptions: spacing, equivalent, inline, user agent control, essential). xsuit's guard models the spacing and inline exceptions (B15); equivalent, user agent control and essential are not modelled, so the guard may undo more than WCAG strictly requires. Used only as a constraint on effects, never as evidence of cultural difference.",
+    "notes": "Primary text read on 2026-11-10 (w3.org/TR/WCAG22). Criteria read: 1.4.1 (colour not the only means), 1.4.3 (4.5:1; 3:1 for large text; exceptions: incidental, logotypes), 1.4.12, 2.5.8 (24 by 24 CSS px, with exceptions: spacing, equivalent, inline, user agent control, essential). xsuit's guard models the spacing and inline exceptions (B15); equivalent, user agent control and essential are not modelled, so the guard may undo more than WCAG strictly requires. Used only as a constraint on effects, never as evidence of cultural difference. B20: 3.1.2 Language of Parts (Level AA) also read on 2026-11-10: the language of each passage can be programmatically determined; xsuit marks the English text it adds with lang=\"en\".",
     "checkedOn": "2026-11-10"
+  },
+  {
+    "id": "clreq",
+    "kind": "standard",
+    "authors": "W3C",
+    "verified": true,
+    "checkedOn": "2026-11-10",
+    "title": "Requirements for Chinese Text Layout (clreq)",
+    "year": 2026,
+    "url": "https://www.w3.org/TR/clreq/",
+    "sample": "Layout requirements for Chinese text (W3C document, dated 4 November 2026 on the page read)",
+    "notes": "Primary text read on 2026-11-10, section 7.1.1 (type area): the line gap is mostly between 50 % and 100 % of the font size, and line height = font size + line gap, so line-height between 1.5 and 2.0. Written for typeset pages, not specifically for screens. Used only as a constraint on xsuit's typography (line height is never set below 1.5 on pages with CJK text), never as evidence of a cultural difference."
+  },
+  {
+    "id": "jlreq",
+    "kind": "standard",
+    "authors": "W3C",
+    "verified": true,
+    "checkedOn": "2026-11-10",
+    "title": "Requirements for Japanese Text Layout (jlreq)",
+    "year": 2020,
+    "url": "https://www.w3.org/TR/jlreq/",
+    "sample": "Layout requirements for Japanese text (W3C Working Group Note, dated 11 August 2020 on the page read)",
+    "notes": "Primary text read on 2026-11-10, section on the basic text area (kihon-hanmen): the line gap is often between half an em and one em of the character size, so line-height between 1.5 and 2.0; one em or close to it is more appropriate when lines are longer than 35 characters. Written for typeset pages, not specifically for screens. Used only as a constraint on xsuit's typography, never as evidence of a cultural difference."
   }
 ]

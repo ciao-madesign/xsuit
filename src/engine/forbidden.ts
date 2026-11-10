@@ -42,6 +42,15 @@ const REMOVES_OUTLINE = /^(none|hidden|0|0px|transparent)\b/i;
 const WIDTH = /^(min-|max-)?width$/;
 const SAFE_WIDTH = /^(100%|auto)$/i;
 
+/**
+ * Physical left/right properties. Effects must use logical ones (padding-block, margin-inline...)
+ * so they behave the same on right-to-left pages (B20).
+ */
+const PHYSICAL =
+  /^((margin|padding|border|scroll-margin|scroll-padding)-(left|right)(-.*)?|left|right|float|clear)$/;
+const PHYSICAL_ALIGN = /^text-align$/;
+const PHYSICAL_ALIGN_VALUE = /^(left|right)\b/i;
+
 /** True if the declaration ("prop: value") uses a forbidden property or a harmful value. */
 export function usesForbiddenProperty(declaration: string): boolean {
   const [name = "", ...rest] = declaration.split(":");
@@ -51,6 +60,8 @@ export function usesForbiddenProperty(declaration: string): boolean {
     .trim()
     .replace(/\s*!important\s*$/i, "");
   if (FORBIDDEN_PROPERTIES.includes(prop) || /^(animation|transition)-/.test(prop)) return true;
+  if (PHYSICAL.test(prop)) return true;
+  if (PHYSICAL_ALIGN.test(prop) && PHYSICAL_ALIGN_VALUE.test(value)) return true;
   if (OUTLINE.test(prop)) return REMOVES_OUTLINE.test(value);
   if (WIDTH.test(prop)) return !SAFE_WIDTH.test(value);
   return false;

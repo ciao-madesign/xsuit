@@ -5,6 +5,13 @@ import type { Depth, ProfileChoice } from "../shared/settings";
 
 const RANK: Record<Confidence, number> = { low: 1, medium: 2, high: 3 };
 
+/**
+ * Below this width the page is a phone layout. xsuit's measurements and thresholds are defined on
+ * desktop-width pages (the observation guide asks for 1280 px), so a phone layout differs for
+ * device reasons, not market ones, and measured rules do not run there (B20, decision #55).
+ */
+export const PHONE_MAX_WIDTH = 600;
+
 export interface PlanInput {
   ruleSets: RuleSet[];
   profiles: Profile[];
@@ -71,6 +78,8 @@ function blocker(rule: Rule, input: PlanInput): string | null {
     if (c.type === "viewport-min-width" && ctx.viewportWidth < Number(c.value))
       return `viewport narrower than ${c.value}px`;
     if (c.type === "metric-above" || c.type === "metric-below") {
+      if (ctx.viewportWidth < PHONE_MAX_WIDTH)
+        return `phone-sized viewport (under ${PHONE_MAX_WIDTH}px): the thresholds are defined on desktop-width pages, so the differences here come from the device, not the market`;
       const v = ctx.metrics?.[c.metric!];
       if (typeof v !== "number") return `metric "${c.metric}" not measured`;
       const limit = Number(c.value);

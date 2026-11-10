@@ -55,10 +55,24 @@ function bigPage(n) {
   if (!sw) sw = await ctx.waitForEvent("serviceworker");
 
   const results = [];
-  for (const name of Object.keys(pages)) {
+  // Desktop width for every page; phone width (B20) for the pages where text and layout are most at risk.
+  const PHONE = [
+    "rtl-arabic.html",
+    "cjk-zh.html",
+    "cjk-ja.html",
+    "long-words-de.html",
+    "dense.html",
+    "div-soup.html",
+  ];
+  const runs = Object.keys(pages).flatMap((n) => [
+    { name: n, width: 1280 },
+    ...(PHONE.includes(n) ? [{ name: n, width: 390 }] : []),
+  ]);
+  for (const { name, width } of runs) {
     for (const profile of ["western", "china", "hybrid"]) {
       for (const depth of ["visual", "structural"]) {
         const page = await ctx.newPage();
+        await page.setViewportSize({ width, height: width < 600 ? 800 : 720 });
         const errors = [],
           external = [];
         page.on("pageerror", (e) => errors.push(e.message));
@@ -80,6 +94,23 @@ function bigPage(n) {
         await page.goto(`http://127.0.0.1:${port}/${name}`);
         await page.waitForTimeout(150);
         const before = norm(await page.evaluate(() => document.documentElement.outerHTML));
+        // Sideways scroll and the smallest line-height / font-size ratio of paragraphs, before and after.
+        const probe = () =>
+          page.evaluate(() => {
+            const de = document.documentElement;
+            const ratios = [...document.querySelectorAll("article p, main p")]
+              .map((p) => {
+                const cs = getComputedStyle(p);
+                const lh = parseFloat(cs.lineHeight);
+                return Number.isFinite(lh) ? lh / parseFloat(cs.fontSize) : null;
+              })
+              .filter((x) => x !== null);
+            return {
+              overflow: de.scrollWidth > window.innerWidth + 1,
+              lhRatio: ratios.length ? Math.min(...ratios) : null,
+            };
+          });
+        const probeBefore = await probe();
         const r = await sw.evaluate(
           async ({ profile, depth, port }) => {
             await chrome.storage.local.set({
@@ -98,6 +129,7 @@ function bigPage(n) {
           },
           { profile, depth, port },
         );
+        const probeAfter = await probe();
         const changed =
           norm(await page.evaluate(() => document.documentElement.outerHTML)) !== before;
         await sw.evaluate(async (port) => {
@@ -109,6 +141,13 @@ function bigPage(n) {
           norm(await page.evaluate(() => document.documentElement.outerHTML)) === before;
         results.push({
           page: name,
+          width,
+          overflowIntroduced: probeAfter.overflow && !probeBefore.overflow,
+          lineHeightLoweredBelow15:
+            name.startsWith("cjk-") &&
+            probeAfter.lhRatio !== null &&
+            probeAfter.lhRatio < 1.5 &&
+            (probeBefore.lhRatio === null || probeAfter.lhRatio < probeBefore.lhRatio),
           profile,
           depth,
           rules: r.rules,
@@ -131,7 +170,14 @@ function bigPage(n) {
     out,
     JSON.stringify({ generatedAt: new Date().toISOString(), runs: results }, null, 2) + "\n",
   );
-  const bad = results.filter((x) => !x.restoredIdentical || x.errors || x.externalRequests);
+  const bad = results.filter(
+    (x) =>
+      !x.restoredIdentical ||
+      x.errors ||
+      x.externalRequests ||
+      x.overflowIntroduced ||
+      x.lineHeightLoweredBelow15,
+  );
   console.log(`runs: ${results.length}, failures: ${bad.length}`);
   for (const b of bad) console.log("FAIL", JSON.stringify(b));
   console.log(

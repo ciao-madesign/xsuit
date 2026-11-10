@@ -1,6 +1,7 @@
 import { usesForbiddenProperty } from "./forbidden";
 import type { EffectCatalog, Plan } from "./types";
 
+export const CJK_NOTE = `Line height raised to ${1.5} because the page has Chinese, Japanese or Korean text (W3C clreq and jlreq: line gap of 50-100 % of the font size).`;
 export const NS = "xsuit";
 export const STYLE_ID = "xsuit-style";
 const UNSAFE = /[{}<>]|url\(|@import|expression\(|javascript:|\/\*/i;
@@ -24,6 +25,25 @@ export function parseEffectKey(key: string): { base: string; descendant: string 
   return { base, descendant: desc ?? null };
 }
 
+/** Smallest line height xsuit sets on pages with CJK text (W3C clreq 7.1.1 and jlreq: line gap 50-100 % of the font size). */
+export const CJK_MIN_LINE_HEIGHT = 1.5;
+
+/** Raises a `line-height: N` below the CJK floor to the floor; every other declaration is unchanged. */
+export function forScript(declaration: string, cjk: boolean): string {
+  if (!cjk) return declaration;
+  const m = /^\s*line-height\s*:\s*([\d.]+)\s*$/i.exec(declaration);
+  return m && Number(m[1]) < CJK_MIN_LINE_HEIGHT
+    ? `line-height: ${CJK_MIN_LINE_HEIGHT}`
+    : declaration;
+}
+
+export interface CssOptions {
+  /** The page has CJK text: typography is kept within what Chinese and Japanese layout practice allows. */
+  cjk?: boolean;
+  /** Receives a note for every adjustment made because of the script. */
+  notes?: string[];
+}
+
 /**
  * CSS for the plan. Every selector starts with html[data-xsuit] so nothing can leak onto
  * the page, and only attributes set by the engine are matched.
@@ -32,6 +52,7 @@ export function buildCss(
   plan: Plan,
   effects: EffectCatalog,
   scope: "document" | "shadow" = "document",
+  options: CssOptions = {},
 ): string {
   // Inside a shadow root the style only reaches that root, and there is no <html>: no prefix.
   const prefix = scope === "shadow" ? "" : `html[data-${NS}] `;
@@ -43,7 +64,12 @@ export function buildCss(
     for (const [key, raw] of Object.entries(effects)) {
       const parsed = parseEffectKey(key);
       if (!parsed || parsed.base !== baseKey) continue;
-      const decls = raw.filter(safeDeclaration);
+      const decls = raw.filter(safeDeclaration).map((d) => {
+        const out = forScript(d, !!options.cjk);
+        if (out !== d && options.notes && !options.notes.includes(CJK_NOTE))
+          options.notes.push(CJK_NOTE);
+        return out;
+      });
       if (!decls.length) continue;
       const target = parsed.descendant ? `${attrSelector} ${parsed.descendant}` : attrSelector;
       blocks.push(

@@ -278,6 +278,8 @@ describe("what xsuit is able to add to a page is tiny and fixed", () => {
     "type",
     "aria-label",
     "aria-expanded",
+    "lang", // B20: marks the English text xsuit adds, and copies the language of copied links
+    "dir",
   ]);
   it("adds only a few inert elements and only data-xsuit attributes on page elements", () => {
     for (const p of pages)

@@ -1,0 +1,59 @@
+<!doctype html>
+<!-- Synthetic page for tests. NOT a capture of a real site. Right-to-left layout. -->
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <title>صفحة تجريبية</title>
+    <meta property="og:type" content="article" />
+    <style>
+      body {
+        margin: 0;
+        font-family: sans-serif;
+      }
+      main {
+        display: flex;
+        gap: 16px;
+        padding: 16px;
+      }
+      article {
+        flex: 1;
+        min-width: 0;
+      }
+      aside {
+        width: 220px;
+      }
+      nav a,
+      footer a {
+        margin-inline-end: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/a">الرئيسية</a><a href="/b">الأخبار</a><a href="/c">الرياضة</a
+        ><a href="/d">الثقافة</a>
+      </nav>
+      <form role="search"><input type="search" name="q" aria-label="بحث" /></form>
+    </header>
+    <main>
+      <article>
+        <h1>عنوان المقال التجريبي</h1>
+        <p>
+          هذه صفحة تجريبية مكتوبة من اليمين إلى اليسار، وتستخدم للتأكد من أن التعديلات لا تكسر
+          التخطيط ولا تسبب تمريرا أفقيا. النص هنا طويل بما يكفي ليتم التعرف على الكتابة العربية بشكل
+          صحيح.
+        </p>
+        <p>
+          الفقرة الثانية تحتوي على كلمات إضافية حتى يصبح للمقال طول معقول، ويمكن للمحرك قياس الكثافة
+          وترتيب العناصر دون الحاجة إلى أي ترجمة.
+        </p>
+      </article>
+      <aside>
+        <p>مقالات ذات صلة</p>
+        <a href="/r1">مقال أول</a> <a href="/r2">مقال ثان</a>
+      </aside>
+    </main>
+    <footer><a href="/1">من نحن</a><a href="/2">اتصل بنا</a><a href="/3">الشروط</a></footer>
+  </body>
+</html>

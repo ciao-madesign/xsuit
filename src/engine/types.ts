@@ -1,3 +1,4 @@
+import type { LanguageInfo } from "../analyzer/language";
 import type { Component, PageType, Rule } from "../rules/types";
 
 export type Confidence = "low" | "medium" | "high";
@@ -8,6 +9,8 @@ export interface PageContext {
   /** Recognized components and how sure we are. Missing key = not found. */
   components: Partial<Record<Component, Confidence>>;
   viewportWidth: number;
+  /** Language, script and direction of the page (B20). Used only to keep typography and layout safe. */
+  language?: LanguageInfo;
   /** The page asks for a password or payment details: only spacing and typography may change. */
   sensitive?: boolean;
   /** Metrics of the ORIGINAL page, measured once (null = could not be measured). */
@@ -47,4 +50,6 @@ export interface ApplyReport {
     unverifiable: number;
     reverted: SkippedRule[];
   };
+  /** Typography adjustments made because of the page's script (e.g. line height for CJK text). */
+  typography: string[];
 }

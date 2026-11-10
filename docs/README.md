@@ -33,3 +33,5 @@ Foundations of the **Cross-Market UX Localization Extension**. Reading order:
 - `21-scorecard-and-explanation.md`: B19 descriptive scorecard per dimension and the explanation shown for every change.
 
 Repository root: [README](../README.md), [SECURITY](../SECURITY.md).
+
+- `22-language-typography-responsive.md`: B20 language, script and direction handling, CJK line height, right-to-left safety, phone widths.

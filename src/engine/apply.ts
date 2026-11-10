@@ -1,6 +1,7 @@
 import type { A11yGuard, Snapshot } from "./a11y";
 import { isInShadow } from "../analyzer/deep";
 import { buildCss, NS, STYLE_ID } from "./css";
+import { detectLanguage } from "../analyzer/language";
 import type { Journal } from "./journal";
 import { isProtected } from "./protect";
 import { isActionRisky, isNotice, isSafeShortcut } from "./safety";
@@ -33,6 +34,16 @@ function markDone(el: Element, ruleId: string, state: AppliedState): void {
   state.set(el, done);
 }
 
+/**
+ * Text that xsuit adds is English and is not translated (no machine translation). It is marked as
+ * English so screen readers pronounce it correctly on pages in other languages (WCAG 3.1.2), and
+ * kept left-to-right so it does not get scrambled inside a right-to-left page.
+ */
+function markEnglish(el: Element) {
+  el.setAttribute("lang", "en");
+  el.setAttribute("dir", "ltr");
+}
+
 const MIN_SHORTCUTS = 3;
 const MAX_SHORTCUTS = 6;
 const collapsedAttr = `data-${NS}-collapsed`;
@@ -46,6 +57,7 @@ function collapse(doc: Document, journal: Journal, el: Element, component: strin
   const btn = doc.createElement("button");
   btn.type = "button";
   btn.setAttribute(`data-${NS}-toggle`, "");
+  markEnglish(btn);
   const sync = () => {
     const closed = el.getAttribute(collapsedAttr) === "1";
     btn.setAttribute("aria-expanded", String(!closed));
@@ -96,8 +108,10 @@ function group(doc: Document, journal: Journal, members: Element[], tag: string)
 }
 
 /** Copies up to a few existing, safe links (text + address) from the source blocks. */
-function shortcutLinks(sources: Element[]): { text: string; href: string }[] {
-  const out: { text: string; href: string }[] = [];
+function shortcutLinks(
+  sources: Element[],
+): { text: string; href: string; lang?: string; dir?: string }[] {
+  const out: { text: string; href: string; lang?: string; dir?: string }[] = [];
   const seen = new Set<string>();
   for (const src of sources) {
     if (isProtected(src) || isActionRisky(src)) continue;
@@ -108,7 +122,10 @@ function shortcutLinks(sources: Element[]): { text: string; href: string }[] {
       if (!text || text.length > 30 || seen.has(text)) continue;
       if (isProtected(a) || !isSafeShortcut(a, text, pageHost, src.ownerDocument.baseURI)) continue;
       seen.add(text);
-      out.push({ text, href });
+      // A copy keeps the language and direction its original has, so it reads the same here.
+      const lang = a.closest("[lang]")?.getAttribute("lang") ?? undefined;
+      const dir = a.closest("[dir]")?.getAttribute("dir") ?? undefined;
+      out.push({ text, href, lang, dir });
       if (out.length === MAX_SHORTCUTS) return out;
     }
   }
@@ -119,7 +136,7 @@ function insertShortcuts(
   doc: Document,
   journal: Journal,
   before: Element,
-  links: { text: string; href: string }[],
+  links: { text: string; href: string; lang?: string; dir?: string }[],
   tag: string,
 ): void {
   const parent = before.parentNode;
@@ -127,9 +144,11 @@ function insertShortcuts(
   const nav = doc.createElement("nav");
   nav.setAttribute(`data-${NS}-shortcuts`, "");
   nav.setAttribute("aria-label", "Shortcuts added by xsuit");
+  nav.setAttribute("lang", "en"); // the label is English; the copied links below keep their own language
   nav.title = "Shortcuts added by xsuit: copies of links already on this page";
   const note = doc.createElement("span");
   note.textContent = "xsuit shortcuts:";
+  markEnglish(note);
   nav.appendChild(note);
   for (const l of links) {
     const a = doc.createElement("a");
@@ -143,6 +162,8 @@ function insertShortcuts(
       /* the href was validated before; nothing to show */
     }
     a.textContent = l.text;
+    if (l.lang) a.setAttribute("lang", l.lang);
+    if (l.dir) a.setAttribute("dir", l.dir);
     nav.appendChild(a);
   }
   journal.insertBefore(parent, nav, before, tag);
@@ -163,6 +184,7 @@ export function applyPlan(
     unsupported: [],
     protectedSkipped: 0,
     guard: { checked: 0, unverifiable: 0, reverted: [] },
+    typography: [],
   };
   const root = doc.documentElement;
 
@@ -273,10 +295,14 @@ export function applyPlan(
     }
   }
 
+  const cjk = detectLanguage(doc).cjk;
+
   // 3. One namespaced style element, created once and replaced as the plan changes.
   const writeCss = (entries: Plan["entries"]) => {
     let style = doc.getElementById(STYLE_ID);
-    const css = buildCss({ entries, skipped: [] }, effects);
+    const notes: string[] = [];
+    const css = buildCss({ entries, skipped: [] }, effects, "document", { cjk, notes });
+    report.typography = notes;
     if (css && !style) {
       style = doc.createElement("style");
       style.id = STYLE_ID;
@@ -293,7 +319,7 @@ export function applyPlan(
         const r = el.getRootNode();
         if (r instanceof ShadowRoot && inOpenShadow(el)) roots.add(r);
       }
-    const shadowCss = buildCss({ entries, skipped: [] }, effects, "shadow");
+    const shadowCss = buildCss({ entries, skipped: [] }, effects, "shadow", { cjk });
     for (const r of roots) {
       if (!r.host.isConnected) {
         roots.delete(r);
