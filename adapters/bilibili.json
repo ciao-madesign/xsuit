@@ -1,0 +1,39 @@
+{
+  "id": "site.bilibili",
+  "site": "Bilibili",
+  "hosts": ["www.bilibili.com"],
+  "status": "draft",
+  "pageTypeHints": [
+    {
+      "pageType": "home",
+      "urlPattern": "^/$"
+    },
+    {
+      "pageType": "video",
+      "urlPattern": "^/video/"
+    }
+  ],
+  "components": [
+    {
+      "component": "search-box",
+      "selectors": ["form[role='search']", "div[class*='nav-search']"],
+      "confidence": "low"
+    },
+    {
+      "component": "video-player",
+      "selectors": ["video"],
+      "confidence": "medium"
+    },
+    {
+      "component": "recommendations",
+      "selectors": ["div[class*='feed']", "div[class*='recommend']"],
+      "confidence": "low"
+    },
+    {
+      "component": "footer",
+      "selectors": ["footer"],
+      "confidence": "low"
+    }
+  ],
+  "notes": "DRAFT. Selectors written from general knowledge of the page structure; NOT verified against the live DOM (the session network cannot reach this site). urlPattern is matched against the URL path only. Verify with adapters/VERIFY.md before changing status to tested."
+}

@@ -317,7 +317,20 @@ describe("compatibility indicator", () => {
     expect(compatibility(analyzePage(document, tested, "/"), tested).level).toBe("full");
   });
   it("no shipped adapter is 'tested' yet, so none can claim Full", () => {
-    for (const f of ["google", "baidu"])
+    for (const f of [
+      "google",
+      "baidu",
+      "amazon",
+      "taobao",
+      "bbc",
+      "guardian",
+      "bilibili",
+      "caixin",
+      "youtube",
+      "reddit",
+      "weibo",
+      "xiaohongshu",
+    ])
       expect((load(`adapters/${f}.json`) as Adapter).status).toBe("draft");
   });
 });

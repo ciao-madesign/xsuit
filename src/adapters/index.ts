@@ -1,10 +1,33 @@
+import amazonAdapter from "../../adapters/amazon.json";
+import taobaoAdapter from "../../adapters/taobao.json";
+import bbcAdapter from "../../adapters/bbc.json";
+import guardianAdapter from "../../adapters/guardian.json";
+import bilibiliAdapter from "../../adapters/bilibili.json";
+import caixinAdapter from "../../adapters/caixin.json";
+import youtubeAdapter from "../../adapters/youtube.json";
+import redditAdapter from "../../adapters/reddit.json";
+import weiboAdapter from "../../adapters/weibo.json";
+import xiaohongshuAdapter from "../../adapters/xiaohongshu.json";
 import googleAdapter from "../../adapters/google.json";
 import baiduAdapter from "../../adapters/baidu.json";
 import type { PageContext, Resolver } from "../engine/types";
 import type { Adapter, Component } from "../rules/types";
 import { normalizeHost } from "../shared/settings";
 
-export const adapters = [googleAdapter, baiduAdapter] as unknown as Adapter[];
+export const adapters = [
+  googleAdapter,
+  baiduAdapter,
+  amazonAdapter,
+  taobaoAdapter,
+  bbcAdapter,
+  guardianAdapter,
+  bilibiliAdapter,
+  caixinAdapter,
+  youtubeAdapter,
+  redditAdapter,
+  weiboAdapter,
+  xiaohongshuAdapter,
+] as unknown as Adapter[];
 
 /** Adapter for a host, matching the host itself or its subdomains. */
 export function findAdapter(host: string, list: Adapter[] = adapters): Adapter | null {

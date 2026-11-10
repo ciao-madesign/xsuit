@@ -1,0 +1,48 @@
+{
+  "id": "site.youtube",
+  "site": "YouTube",
+  "hosts": ["www.youtube.com"],
+  "status": "draft",
+  "pageTypeHints": [
+    {
+      "pageType": "home",
+      "urlPattern": "^/$"
+    },
+    {
+      "pageType": "video",
+      "urlPattern": "^/watch"
+    },
+    {
+      "pageType": "search-results",
+      "urlPattern": "^/results"
+    }
+  ],
+  "components": [
+    {
+      "component": "search-box",
+      "selectors": ["form[role='search']", "ytd-searchbox"],
+      "confidence": "medium"
+    },
+    {
+      "component": "video-player",
+      "selectors": ["#movie_player", "video"],
+      "confidence": "medium"
+    },
+    {
+      "component": "recommendations",
+      "selectors": ["#related", "ytd-watch-next-secondary-results-renderer"],
+      "confidence": "low"
+    },
+    {
+      "component": "comments",
+      "selectors": ["#comments", "ytd-comments"],
+      "confidence": "low"
+    },
+    {
+      "component": "sidebar",
+      "selectors": ["#guide", "tp-yt-app-drawer"],
+      "confidence": "low"
+    }
+  ],
+  "notes": "DRAFT. Selectors written from general knowledge of the page structure; NOT verified against the live DOM (the session network cannot reach this site). urlPattern is matched against the URL path only. Verify with adapters/VERIFY.md before changing status to tested."
+}

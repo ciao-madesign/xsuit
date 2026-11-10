@@ -1,0 +1,39 @@
+{
+  "id": "site.caixin",
+  "site": "Caixin",
+  "hosts": ["www.caixin.com"],
+  "status": "draft",
+  "pageTypeHints": [
+    {
+      "pageType": "home",
+      "urlPattern": "^/$"
+    },
+    {
+      "pageType": "article",
+      "urlPattern": "^/20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]/"
+    }
+  ],
+  "components": [
+    {
+      "component": "header",
+      "selectors": ["header", "[role='banner']"],
+      "confidence": "low"
+    },
+    {
+      "component": "primary-nav",
+      "selectors": ["nav", "[role='navigation']"],
+      "confidence": "low"
+    },
+    {
+      "component": "article-body",
+      "selectors": ["article", "div[class*='article']"],
+      "confidence": "low"
+    },
+    {
+      "component": "footer",
+      "selectors": ["footer"],
+      "confidence": "low"
+    }
+  ],
+  "notes": "DRAFT. Selectors written from general knowledge of the page structure; NOT verified against the live DOM (the session network cannot reach this site). urlPattern is matched against the URL path only. Verify with adapters/VERIFY.md before changing status to tested."
+}

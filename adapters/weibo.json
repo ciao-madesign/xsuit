@@ -1,0 +1,34 @@
+{
+  "id": "site.weibo",
+  "site": "Weibo",
+  "hosts": ["weibo.com"],
+  "status": "draft",
+  "pageTypeHints": [
+    {
+      "pageType": "home",
+      "urlPattern": "^/$"
+    },
+    {
+      "pageType": "feed",
+      "urlPattern": "^/(u|n)/"
+    }
+  ],
+  "components": [
+    {
+      "component": "search-box",
+      "selectors": ["form[role='search']", "input[type='search']"],
+      "confidence": "low"
+    },
+    {
+      "component": "feed-item",
+      "selectors": ["article", "div[class*='feed']"],
+      "confidence": "low"
+    },
+    {
+      "component": "sidebar",
+      "selectors": ["aside", "div[class*='side']"],
+      "confidence": "low"
+    }
+  ],
+  "notes": "DRAFT. Selectors written from general knowledge of the page structure; NOT verified against the live DOM (the session network cannot reach this site). urlPattern is matched against the URL path only. Verify with adapters/VERIFY.md before changing status to tested."
+}

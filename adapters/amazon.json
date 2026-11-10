@@ -1,0 +1,53 @@
+{
+  "id": "site.amazon",
+  "site": "Amazon",
+  "hosts": ["www.amazon.com"],
+  "status": "draft",
+  "pageTypeHints": [
+    {
+      "pageType": "home",
+      "urlPattern": "^/$"
+    },
+    {
+      "pageType": "search-results",
+      "urlPattern": "^/s$"
+    },
+    {
+      "pageType": "product-detail",
+      "urlPattern": "^/(.+/)?dp/"
+    }
+  ],
+  "components": [
+    {
+      "component": "search-box",
+      "selectors": ["form#nav-search-bar-form", "form[role='search']"],
+      "confidence": "medium"
+    },
+    {
+      "component": "primary-nav",
+      "selectors": ["#nav-belt", "#nav-main"],
+      "confidence": "low"
+    },
+    {
+      "component": "product-grid",
+      "selectors": ["[data-component-type='s-search-results']"],
+      "confidence": "low"
+    },
+    {
+      "component": "product-card",
+      "selectors": ["[data-component-type='s-search-result']"],
+      "confidence": "low"
+    },
+    {
+      "component": "filters",
+      "selectors": ["#s-refinements"],
+      "confidence": "low"
+    },
+    {
+      "component": "footer",
+      "selectors": ["#navFooter", "footer"],
+      "confidence": "low"
+    }
+  ],
+  "notes": "DRAFT. Selectors written from general knowledge of the page structure; NOT verified against the live DOM (the session network cannot reach this site). urlPattern is matched against the URL path only. Verify with adapters/VERIFY.md before changing status to tested."
+}

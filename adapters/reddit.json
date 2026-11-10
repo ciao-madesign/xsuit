@@ -1,0 +1,39 @@
+{
+  "id": "site.reddit",
+  "site": "Reddit",
+  "hosts": ["www.reddit.com"],
+  "status": "draft",
+  "pageTypeHints": [
+    {
+      "pageType": "home",
+      "urlPattern": "^/$"
+    },
+    {
+      "pageType": "feed",
+      "urlPattern": "^/r/[^/]+/?$"
+    }
+  ],
+  "components": [
+    {
+      "component": "search-box",
+      "selectors": ["form[role='search']", "faceplate-search-input"],
+      "confidence": "low"
+    },
+    {
+      "component": "feed-item",
+      "selectors": ["shreddit-post", "article"],
+      "confidence": "low"
+    },
+    {
+      "component": "sidebar",
+      "selectors": ["#right-sidebar-container", "aside"],
+      "confidence": "low"
+    },
+    {
+      "component": "comments",
+      "selectors": ["shreddit-comment-tree"],
+      "confidence": "low"
+    }
+  ],
+  "notes": "DRAFT. Selectors written from general knowledge of the page structure; NOT verified against the live DOM (the session network cannot reach this site). urlPattern is matched against the URL path only. Verify with adapters/VERIFY.md before changing status to tested."
+}

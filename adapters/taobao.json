@@ -1,0 +1,34 @@
+{
+  "id": "site.taobao",
+  "site": "Taobao",
+  "hosts": ["www.taobao.com", "world.taobao.com"],
+  "status": "draft",
+  "pageTypeHints": [
+    {
+      "pageType": "home",
+      "urlPattern": "^/$"
+    },
+    {
+      "pageType": "search-results",
+      "urlPattern": "^/search"
+    }
+  ],
+  "components": [
+    {
+      "component": "search-box",
+      "selectors": ["form[role='search']", "form[action*='search']"],
+      "confidence": "low"
+    },
+    {
+      "component": "primary-nav",
+      "selectors": ["nav", "[role='navigation']"],
+      "confidence": "low"
+    },
+    {
+      "component": "footer",
+      "selectors": ["footer"],
+      "confidence": "low"
+    }
+  ],
+  "notes": "DRAFT. Selectors written from general knowledge of the page structure; NOT verified against the live DOM (the session network cannot reach this site). urlPattern is matched against the URL path only. Verify with adapters/VERIFY.md before changing status to tested."
+}

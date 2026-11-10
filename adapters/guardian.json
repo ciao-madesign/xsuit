@@ -1,0 +1,39 @@
+{
+  "id": "site.guardian",
+  "site": "The Guardian",
+  "hosts": ["www.theguardian.com"],
+  "status": "draft",
+  "pageTypeHints": [
+    {
+      "pageType": "home",
+      "urlPattern": "^/(uk|us|au|international)?$"
+    },
+    {
+      "pageType": "article",
+      "urlPattern": "^/.+/20[0-9][0-9]/[a-z][a-z][a-z]/[0-9][0-9]/"
+    }
+  ],
+  "components": [
+    {
+      "component": "header",
+      "selectors": ["header", "[role='banner']"],
+      "confidence": "medium"
+    },
+    {
+      "component": "primary-nav",
+      "selectors": ["nav[aria-label*='av' i]", "header nav"],
+      "confidence": "low"
+    },
+    {
+      "component": "article-body",
+      "selectors": ["article", "main article"],
+      "confidence": "medium"
+    },
+    {
+      "component": "footer",
+      "selectors": ["footer"],
+      "confidence": "medium"
+    }
+  ],
+  "notes": "DRAFT. Selectors written from general knowledge of the page structure; NOT verified against the live DOM (the session network cannot reach this site). urlPattern is matched against the URL path only. Verify with adapters/VERIFY.md before changing status to tested."
+}

@@ -1,0 +1,39 @@
+{
+  "id": "site.bbc",
+  "site": "BBC",
+  "hosts": ["www.bbc.com", "www.bbc.co.uk"],
+  "status": "draft",
+  "pageTypeHints": [
+    {
+      "pageType": "home",
+      "urlPattern": "^/$"
+    },
+    {
+      "pageType": "article",
+      "urlPattern": "^/(news|sport)/.+"
+    }
+  ],
+  "components": [
+    {
+      "component": "header",
+      "selectors": ["header", "[role='banner']"],
+      "confidence": "medium"
+    },
+    {
+      "component": "primary-nav",
+      "selectors": ["nav[aria-label*='av' i]", "header nav"],
+      "confidence": "low"
+    },
+    {
+      "component": "article-body",
+      "selectors": ["article", "main article"],
+      "confidence": "medium"
+    },
+    {
+      "component": "footer",
+      "selectors": ["footer"],
+      "confidence": "medium"
+    }
+  ],
+  "notes": "DRAFT. Selectors written from general knowledge of the page structure; NOT verified against the live DOM (the session network cannot reach this site). urlPattern is matched against the URL path only. Verify with adapters/VERIFY.md before changing status to tested."
+}

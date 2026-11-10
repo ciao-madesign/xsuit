@@ -1,0 +1,34 @@
+{
+  "id": "site.xiaohongshu",
+  "site": "RED (Xiaohongshu)",
+  "hosts": ["www.xiaohongshu.com"],
+  "status": "draft",
+  "pageTypeHints": [
+    {
+      "pageType": "home",
+      "urlPattern": "^/(explore)?$"
+    },
+    {
+      "pageType": "search-results",
+      "urlPattern": "^/search_result"
+    }
+  ],
+  "components": [
+    {
+      "component": "search-box",
+      "selectors": ["form[role='search']", "input[type='search']"],
+      "confidence": "low"
+    },
+    {
+      "component": "feed-item",
+      "selectors": ["section[class*='note-item']", "div[class*='note-item']"],
+      "confidence": "low"
+    },
+    {
+      "component": "sidebar",
+      "selectors": ["div[class*='side-bar']", "aside"],
+      "confidence": "low"
+    }
+  ],
+  "notes": "DRAFT. Selectors written from general knowledge of the page structure; NOT verified against the live DOM (the session network cannot reach this site). urlPattern is matched against the URL path only. Verify with adapters/VERIFY.md before changing status to tested."
+}
