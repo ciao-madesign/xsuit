@@ -62,6 +62,10 @@ describe("release build", () => {
       expect(c, m).toContain(m);
     expect(text("dist", "popup.html")).toContain('id="always"');
     expect(text("dist", "popup.html")).toContain('id="toggle"');
+    // P5: the localization brief is a product feature, so it is in the release build
+    expect(existsSync("dist/brief.html")).toBe(true);
+    expect(existsSync("dist/brief.js")).toBe(true);
+    expect(c).toContain("xsuit/brief");
   }, 30000);
 
   it("has the same manifest and security invariants as the developer build", () => {

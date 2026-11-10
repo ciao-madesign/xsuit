@@ -9,11 +9,12 @@ import westernRules from "../../rules/western.json";
 import chinaRules from "../../rules/china.json";
 import profiles from "../../rules/profiles.json";
 import type { Profile, RuleSet } from "../rules/types";
-import type { ApplyReply, Message, PingReply, RestoreReply } from "../shared/messages";
+import type { ApplyReply, BriefReply, Message, PingReply, RestoreReply } from "../shared/messages";
 import type { Settings } from "../shared/settings";
 import { computeStatus } from "../shared/state";
 import { loadSettings, onSettingsChanged } from "../shared/storage";
 import { resolveLanguage } from "../i18n";
+import { buildBrief } from "../brief/brief";
 import { Overlay } from "../ui/overlay";
 import { DEV_MESSAGE_TYPES, handleDevMessage } from "./dev";
 import { summarizeChanges } from "../ui/summary";
@@ -28,6 +29,7 @@ const MESSAGE_TYPES = new Set<string>([
   "xsuit/ping",
   "xsuit/restore",
   "xsuit/apply-once",
+  "xsuit/brief",
   ...(__DEV__ ? DEV_MESSAGE_TYPES : []),
 ]);
 function isMessage(x: unknown): x is Message {
@@ -171,6 +173,28 @@ function main(): void {
             ? "Original page restored."
             : "Nothing to restore: no transformation is applied.",
         } satisfies RestoreReply);
+        break;
+      }
+      case "xsuit/brief": {
+        // Local only: the site name (no path), the rules that ran and their sources, nothing from the page text.
+        const st = engine.status;
+        sendResponse({
+          ok: true,
+          brief: buildBrief({
+            host: location.hostname,
+            now: new Date(),
+            market: current?.profile ?? "original",
+            strength: current?.intensity ?? "standard",
+            depth: current?.depth ?? "visual",
+            pageType: (analysis ?? analyze()).context.pageType,
+            changes: st.changes,
+            reverted: st.reverted,
+            unverifiable: st.report?.guard.unverifiable ?? 0,
+            rules: allRules,
+            components: (analysis ?? analyze()).context.components,
+            catalog: toCatalog(effectFile, current?.intensity ?? "standard"),
+          }),
+        } satisfies BriefReply);
         break;
       }
       case "xsuit/apply-once":

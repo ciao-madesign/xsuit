@@ -98,8 +98,8 @@ describe("security invariants: source code", () => {
 });
 
 describe("security invariants: code that runs inside web pages never acts for the user", () => {
-  // Everything except the extension's own pages (popup, options, report) and the service worker.
-  const PAGE_CODE = (f: string) => !/src\/(popup|options|report|pages|background)\//.test(f);
+  // Everything except the extension's own pages (popup, options, report, brief) and the service worker.
+  const PAGE_CODE = (f: string) => !/src\/(popup|options|report|brief|pages|background)\//.test(f);
   const FORBIDDEN_IN_PAGE: [RegExp, string][] = [
     [
       /createElement\(["'](form|input|img|link|meta|textarea|select)["']\)/,

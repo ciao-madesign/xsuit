@@ -75,6 +75,7 @@ Install → choose your market once → on any page, one click on the icon adapt
 - **P2 done**: one click (decision #59).
 - **P3 done**: strength and plain feedback (decision #60).
 - **P4 done**: plain words and languages (decision #61).
+- **P5 done**: localization brief (decision #62).
 
 ## Honest limits to keep in view
 

@@ -1,4 +1,4 @@
-import type { ApplyReply, Message, PingReply, RestoreReply } from "../shared/messages";
+import type { ApplyReply, BriefReply, Message, PingReply, RestoreReply } from "../shared/messages";
 import {
   DEPTHS,
   INTENSITY_CHOICES,
@@ -205,6 +205,15 @@ async function toggle(): Promise<void> {
   render();
 }
 
+/** Opens the localization brief of the adapted page, built on this device. */
+async function openBrief(): Promise<void> {
+  if (!adapted) return say(t("brief.empty"));
+  const r = await send<BriefReply>({ type: "xsuit/brief" });
+  if (!r) return;
+  await chrome.storage.session.set({ brief: r.brief });
+  await chrome.tabs.create({ url: chrome.runtime.getURL("brief.html") });
+}
+
 async function setAlways(on: boolean): Promise<void> {
   const status = computeStatus(settings, tab?.url);
   if (!("host" in status)) return;
@@ -249,6 +258,7 @@ async function init(): Promise<void> {
     $("marketPicker").hidden = !$("marketPicker").hidden;
   });
   $("toggle").addEventListener("click", toggle);
+  $("brief").addEventListener("click", openBrief);
   $<HTMLInputElement>("always").addEventListener("change", (e) =>
     setAlways((e.target as HTMLInputElement).checked),
   );

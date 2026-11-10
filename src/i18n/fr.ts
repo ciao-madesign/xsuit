@@ -102,6 +102,32 @@ export const fr: Record<Key, string> = {
     "Les recommandations remontent, juste sous la bannière principale.",
   "rule.structure.china.surface-shortcuts":
     "Une petite bande de raccourcis est ajoutée en haut, copiant des liens déjà présents sur la page.",
+  "brief.button": "Fiche de localisation",
+  "brief.title": "Fiche de localisation",
+  "brief.subtitle": "{host} · style « {market} » · intensité : {strength} · {date}",
+  "brief.summary":
+    "xsuit a modifié {n} éléments de cette page pour la rapprocher du style « {market} ».",
+  "brief.empty": "Rien n'a été modifié sur cette page, il n'y a donc rien à signaler.",
+  "brief.limits": "Ce que les preuves ne montrent pas",
+  "brief.css": "CSS approximatif pour votre propre site",
+  "brief.cssNote":
+    "Appliquez-le aux blocs correspondants de votre page. Les valeurs dépendent de l'intensité choisie.",
+  "brief.structural":
+    "Cette modification déplace, masque ou ajoute des parties de la page ; il n'existe pas de règle CSS unique.",
+  "brief.elements": "Éléments concernés : {n}",
+  "brief.notApplied": "Non appliquées",
+  "brief.readFirst": "À lire d'abord",
+  "brief.note1":
+    "Ce sont des tendances observées dans des études de deux groupes de sites, pas des règles. Votre public peut différer.",
+  "brief.note2": "Les modifications affichées concernent cette seule page, à cet instant.",
+  "brief.note3":
+    "Elles n'ont pas été testées avec vos utilisateurs. Testez avec de vraies personnes avant de décider.",
+  "brief.print": "Imprimer ou enregistrer en PDF",
+  "brief.save": "Enregistrer en fichier",
+  "brief.footer":
+    "Créée sur cet appareil. Rien n'a été envoyé. Le fichier contient le nom du site mais aucun texte de la page ni chemin d'adresse.",
+  "brief.cssImages": "sur les images",
+  "brief.cssLinks": "sur les liens",
   "options.title": "Options de xsuit",
   "options.label.title": "Étiquette sur la page",
   "options.label.intro":

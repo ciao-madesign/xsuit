@@ -14,6 +14,7 @@ const opts = {
     content: "src/content/index.ts",
     popup: "src/popup/index.ts",
     options: "src/options/index.ts",
+    brief: "src/brief/index.ts",
     // The comparison report page is a developer tool: only in the developer build.
     ...(dev ? { report: "src/report/index.ts" } : {}),
   },

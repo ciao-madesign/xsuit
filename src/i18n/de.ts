@@ -100,6 +100,32 @@ export const de: Record<Key, string> = {
     "Empfehlungen rücken nach oben, direkt unter den Hauptbanner.",
   "rule.structure.china.surface-shortcuts":
     "Oben wird eine kleine Leiste mit Abkürzungen eingefügt, die Links kopiert, die schon auf der Seite sind.",
+  "brief.button": "Lokalisierungsbericht",
+  "brief.title": "Lokalisierungsbericht",
+  "brief.subtitle": "{host} · Stil „{market}“ · Stärke: {strength} · {date}",
+  "brief.summary":
+    "xsuit hat {n} Dinge auf dieser Seite geändert, um sie dem Stil „{market}“ anzunähern.",
+  "brief.empty": "Auf dieser Seite wurde nichts geändert, es gibt also nichts zu berichten.",
+  "brief.limits": "Was die Belege nicht zeigen",
+  "brief.css": "Ungefähres CSS für deine eigene Website",
+  "brief.cssNote":
+    "Wende es auf die passenden Blöcke deiner Seite an. Die Werte hängen von der gewählten Stärke ab.",
+  "brief.structural":
+    "Diese Änderung verschiebt, versteckt oder ergänzt Seitenteile; es gibt dafür keine einzelne CSS-Regel.",
+  "brief.elements": "Betroffene Elemente: {n}",
+  "brief.notApplied": "Nicht angewendet",
+  "brief.readFirst": "Zuerst lesen",
+  "brief.note1":
+    "Das sind Tendenzen aus Studien zu zwei Gruppen von Websites, keine Regeln. Dein Publikum kann abweichen.",
+  "brief.note2": "Die gezeigten Änderungen gelten nur für diese eine Seite, in diesem Moment.",
+  "brief.note3":
+    "Sie wurden nicht mit deinen Nutzern getestet. Teste mit echten Menschen, bevor du entscheidest.",
+  "brief.print": "Drucken oder als PDF speichern",
+  "brief.save": "Als Datei speichern",
+  "brief.footer":
+    "Auf diesem Gerät erstellt. Es wurde nichts gesendet. Die Datei enthält den Websitenamen, aber keinen Seitentext und keinen Adresspfad.",
+  "brief.cssImages": "bei Bildern",
+  "brief.cssLinks": "bei Links",
   "options.title": "xsuit-Optionen",
   "options.label.title": "Etikett auf der Seite",
   "options.label.intro":

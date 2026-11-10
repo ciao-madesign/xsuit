@@ -82,6 +82,50 @@ function bigPage(n) {
       popupProblems.push("normal view showed neither the switch nor an explanation");
     await pp.close();
   }
+  // The localization brief page (P5) renders a stored brief in the real browser without errors.
+  await sw.evaluate(async () => {
+    await chrome.storage.session.set({
+      brief: {
+        schema: "xsuit.brief/1",
+        createdOn: "2026-11-10",
+        host: "example.com",
+        market: "china",
+        strength: "standard",
+        depth: "visual",
+        pageType: "home",
+        unverifiable: 0,
+        notApplied: [],
+        changes: [
+          {
+            ruleId: "visual.china.compact-density",
+            title: "Compact density",
+            dimension: "density",
+            pole: "compact",
+            evidenceLevel: "moderate",
+            sources: ["li2026"],
+            limit: "Sample is institutional.",
+            elements: 3,
+            confidence: "high",
+            version: "1.0.0",
+            structural: false,
+            css: [{ on: null, declaration: "line-height: 1.4" }],
+          },
+        ],
+      },
+    });
+  });
+  {
+    const bp = await ctx.newPage();
+    const errs = [];
+    bp.on("pageerror", (e) => errs.push(e.message));
+    await bp.goto(`chrome-extension://${extId}/brief.html`);
+    await bp.waitForTimeout(300);
+    const txt = await bp.evaluate(() => document.body.textContent);
+    if (errs.length) popupProblems.push(`brief page errors: ${errs.join("; ")}`);
+    if (!txt.includes("example.com") || !txt.includes("line-height: 1.4"))
+      popupProblems.push("brief page did not show the brief");
+    await bp.close();
+  }
   console.log(
     popupProblems.length
       ? `POPUP PROBLEMS: ${popupProblems.join(" | ")}`

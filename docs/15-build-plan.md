@@ -90,4 +90,4 @@ B12 → B13 → B14 → B15 → B16 → B17 → B18 → B19 → B20 → B21 → 
 ## Product plan P1–P6 (replaces the B22 direction; see docs/25-product-replan.md)
 
 - **P1 DONE 2026-11-10**: release and developer builds; research code leaves the shipped extension.
-- **P2 DONE 2026-11-10** (docs/26-one-click.md); **P3 DONE 2026-11-10** (docs/27-visible-value.md, docs/28-strength-and-feedback.md); **P4 DONE 2026-11-10** (docs/29-plain-words-and-languages.md); P5 localization brief for companies; P6 release readiness.
+- **P2 DONE 2026-11-10** (docs/26-one-click.md); **P3 DONE 2026-11-10** (docs/27-visible-value.md, docs/28-strength-and-feedback.md); **P4 DONE 2026-11-10** (docs/29-plain-words-and-languages.md); **P5 DONE 2026-11-10** (docs/30-localization-brief.md); the path to a first MVP is in docs/31-roadmap-to-mvp.md; P6 release readiness.

@@ -9,7 +9,8 @@ export type Message =
   | { type: "xsuit/apply-once" }
   | { type: "xsuit/measure" }
   | { type: "xsuit/inspect" }
-  | { type: "xsuit/report" };
+  | { type: "xsuit/report" }
+  | { type: "xsuit/brief" };
 
 export interface PingReply {
   ok: true;
@@ -31,6 +32,12 @@ export interface ApplyReply {
   recognized: RecognizedComponent[];
   pageType: string;
   reverted: { ruleId: string; reason: string }[];
+}
+import type { Brief } from "../brief/brief";
+
+export interface BriefReply {
+  ok: true;
+  brief: Brief;
 }
 export interface MeasureReply {
   ok: true;

@@ -98,6 +98,32 @@ export const it: Record<Key, string> = {
     "I consigli salgono, subito sotto il banner principale.",
   "rule.structure.china.surface-shortcuts":
     "Vicino all'inizio viene aggiunta una piccola fascia di scorciatoie, copiando link già presenti nella pagina.",
+  "brief.button": "Scheda di localizzazione",
+  "brief.title": "Scheda di localizzazione",
+  "brief.subtitle": "{host} · stile «{market}» · intensità: {strength} · {date}",
+  "brief.summary":
+    "xsuit ha cambiato {n} cose su questa pagina per avvicinarla allo stile «{market}».",
+  "brief.empty": "Su questa pagina non è stato cambiato nulla, quindi non c'è nulla da riportare.",
+  "brief.limits": "Cosa non dimostrano le prove",
+  "brief.css": "CSS indicativo per il tuo sito",
+  "brief.cssNote":
+    "Applicalo ai blocchi corrispondenti della tua pagina. I valori dipendono dall'intensità scelta.",
+  "brief.structural":
+    "Questa modifica sposta, nasconde o aggiunge parti della pagina: non esiste una singola regola CSS.",
+  "brief.elements": "Elementi interessati: {n}",
+  "brief.notApplied": "Non applicate",
+  "brief.readFirst": "Da leggere prima",
+  "brief.note1":
+    "Sono tendenze emerse da studi su due gruppi di siti, non regole. Il tuo pubblico può essere diverso.",
+  "brief.note2": "Le modifiche mostrate riguardano questa sola pagina, in questo momento.",
+  "brief.note3":
+    "Non sono state provate con i tuoi utenti. Prova con persone reali prima di decidere.",
+  "brief.print": "Stampa o salva come PDF",
+  "brief.save": "Salva come file",
+  "brief.footer":
+    "Creata su questo dispositivo. Non è stato inviato nulla. Il file contiene il nome del sito ma nessun testo della pagina e nessun percorso dell'indirizzo.",
+  "brief.cssImages": "sulle immagini",
+  "brief.cssLinks": "sui link",
   "options.title": "Opzioni di xsuit",
   "options.label.title": "Etichetta sulla pagina",
   "options.label.intro":

@@ -95,6 +95,31 @@ export const en = {
   "rule.structure.china.recommendations-up": "Recommendations move up, just below the main banner.",
   "rule.structure.china.surface-shortcuts":
     "A small strip of shortcuts is added near the top, copying links that already exist on the page.",
+  "brief.button": "Localization brief",
+  "brief.title": "Localization brief",
+  "brief.subtitle": "{host} · {market} style · strength: {strength} · {date}",
+  "brief.summary": "xsuit changed {n} things on this page to match the {market} style.",
+  "brief.empty": "Nothing was changed on this page, so there is nothing to report.",
+  "brief.limits": "What the evidence does not show",
+  "brief.css": "Approximate CSS for your own site",
+  "brief.cssNote":
+    "Apply to the matching blocks of your page. The values depend on the strength chosen.",
+  "brief.structural":
+    "This change moves, hides or adds page parts; there is no single CSS rule for it.",
+  "brief.elements": "Elements affected: {n}",
+  "brief.notApplied": "Not applied",
+  "brief.readFirst": "Read this first",
+  "brief.note1":
+    "These are tendencies found in studies of two groups of websites, not rules. Your audience may differ.",
+  "brief.note2": "The changes shown are for this one page, at this moment.",
+  "brief.note3":
+    "They have not been tested with your users. Test with real people before you decide.",
+  "brief.print": "Print or save as PDF",
+  "brief.save": "Save as file",
+  "brief.footer":
+    "Made on this device. Nothing was sent anywhere. The file contains the site name but no page text and no page address path.",
+  "brief.cssImages": "on images",
+  "brief.cssLinks": "on links",
   "options.title": "xsuit options",
   "options.label.title": "On-page label",
   "options.label.intro":
