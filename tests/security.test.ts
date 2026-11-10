@@ -76,7 +76,8 @@ describe("security invariants: source code", () => {
   });
   it("screenshots are captured only by the popup, and shown only as inline PNG", () => {
     for (const f of files(join(root, "src")))
-      if (!f.endsWith("popup/index.ts"))
+      // shared/features.ts only lists the API name for the feature check (B21); it never calls it.
+      if (!f.endsWith("popup/index.ts") && !f.endsWith("shared/features.ts"))
         expect(readFileSync(f, "utf8"), f).not.toMatch(/captureVisibleTab/);
     expect(read("src/report/index.ts")).toContain("data:image\\/png;base64");
   });

@@ -1,3 +1,4 @@
+import { missingApis, REQUIRED_APIS } from "../shared/features";
 import { describe } from "../shared/version";
 import { DEFAULT_SETTINGS, normalizeHost, sitePatterns, withSite } from "../shared/settings";
 import { loadSettings, onSettingsChanged, saveSettings } from "../shared/storage";
@@ -43,17 +44,20 @@ onSettingsChanged((s) => void syncRegistration(s));
 
 // The permission prompt can close the popup before it finishes, so the site list is also
 // kept in step here.
-chrome.permissions.onAdded.addListener(async (p) => {
+chrome.permissions.onAdded?.addListener(async (p) => {
   let s = await loadSettings();
   for (const h of hostsOf(p.origins)) s = withSite(s, h, true);
   await saveSettings(s);
   await syncRegistration(s);
 });
-chrome.permissions.onRemoved.addListener(async (p) => {
+chrome.permissions.onRemoved?.addListener(async (p) => {
   let s = await loadSettings();
   for (const h of hostsOf(p.origins)) s = withSite(s, h, false);
   await saveSettings(s);
   await syncRegistration(s);
 });
 
-console.info(describe(), "service worker ready");
+const missing = missingApis(REQUIRED_APIS);
+if (missing.length)
+  console.error("xsuit cannot work in this browser: missing APIs:", missing.join(", "));
+console.info(describe(), "background ready");

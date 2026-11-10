@@ -72,9 +72,9 @@ Written 2026-11-10 after the merge of the security work and B11 and the privacy 
 - CJK and RTL handling, text expansion, font fallbacks, number/date format hints; separate device-driven differences (mobile vs desktop) from market conventions. No machine translation.
 - Checks (A): RTL and CJK fixtures keep layout without overflow; mobile-width fixtures.
 
-## B21 — Cross-browser
+## B21 — Cross-browser (DONE 2026-11-10, see docs/23-cross-browser.md)
 
-- Firefox and Edge manifests/build targets; feature checks for APIs that differ. `docs/17-cross-browser-strategy.md`.
+- Firefox and Edge manifests/build targets; feature checks for APIs that differ. `docs/23-cross-browser.md`.
 - Checks (A): build per target + manifest tests (same security invariants). (P): manual smoke test in each browser.
 
 ## B22 — Validation with people and go / no-go

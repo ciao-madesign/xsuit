@@ -1,3 +1,4 @@
+import { ifAvailable } from "../shared/features";
 import type { Measurement } from "../metrics/metrics";
 import { prepareMeasurementExport } from "../research/exportGate";
 import { showPreview } from "../pages/exportPreview";
@@ -149,8 +150,13 @@ async function compare(): Promise<void> {
   const r = await send<ReportReply>({ type: "xsuit/report" });
   if (!r) return;
   const images: { before: string | null; after: string | null } = { before: null, after: null };
-  const shot = () =>
-    chrome.tabs.captureVisibleTab(tab!.windowId, { format: "png" }).catch(() => null);
+  // Screenshots are optional: a browser without the API simply gets a report without images.
+  const shot = (): Promise<string | null> =>
+    ifAvailable(
+      "tabs.captureVisibleTab",
+      () => chrome.tabs.captureVisibleTab(tab!.windowId, { format: "png" }).catch(() => null),
+      Promise.resolve(null),
+    );
   if (r.report.transformed) {
     images.after = await shot();
     await send<RestoreReply>({ type: "xsuit/restore" });

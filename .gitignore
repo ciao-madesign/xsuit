@@ -2,3 +2,5 @@ node_modules
 dist
 *.log
 .replication.cjs
+dist-firefox
+dist-edge
