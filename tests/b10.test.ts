@@ -4,7 +4,7 @@ import type { Measurement } from "../src/metrics/metrics";
 
 const m = (metrics: Record<string, number | null>, hasLayout = true) =>
   ({
-    page: { host: "example.test", path: "/" },
+    page: { host: "example.test", pageType: "home" },
     hasLayout,
     metrics,
   }) as unknown as Measurement;

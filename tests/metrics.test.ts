@@ -84,7 +84,7 @@ describe("measurePage on a synthetic dense page", () => {
     const json = JSON.stringify({ ...r, definitions: undefined });
     expect(json).not.toContain("今日");
     expect(json).not.toContain("Hello");
-    expect(Object.keys(r.page)).toEqual(["host", "path", "lang"]);
+    expect(Object.keys(r.page)).toEqual(["host", "pageType", "lang"]);
   });
   it("every metric has a written definition", () => {
     for (const k of Object.keys(m().metrics)) expect(METRIC_DEFINITIONS[k], k).toBeTruthy();

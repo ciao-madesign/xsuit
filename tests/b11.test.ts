@@ -20,7 +20,7 @@ describe("privacy: the extension code never sends data out (spec 15)", () => {
     expect(m.host_permissions).toBeUndefined();
     expect(m.content_scripts).toBeUndefined();
     expect(JSON.stringify(m)).not.toMatch(/https?:\/\/[^*]/);
-    expect(m.content_security_policy).toBeUndefined();
+    expect(m.content_security_policy.extension_pages).toContain("script-src 'self'");
   });
   it("pages and scripts shipped in public/ load nothing from other origins", () => {
     for (const f of readdirSync("public").filter((x) => /\.(html|css)$/.test(x)))

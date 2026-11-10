@@ -1,7 +1,7 @@
 import { safeFilePart, type Measurement } from "../metrics/metrics";
 import type { Rule } from "../rules/types";
 
-export const REPORT_SCHEMA = "xsuit.report/1";
+export const REPORT_SCHEMA = "xsuit.report/2";
 
 export interface ReportRule {
   id: string;
@@ -21,7 +21,7 @@ export interface Report {
   schema: typeof REPORT_SCHEMA;
   createdAt: string;
   /** Host and path only; never the query string or page text. */
-  page: { host: string; path: string };
+  page: { host: string; pageType: string };
   profile: string;
   depth: string;
   pageType: string;
@@ -76,7 +76,7 @@ export function buildReport(i: ReportInput): Report {
   return {
     schema: REPORT_SCHEMA,
     createdAt: (i.now ?? new Date()).toISOString(),
-    page: { host: i.before.page.host, path: i.before.page.path },
+    page: { host: i.before.page.host, pageType: i.before.page.pageType },
     profile: i.profile,
     depth: i.depth,
     pageType: i.pageType,

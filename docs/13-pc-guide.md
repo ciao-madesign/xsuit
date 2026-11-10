@@ -59,4 +59,4 @@ Then tell me in a new session: "measurements added". I will downgrade or keep ru
 
 - "Could not reach the page": reload the page and try again.
 - Metrics show `n/a`: the page had no layout yet; wait for full load and measure again.
-- Never share files that contain personal data; measurement files hold numbers only.
+- Never share files that contain personal data; measurement files hold numbers, host, page-type and language only (no URL path).

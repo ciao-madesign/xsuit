@@ -1,6 +1,6 @@
 # Security policy
 
-xsuit runs inside the user's browser and must never be usable for attacks, data theft or abuse. The security model is described in [docs/12-security-model.md](docs/12-security-model.md) and enforced by automated tests (`tests/security.test.ts`).
+xsuit runs inside the user's browser and must never be usable for attacks, data theft or abuse. The security model is described in [docs/14-security-model.md](docs/14-security-model.md) and enforced by automated tests (`tests/security.test.ts`).
 
 ## Reporting a vulnerability
 

@@ -1,9 +1,12 @@
+import { classifyPage } from "../analyzer/pageType";
+import { normalizeHost } from "../shared/settings";
 // Page metrics: our own operationalisation of the indicators reported in the research
 // (docs/01 section 2). Definitions are ours and may differ from the studies' exact methods;
 // each one is written down in METRIC_DEFINITIONS and exported with every measurement.
-// Privacy: only numbers are produced. No page text or user data is kept.
+// Privacy: only numbers, the host, a page-type label and the language are produced.
+// No page text, URL path, query or user data is kept.
 
-export const METRICS_SCHEMA = "xsuit.metrics/1";
+export const METRICS_SCHEMA = "xsuit.metrics/2";
 
 export const METRIC_DEFINITIONS: Record<string, string> = {
   pageHeightPx: "Full document height in CSS pixels.",
@@ -64,7 +67,7 @@ export interface PageMetrics {
 export interface Measurement {
   schema: typeof METRICS_SCHEMA;
   capturedAt: string;
-  page: { host: string; path: string; lang: string };
+  page: { host: string; pageType: string; lang: string };
   viewport: { width: number; height: number };
   /** False when the environment has no layout (unit tests): size-based metrics are null. */
   hasLayout: boolean;
@@ -266,8 +269,13 @@ export function measurePage(doc: Document, now: Date = new Date()): Measurement 
   return {
     schema: METRICS_SCHEMA,
     capturedAt: now.toISOString(),
-    // Query string and fragment are dropped on purpose: they can carry personal data.
-    page: { host: win.location.hostname, path: win.location.pathname, lang: root.lang || "" },
+    // Data minimization: the URL path, query and fragment are never kept (they can carry personal
+    // data). Only the host and a page-type label, which is what the research needs.
+    page: {
+      host: normalizeHost(win.location.hostname) ?? "",
+      pageType: classifyPage(doc, win.location.pathname, win.location.search).pageType,
+      lang: /^[a-z]{2,3}(-[a-z0-9]{2,8})?$/i.test(root.lang) ? root.lang.toLowerCase() : "",
+    },
     viewport: { width: win.innerWidth, height: win.innerHeight },
     hasLayout,
     sampledElements: sampled,

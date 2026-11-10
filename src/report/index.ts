@@ -32,7 +32,7 @@ async function init(): Promise<void> {
   }
   const r = data.report;
   $("content").hidden = false;
-  $("title").textContent = `${r.page.host}${r.page.path}`;
+  $("title").textContent = `${r.page.host} (${r.page.pageType})`;
   $("meta").textContent =
     `Style: ${r.profile} · depth: ${r.depth} · page type: ${r.pageType} · ${r.createdAt}`;
   $("not-transformed").hidden = r.transformed;
