@@ -28,7 +28,7 @@ const hostsOf = (origins: string[] | undefined) =>
   [
     ...new Set(
       (origins ?? []).map((o) =>
-        normalizeHost(o.replace(/^\*:\/\/(\*\.)?/, "").replace(/\/\*$/, "")),
+        normalizeHost(o.replace(/^(\*|https?):\/\/(\*\.)?/, "").replace(/\/\*$/, "")),
       ),
     ),
   ].filter((h): h is string => h !== null);

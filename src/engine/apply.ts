@@ -77,6 +77,25 @@ function group(doc: Document, journal: Journal, members: Element[], tag: string)
   return true;
 }
 
+// Links that change state or end a session must never be promoted to a one-click shortcut.
+const RISKY_LINK =
+  /(log-?out|sign-?out|delete|remove|unsubscribe|deactivate|close-?account|checkout|pay(ment)?|purchase|buy-?now|confirm|transfer)/i;
+
+/** Only plain http(s) navigation to a real address, never a risky action, never in protected areas. */
+export function isSafeLink(href: string, a: Element, base: string): boolean {
+  if (!href.trim() || href.trim() === "#") return false;
+  let url: URL;
+  try {
+    url = new URL(href.trim(), base);
+  } catch {
+    return false;
+  }
+  if (url.protocol !== "http:" && url.protocol !== "https:") return false;
+  if (url.username || url.password) return false;
+  if (RISKY_LINK.test(url.pathname) || RISKY_LINK.test(url.search)) return false;
+  return !isProtected(a);
+}
+
 /** Copies up to a few existing, safe links (text + address) from the source blocks. */
 function shortcutLinks(sources: Element[]): { text: string; href: string }[] {
   const out: { text: string; href: string }[] = [];
@@ -86,7 +105,7 @@ function shortcutLinks(sources: Element[]): { text: string; href: string }[] {
       const text = (a.textContent ?? "").replace(/\s+/g, " ").trim();
       const href = a.getAttribute("href") ?? "";
       if (!text || text.length > 30 || seen.has(text)) continue;
-      if (/^\s*(javascript|data|vbscript):/i.test(href) || href === "#") continue;
+      if (!isSafeLink(href, a, src.ownerDocument.baseURI)) continue;
       seen.add(text);
       out.push({ text, href });
       if (out.length === MAX_SHORTCUTS) return out;

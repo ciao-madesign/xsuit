@@ -34,6 +34,52 @@ export const DEFAULT_SETTINGS: Settings = {
 const RULE_ID_RE = /^[a-z0-9]+(\.[a-z0-9-]+)+$/;
 const HOST_RE = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/;
 
+const MAX_LIST = 500;
+const IPV4_RE = /^\d{1,3}(\.\d{1,3}){3}$/;
+/** Too broad to grant: one site entry would cover unrelated organizations. */
+const SHARED_SUFFIXES = new Set([
+  "co.uk",
+  "org.uk",
+  "ac.uk",
+  "gov.uk",
+  "com.au",
+  "net.au",
+  "org.au",
+  "co.nz",
+  "co.jp",
+  "or.jp",
+  "ne.jp",
+  "co.kr",
+  "or.kr",
+  "com.cn",
+  "net.cn",
+  "org.cn",
+  "gov.cn",
+  "edu.cn",
+  "com.hk",
+  "com.tw",
+  "com.sg",
+  "com.br",
+  "com.mx",
+  "com.ar",
+  "co.in",
+  "co.za",
+  "com.tr",
+  "github.io",
+  "gitlab.io",
+  "pages.dev",
+  "netlify.app",
+  "vercel.app",
+  "herokuapp.com",
+  "blogspot.com",
+  "appspot.com",
+  "web.app",
+  "firebaseapp.com",
+  "azurewebsites.net",
+  "cloudfront.net",
+  "amazonaws.com",
+]);
+
 /** Accepts "https://www.Example.com/x", "WWW.example.com", "example.com". Returns null if not a host. */
 export function normalizeHost(input: string): string | null {
   let h = input.trim().toLowerCase();
@@ -46,6 +92,9 @@ export function normalizeHost(input: string): string | null {
     }
   }
   h = h.replace(/^www\./, "").replace(/\.$/, "");
+  if (h.length > 253 || IPV4_RE.test(h) || SHARED_SUFFIXES.has(h)) return null;
+  const tld = h.slice(h.lastIndexOf(".") + 1);
+  if (tld.length < 2 || /^\d+$/.test(tld)) return null;
   return HOST_RE.test(h) ? h : null;
 }
 
@@ -62,20 +111,24 @@ export function normalizeSettings(raw: unknown): Settings {
   if (Array.isArray(r.disabledRules)) {
     s.disabledRules = [
       ...new Set(
-        r.disabledRules.filter((x): x is string => typeof x === "string" && RULE_ID_RE.test(x)),
+        r.disabledRules
+          .slice(0, MAX_LIST)
+          .filter((x): x is string => typeof x === "string" && RULE_ID_RE.test(x)),
       ),
     ].sort();
   }
   if (Array.isArray(r.hybridRules)) {
     s.hybridRules = [
       ...new Set(
-        r.hybridRules.filter((x): x is string => typeof x === "string" && RULE_ID_RE.test(x)),
+        r.hybridRules
+          .slice(0, MAX_LIST)
+          .filter((x): x is string => typeof x === "string" && RULE_ID_RE.test(x)),
       ),
     ].sort();
   }
   if (Array.isArray(r.enabledSites)) {
     const set = new Set<string>();
-    for (const d of r.enabledSites) {
+    for (const d of r.enabledSites.slice(0, MAX_LIST)) {
       const h = typeof d === "string" ? normalizeHost(d) : null;
       if (h) set.add(h);
     }
@@ -97,7 +150,8 @@ export function withSite(settings: Settings, host: string, enabled: boolean): Se
   return { ...settings, enabledSites: enabled ? [...rest, h].sort() : rest };
 }
 
-/** Match patterns for a site and its subdomains, for permissions and script registration. */
+/** Match patterns (https only) for a site and its subdomains. Empty for an invalid or too broad host. */
 export function sitePatterns(host: string): string[] {
-  return [`*://${host}/*`, `*://*.${host}/*`];
+  const h = normalizeHost(host);
+  return h ? [`https://${h}/*`, `https://*.${h}/*`] : [];
 }

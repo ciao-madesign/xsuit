@@ -276,8 +276,16 @@ export function measurePage(doc: Document, now: Date = new Date()): Measurement 
   };
 }
 
+/** Keeps only characters that are safe in a file name. */
+export function safeFilePart(s: string): string {
+  return s
+    .replace(/[^a-z0-9.-]/gi, "_")
+    .replace(/^\.+/, "")
+    .slice(0, 80);
+}
+
 /** File name for an exported measurement, e.g. "www.example.com__2026-11-09T10-00-00.json". */
 export function measurementFileName(m: Measurement): string {
   const stamp = m.capturedAt.replace(/[:.]/g, "-").replace(/-\d{3}Z$/, "");
-  return `${m.page.host || "page"}__${stamp}.json`;
+  return `${safeFilePart(m.page.host) || "page"}__${stamp}.json`;
 }

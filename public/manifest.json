@@ -13,5 +13,9 @@
     "type": "module"
   },
   "permissions": ["storage", "activeTab", "scripting"],
-  "optional_host_permissions": ["http://*/*", "https://*/*"]
+  "optional_host_permissions": ["https://*/*"],
+  "minimum_chrome_version": "120",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+  }
 }

@@ -32,6 +32,23 @@ declare global {
   }
 }
 
+const MESSAGE_TYPES = new Set<string>([
+  "xsuit/ping",
+  "xsuit/restore",
+  "xsuit/apply-once",
+  "xsuit/measure",
+  "xsuit/inspect",
+  "xsuit/report",
+]);
+function isMessage(x: unknown): x is Message {
+  return (
+    typeof x === "object" &&
+    x !== null &&
+    typeof (x as { type?: unknown }).type === "string" &&
+    MESSAGE_TYPES.has((x as { type: string }).type)
+  );
+}
+
 function main(): void {
   const ruleSets = [westernRules, chinaRules] as unknown as RuleSet[];
   const allRules = ruleSets.flatMap((s) => s.rules);
@@ -105,7 +122,11 @@ function main(): void {
     });
   }
 
-  chrome.runtime.onMessage.addListener((msg: Message, _sender, sendResponse) => {
+  chrome.runtime.onMessage.addListener((raw: unknown, sender, sendResponse) => {
+    // Only our own extension (popup / report pages, which have no tab) may command the page.
+    if (sender.id !== chrome.runtime.id || sender.tab) return false;
+    if (!isMessage(raw)) return false;
+    const msg = raw;
     switch (msg.type) {
       case "xsuit/ping":
         sendResponse({

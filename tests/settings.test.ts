@@ -60,7 +60,10 @@ describe("per-site opt-in", () => {
     expect(withSite(s, "example.com", false).enabledSites).toEqual([]);
   });
   it("builds match patterns for the site and subdomains", () => {
-    expect(sitePatterns("example.com")).toEqual(["*://example.com/*", "*://*.example.com/*"]);
+    expect(sitePatterns("example.com")).toEqual([
+      "https://example.com/*",
+      "https://*.example.com/*",
+    ]);
   });
   it("no site is enabled by default", () => expect(DEFAULT_SETTINGS.enabledSites).toEqual([]));
 });

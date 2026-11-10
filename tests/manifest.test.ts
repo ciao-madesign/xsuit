@@ -8,5 +8,5 @@ it("manifest is MV3 with minimal permissions", () => {
   // No site access by default: nothing in host_permissions, no static content script.
   expect(m.host_permissions).toBeUndefined();
   expect(m.content_scripts).toBeUndefined();
-  expect(m.optional_host_permissions).toEqual(["http://*/*", "https://*/*"]);
+  expect(m.optional_host_permissions).toEqual(["https://*/*"]);
 });

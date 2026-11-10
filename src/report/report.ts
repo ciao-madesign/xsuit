@@ -1,4 +1,4 @@
-import type { Measurement } from "../metrics/metrics";
+import { safeFilePart, type Measurement } from "../metrics/metrics";
 import type { Rule } from "../rules/types";
 
 export const REPORT_SCHEMA = "xsuit.report/1";
@@ -97,5 +97,5 @@ export function buildReport(i: ReportInput): Report {
 }
 
 export function reportFileName(r: Report): string {
-  return `${r.page.host}__${r.profile}__${r.createdAt.replace(/[:.]/g, "-")}.report.json`;
+  return `${safeFilePart(r.page.host) || "page"}__${safeFilePart(r.profile)}__${r.createdAt.replace(/[:.]/g, "-")}.report.json`;
 }

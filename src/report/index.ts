@@ -10,7 +10,8 @@ const fmt = (v: number | null) => (v === null ? "n/a" : String(v));
 
 function addImage(id: string, src: string | null, alt: string): void {
   const box = $(id);
-  if (!src) {
+  // Only an inline PNG captured by the popup is accepted: never a remote or script address.
+  if (!src || !/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(src)) {
     box.textContent = "No screenshot.";
     return;
   }
