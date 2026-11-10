@@ -30,11 +30,13 @@ Written 2026-11-10 after the merge of the security work and B11 and the privacy 
 - Result: 34 pages (`tests/corpus/`), report in `docs/16-generality-report.md`. Thresholds enforced by `tests/b13-corpus.test.ts`: precision ≥ 95% overall and ≥ 90% per component, page-type precision ≥ 95%, recall floors (90% semantic pages, 85% overall; initial regression floors, not goals). Whole engine run on every page × 3 profiles with exact restore; pages with nothing recognizable get no change; no site names in analyzer/engine/rule machine fields.
 - Honest limits: the corpus is synthetic and written by the project, so the figures catch regressions, not real-web performance (B14). On pages without semantic markup recall is low by design: xsuit does not guess.
 
-## B14 — Adapters as optional hints + real-site verification
+## B14 — Adapters as optional hints + real-site verification (automatic part DONE 2026-11-10; real-site checks need a person)
 
 - Adapter schema: an adapter may add or boost recognition, never be required; selector hit-rate is recorded so drift is visible.
 - Verify the 12 drafts on real pages with the observation sheets; mark each adapter `tested` only with a filled sheet. Same sheets collect measurements for the replication check (≥ 3 sites × 2 page types per side).
 - Checks (A): schema/validator, hit-rate report on fixtures. (P): PC with Chrome, filled sheets, `npm run replication` verdicts.
+- Done (A): draft adapters never override generic recognition (decision #48); `adapterHits` shown in research tools; stricter adapter validation; verification sheet format + gate (`tests/b14-adapters.test.ts`: a tested adapter without a passing sheet fails CI); `npm run adapters`; hostile/stale adapter cannot break a page (exact restore on all 34 corpus pages).
+- Still to do (P): verify the 12 adapters on real sites per `adapters/VERIFY.md` and collect measurements per `docs/13-pc-guide.md`. Until then all adapters stay `draft` and `npm run replication` says "insufficient".
 
 ## B15 — Accessibility guard v2
 

@@ -133,13 +133,14 @@ describe("page type classifier (two independent signals)", () => {
   });
 });
 
-describe("adapter first, generic for the gaps", () => {
-  it("uses the adapter confidence where it matches and generic elsewhere", () => {
+describe("adapters are hints: generic first, tested adapters win", () => {
+  it("a draft adapter never overrides the generic analyzer", () => {
     document.documentElement.innerHTML = readFileSync("tests/fixtures/google-like.html", "utf8");
     const a = analyzePage(document, findAdapter("www.google.com"), "/search", "?q=x");
     const search = a.recognized.find((r) => r.component === "search-box")!;
-    expect(search.source).toBe("adapter");
-    expect(a.context.pageType).toBe("search-results"); // adapter hint wins
+    expect(search.source).toBe("generic");
+    expect(a.adapterHits.find((h) => h.component === "search-box")!.result).toBe("agreed");
+    expect(a.context.pageType).toBe("search-results");
   });
   it("sites without an adapter now get a real context", () => {
     page("article-generic.html");

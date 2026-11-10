@@ -1,4 +1,4 @@
-import type { RecognizedComponent } from "../analyzer";
+import type { AdapterHit, RecognizedComponent } from "../analyzer";
 import type { Compatibility } from "../analyzer/compatibility";
 import type { Report } from "../report/report";
 import type { Measurement } from "../metrics/metrics";
@@ -45,6 +45,8 @@ export interface InspectReply {
   skipped: { ruleId: string; reason: string }[];
   reverted: { ruleId: string; reason: string }[];
   compatibility: Compatibility;
+  /** What each adapter component did on this page (selector drift is visible here). */
+  adapterHits: AdapterHit[];
 }
 
 export interface ReportReply {

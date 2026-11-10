@@ -1,0 +1,21 @@
+{
+  "schema": "xsuit.adapter-verification/1",
+  "adapter": "site.example",
+  "checkedOn": "YYYY-MM-DD",
+  "browser": "Chrome 000",
+  "observer": "",
+  "loggedIn": false,
+  "pageTypes": ["home"],
+  "components": [
+    {
+      "component": "search-box",
+      "selectors": [
+        { "selector": "form[role='search']", "found": 0, "confirmed": false, "note": "" }
+      ]
+    }
+  ],
+  "pageTypeHints": [
+    { "pageType": "home", "urlPattern": "^/$", "samplePath": "/", "matches": false }
+  ],
+  "notes": ""
+}

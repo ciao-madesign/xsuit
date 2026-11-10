@@ -30,9 +30,9 @@ Choices validated by the user on 2026-11-10 (decisions #26–#29). Everything he
 Signal kinds: structured (JSON-LD `@type`, og:type), semantic (article/video elements, Product microdata), url (path words, query parameter **names** only), content (search field repeats the query; compared locally, never stored).
 A type is accepted only when two different kinds agree and it is the only such type. Otherwise `any`, so page-type-specific rules do not run. Types handled: article, video, product-detail, product-list, search-results, home.
 
-## Adapter first
+## Adapters are hints (changed in B14, decision #48)
 
-Where a site adapter matches a component, its confidence is used; the generic analyzer fills the rest. An adapter page-type hint beats the generic classifier. The `ApplyReply` carries `recognized` (component, confidence, source, signals) and `pageType` for the explain panel (B8).
+Generic recognition comes first. A **tested** adapter (verified on the real site, sheet in `research/adapter-verification/`) wins where its selectors match, and its page-type hint wins. A **draft** adapter never overrides: it can confirm a generic result (a weak one rises to medium), or fill a gap with low confidence only; if it disagrees, the generic result is kept. Draft page-type hints are used only when the generic classifier says "any". What each adapter component did on a page (`agreed`, `tested-used`, `filled-gap`, `conflict`, `no-match`) is reported in the research tools, so selector drift is visible. Adapter files are validated strictly (no over-broad selectors, capped sizes, no slow patterns, no shared-suffix hosts).
 
 ## Fallback when unsure (changed in B7, per decision #28)
 

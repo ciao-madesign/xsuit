@@ -210,6 +210,7 @@ function main(): void {
           skipped: engine.status.plan?.skipped ?? [],
           reverted: engine.status.reverted,
           compatibility: compatibility(a, adapter),
+          adapterHits: a.adapterHits,
         } satisfies InspectReply);
         break;
       }

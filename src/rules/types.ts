@@ -123,6 +123,17 @@ export interface Adapter {
     confidence: "low" | "medium" | "high";
   }[];
   notes?: string;
+  /** Required when status is "tested": proof that a person checked it on the real site. */
+  verification?: AdapterVerificationRef;
+}
+
+export interface AdapterVerificationRef {
+  checkedOn: string;
+  browser: string;
+  /** Page types that were checked. */
+  pageTypes: string[];
+  /** Verification sheet, in research/adapter-verification/. */
+  sheet: string;
 }
 
 export interface ValidationIssue {

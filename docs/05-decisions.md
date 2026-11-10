@@ -67,6 +67,13 @@ Notes:
 - The study set is wider than the V1 adapter set. Which sites get a working adapter in V1 is to be narrowed in B1/B4 (each adapter is costly).
 - Several Chinese platforms (WeChat, RED, Weibo) are login-gated or app-first; the practical way to study them (screenshots, public pages, web versions) is to be settled when B5/B6 start.
 
+## Decisions after B11
+
+| #   | Topic               | Decision                                                                                                                                                                                                                                                                                                                                               | Date       |
+| --- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| 48  | Adapters are hints  | A draft adapter never overrides the generic analyzer: it can confirm a generic result (weak becomes medium) or fill a gap with low confidence only; on disagreement the generic result is kept. A tested adapter (verification sheet passing) wins. Draft page-type hints are used only when the generic classifier says "any". Validated by the user. | 2026-11-10 |
+| 49  | Measurement privacy | Measurement files keep numbers, host, page-type label and language only; no URL path. A gate rejects other fields. Replication counts distinct sites and page types.                                                                                                                                                                                   | 2026-11-10 |
+
 ## Still open
 
 None. All initial decisions are made.

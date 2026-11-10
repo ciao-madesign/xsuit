@@ -9,7 +9,7 @@ Goal: collect the real-site data that unlocks A3 (replication) and A5 (tuning). 
    ```bash
    git clone https://github.com/ciao-madesign/xsuit.git
    cd xsuit
-   git checkout claude/great-curie-8yfsjr
+   git checkout claude/loving-hopper-lif32i
    npm install
    npm run build
    ```
@@ -60,3 +60,7 @@ Then tell me in a new session: "measurements added". I will downgrade or keep ru
 - "Could not reach the page": reload the page and try again.
 - Metrics show `n/a`: the page had no layout yet; wait for full load and measure again.
 - Never share files that contain personal data; measurement files hold numbers, host, page-type and language only (no URL path).
+
+## Adapter verification (B14)
+
+For each site you visit, also verify its adapter with `adapters/VERIFY.md` (about 15 minutes). The same visit can produce the measurement files. The replication check needs at least 3 distinct sites and 2 page types per side; each site counts once.

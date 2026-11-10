@@ -134,6 +134,8 @@ async function inspect(): Promise<void> {
   add(`Page type: ${r.pageType} (${r.classificationNote})`);
   for (const c of r.recognized)
     add(`${c.component}: ${c.confidence}, from ${c.source} (${c.signals.join("; ")})`);
+  for (const h of r.adapterHits)
+    add(`adapter ${h.component}: ${h.result} (${h.selectors} selector(s))`);
   if (r.skipped.length) add(`Skipped rules: ${r.skipped.length}`);
   for (const s of r.skipped.slice(0, 8)) add(`- ${s.ruleId}: ${s.reason}`);
   box.hidden = false;

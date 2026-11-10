@@ -1,3 +1,4 @@
+import { normalizeHost } from "../shared/settings";
 import type {
   Adapter,
   Profile,
@@ -35,6 +36,11 @@ const ID_RE = /^[a-z0-9]+(\.[a-z0-9-]+)+$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const HOST_RE = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/;
 // Anything that could smuggle code or external requests into a selector or pattern.
+const MAX_SELECTOR_LENGTH = 200;
+const MAX_SELECTORS = 8;
+/** A selector that is only a common tag or "*" matches unrelated things on every page. */
+const BROAD_SELECTOR_RE = /^(\*|html|body|div|span|a|p|ul|li|section|main|img|form|input)$/i;
+const NESTED_QUANTIFIER_RE = /\([^)]*[+*][^)]*\)[+*{]/;
 const UNSAFE_RE = /[{};]|url\(|expression\(|javascript:|<|>\s*script/i;
 
 const isObj = (v: unknown): v is Obj => typeof v === "object" && v !== null && !Array.isArray(v);
@@ -56,11 +62,13 @@ class Collector {
   strArray(
     path: string,
     v: unknown,
-    opts: { min?: number; item?: (p: string, x: unknown) => void } = {},
+    opts: { min?: number; max?: number; item?: (p: string, x: unknown) => void } = {},
   ) {
     if (!Array.isArray(v)) return this.add(path, "must be an array");
     if (opts.min !== undefined && v.length < opts.min)
       this.add(path, `must have at least ${opts.min} item(s)`);
+    if (opts.max !== undefined && v.length > opts.max)
+      this.add(path, `must have at most ${opts.max} item(s)`);
     v.forEach((x, i) => {
       if (opts.item) opts.item(`${path}[${i}]`, x);
       else this.str(`${path}[${i}]`, x);
@@ -250,24 +258,63 @@ export function validateAdapter(input: unknown): ValidationResult<Adapter> {
     },
   });
   c.oneOf("status", input.status, ["draft", "tested"]);
+  if (Array.isArray(input.hosts))
+    input.hosts.forEach((h, i) => {
+      if (isStr(h) && HOST_RE.test(h) && normalizeHost(h) === null)
+        c.add(`hosts[${i}]`, "is too broad or not a real site (shared suffix or IP address)");
+    });
+  if (input.status === "tested") {
+    const v = input.verification;
+    if (!isObj(v)) c.add("verification", "a tested adapter needs a verification record");
+    else {
+      if (!isStr(v.checkedOn) || !/^\d{4}-\d{2}-\d{2}$/.test(v.checkedOn))
+        c.add("verification.checkedOn", "must be a date YYYY-MM-DD");
+      c.str("verification.browser", v.browser);
+      c.strArray("verification.pageTypes", v.pageTypes, { min: 1 });
+      if (!isStr(v.sheet) || !/^[a-z0-9.-]+\.json$/.test(v.sheet))
+        c.add("verification.sheet", "must be a sheet file name in research/adapter-verification/");
+    }
+  } else if (input.verification !== undefined)
+    c.add("verification", "only a tested adapter has a verification record");
   const safe = (p: string, x: unknown) => {
     if (!isStr(x)) c.add(p, "must be a non-empty string");
     else if (UNSAFE_RE.test(x))
       c.add(p, "contains characters that are not allowed in a selector or pattern");
+    else if (x.length > MAX_SELECTOR_LENGTH)
+      c.add(p, `is longer than ${MAX_SELECTOR_LENGTH} characters`);
+  };
+  const selector = (p: string, x: unknown) => {
+    safe(p, x);
+    if (isStr(x) && BROAD_SELECTOR_RE.test(x.trim()))
+      c.add(p, "is too broad: it would match unrelated parts of any page");
+  };
+  const pattern = (p: string, x: unknown) => {
+    safe(p, x);
+    if (!isStr(x)) return;
+    if (NESTED_QUANTIFIER_RE.test(x)) c.add(p, "has nested repetition (slow on some inputs)");
+    try {
+      new RegExp(x);
+    } catch {
+      c.add(p, "is not a valid pattern");
+    }
   };
   if (!Array.isArray(input.pageTypeHints)) c.add("pageTypeHints", "must be an array");
   else
     input.pageTypeHints.forEach((h, i) => {
       if (!isObj(h)) return c.add(`pageTypeHints[${i}]`, "must be an object");
       c.oneOf(`pageTypeHints[${i}].pageType`, h.pageType, PAGE_TYPES);
-      safe(`pageTypeHints[${i}].urlPattern`, h.urlPattern);
+      pattern(`pageTypeHints[${i}].urlPattern`, h.urlPattern);
     });
   if (!Array.isArray(input.components)) c.add("components", "must be an array");
   else
     input.components.forEach((m, i) => {
       if (!isObj(m)) return c.add(`components[${i}]`, "must be an object");
       c.component(`components[${i}].component`, m.component);
-      c.strArray(`components[${i}].selectors`, m.selectors, { min: 1, item: safe });
+      c.strArray(`components[${i}].selectors`, m.selectors, {
+        min: 1,
+        max: MAX_SELECTORS,
+        item: selector,
+      });
       c.oneOf(`components[${i}].confidence`, m.confidence, CONFIDENCE);
     });
   return c.result(input);
