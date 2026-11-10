@@ -7,6 +7,32 @@
   --accent-fg: #ffffff;
   --warn-bg: #fff4e5;
 }
+.export {
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 8px 0;
+}
+.export dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 12px;
+  margin: 8px 0;
+}
+.export dt {
+  font-weight: 600;
+}
+.export dd {
+  margin: 0;
+}
+.export pre {
+  max-height: 240px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.8em;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #1b1c1f;

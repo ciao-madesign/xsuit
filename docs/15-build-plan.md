@@ -50,9 +50,9 @@ Written 2026-11-10 after the merge of the security work and B11 and the privacy 
 - Performance budget (transform time, mutation-observer cost) written down and tested.
 - Checks (A): fixtures for each case, timing assertions, no growth of observers/listeners after 100 page changes.
 
-## B17 — Privacy and data governance
+## B17 — Privacy and data governance (DONE 2026-11-10, see docs/19-privacy-and-data-governance.md)
 
-- `docs/16-privacy-and-data-governance.md`: what is collected, why, retention, consent for sharing. JSON schema for the measurement file in `schemas/`, closed (no unknown fields).
+- `docs/19-privacy-and-data-governance.md`: what is collected, why, retention, consent for sharing. JSON schema for the measurement file in `schemas/`, closed (no unknown fields).
 - Export UI shows exactly what will be saved before download.
 - Checks (A): schema validates good files and rejects bad ones; test that the export contains no field outside the schema.
 

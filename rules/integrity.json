@@ -20,7 +20,9 @@
     "adapters/xiaohongshu.json": "2bef40d03906c1cad04931cd2bab4d16a206aa2fab07a096f56a6266274008ed",
     "adapters/youtube.json": "56ad93b866a366b187e936017cd590d7b7a27e7e7781aea6f7981c19498d2c2f",
     "schemas/adapter.schema.json": "a58cdc99d37b14f913280807cc3261404c6868a01e470ad254828bf26fb1d200",
+    "schemas/measurement.schema.json": "3a2a52d55eab249eeed055f9e7bf1874ce459740fcd61d633b672874f9a37ace",
     "schemas/profile.schema.json": "edac47c353827303fe0fbabf3f58cd42c0ea6fb8b7bbc453336a6e8ebd50d07e",
+    "schemas/report.schema.json": "59a923d12949d98cf923efad3960dbe03e8df40040f99f38fa1869166456f96e",
     "schemas/rule.schema.json": "f4146236cff959c001205f51d27ace6a590b95dc6cf69c227997d1044d1b7433",
     "schemas/ruleset.schema.json": "3148f35193d98f71f2a30c13917821d80a35b7a13f3d11d385b9067106c1e99a"
   }

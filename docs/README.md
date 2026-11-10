@@ -26,4 +26,6 @@ Foundations of the **Cross-Market UX Localization Extension**. Reading order:
 
 - `18-dynamic-pages.md`: B16 shadow DOM, frames, single-page apps, infinite scroll, give-up rules and performance budget.
 
+- `19-privacy-and-data-governance.md`: B17 what is kept, what a research file may contain, consent, retention, rules for developers.
+
 Repository root: [README](../README.md), [SECURITY](../SECURITY.md).

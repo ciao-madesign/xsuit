@@ -19,7 +19,7 @@ Goal: collect the real-site data that unlocks A3 (replication) and A5 (tuning). 
 
 1. Open the page in a normal Chrome window, **logged out**, desktop size. Set the window to about 1280 px wide.
 2. Wait until it has fully loaded. Do not scroll. Close cookie banners only if they cover the page; note it.
-3. Click the xsuit icon → **Research tools** → **Measure this page** → **Download JSON**.
+3. Click the xsuit icon → **Research tools** → **Measure this page** → **Download JSON** → check the **"Check before saving"** box (it shows the whole file) → **Save this file**. If the box says the file cannot be saved (private or local address), do not use that page.
 4. Move the file to `research/measurements/<site>/<page-type>__<date>.json`, using these folder names (the check script needs them):
    - Western: `google`, `amazon`, `bbc`, `guardian`, `youtube`, `reddit`, `instagram`
    - China: `baidu`, `taobao`, `alibaba`, `bilibili`, `caixin`, `weibo`, `rednote`, `wechat`

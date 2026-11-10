@@ -15,6 +15,10 @@ xsuit must not be usable for attacks, data theft or abuse. Rules below are **enf
 9. **No runaway work.** Loop guard stops the engine if the page keeps changing; guard checks are capped per rule; JSON-LD size is capped.
 10. **Reversible and visible.** Every change is journaled and undoable; the on-page label shows when xsuit changed something. Report screenshots are shown only as inline PNG; exported file names are sanitized.
 
+## Data leaving the device
+
+Nothing leaves except a research file the person saves after seeing its whole content. See `19-privacy-and-data-governance.md`; enforced by `tests/b17-privacy.test.ts`.
+
 ## Misuse through adapters, rules or hostile pages (added 2026-11-10)
 
 **Threat.** Someone uses xsuit as a mask: an adapter or rule (from a contributor, or one day from a user or a server) or a hostile page makes xsuit steer people toward clicks they did not choose, hide a warning, make a credential or payment form look friendlier, or make a scam look "native".

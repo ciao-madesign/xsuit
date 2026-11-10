@@ -1,4 +1,6 @@
-import { reportFileName, type Report } from "./report";
+import { prepareReportExport } from "../research/exportGate";
+import { showPreview } from "../pages/exportPreview";
+import type { Report } from "./report";
 
 export interface StoredReport {
   report: Report;
@@ -68,16 +70,19 @@ async function init(): Promise<void> {
   addImage("img-before", data.images.before, "Page before");
   addImage("img-after", data.images.after, "Page after");
 
-  $("download").addEventListener("click", () => {
-    const url = URL.createObjectURL(
-      new Blob([JSON.stringify(r, null, 2)], { type: "application/json" }),
-    );
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = reportFileName(r);
-    a.click();
-    URL.revokeObjectURL(url);
-  });
+  $("download").addEventListener("click", () =>
+    showPreview(
+      {
+        box: $("exportBox"),
+        summary: $("exportSummary"),
+        problems: $("exportProblems"),
+        json: $("exportJson"),
+        save: $<HTMLButtonElement>("exportSave"),
+        cancel: $<HTMLButtonElement>("exportCancel"),
+      },
+      prepareReportExport(r),
+    ),
+  );
 }
 
 init();

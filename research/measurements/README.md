@@ -13,7 +13,7 @@ Our own observations of real pages (analysis A2 in `docs/08-scope-review-and-rep
 ## Rules
 
 - The measurement is taken on the **original** page: xsuit undoes its own changes before measuring.
-- Files contain only numbers, the host, a page-type label and the language. No page text, no URL path, no query string, no personal data. `npm run replication` rejects any file with other fields.
+- Files are made only after you check the "Check before saving" box. They contain only numbers, the host, a page-type label and the language. No page text, no URL path, no query string, no personal data. `npm run replication` rejects any file with other fields.
 - The replication check counts **distinct sites** (3 per side) and **page types** (2 per side); each site weighs once.
 - Record anything unusual (login wall, consent banner covering the page, regional redirect) in a `notes.md` next to the files.
 - Limits to keep in mind: desktop web only (Chinese services are often app-first); one moment in time; metric definitions are ours (written inside every file under `definitions`) and are approximations of the studies' indicators, not replications of their exact methods.

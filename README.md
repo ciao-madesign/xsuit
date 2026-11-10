@@ -21,7 +21,7 @@ npm ci
 npm run check      # typecheck, lint, format, tests, build
 ```
 
-Then load the `dist/` folder as an unpacked extension in Chrome (`chrome://extensions`, Developer mode). Other commands: `npm run evidence` (regenerates the evidence audit), `npm run corpus` (recognition report on pages without adapters), `npm run adapters` (adapter status and checks), `npm run replication` (checks measurements against the study), `npm run validate:browser` (real-Chromium checks).
+Then load the `dist/` folder as an unpacked extension in Chrome (`chrome://extensions`, Developer mode). Other commands: `npm run evidence` (regenerates the evidence audit), `npm run corpus` (recognition report on pages without adapters), `npm run adapters` (adapter status and checks), `npm run privacy` (checks research files before sharing), `npm run replication` (checks measurements against the study), `npm run validate:browser` (real-Chromium checks).
 
 ## Where to read
 

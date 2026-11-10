@@ -146,6 +146,19 @@ async function init(): Promise<void> {
     pos.value = settings.labelPosition;
     renderRules();
   });
+  $("delete-all").addEventListener("click", async () => {
+    if (!confirm("Delete all xsuit data from this browser? Site access will be removed too."))
+      return;
+    for (const d of settings.enabledSites)
+      await chrome.permissions.remove({ origins: sitePatterns(d) }).catch(() => false);
+    await chrome.storage.local.clear();
+    await chrome.storage.session.clear().catch(() => undefined);
+    settings = { ...DEFAULT_SETTINGS, enabledSites: [], disabledRules: [], hybridRules: null };
+    pos.value = settings.labelPosition;
+    renderSites();
+    renderRules();
+    $("delete-note").textContent = "All xsuit data was deleted.";
+  });
   $("hybrid-default").addEventListener("click", () => update({ ...settings, hybridRules: null }));
   if (location.hash === "#hybrid") $<HTMLDetailsElement>("hybrid").open = true;
   renderSites();

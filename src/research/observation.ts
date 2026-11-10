@@ -1,3 +1,5 @@
+import { scanValue } from "./personal";
+
 // Observation sheets: structured notes for platforms the extension cannot measure (login walls,
 // app-first services). They are evidence under decision #9, so the format is checked.
 
@@ -53,5 +55,7 @@ export function validateObservation(input: unknown): string[] {
   }
   if (!Array.isArray(s.screenshots)) out.push("screenshots must be an array");
   if (!str("limits")) out.push("limits is required (what this observation cannot show)");
+  // Free text must not carry personal data (the observer should use initials or a pseudonym).
+  for (const w of scanValue(s)) out.push(w);
   return out;
 }

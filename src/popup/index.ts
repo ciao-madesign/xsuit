@@ -1,4 +1,6 @@
-import { measurementFileName, type Measurement } from "../metrics/metrics";
+import type { Measurement } from "../metrics/metrics";
+import { prepareMeasurementExport } from "../research/exportGate";
+import { showPreview } from "../pages/exportPreview";
 import type {
   ApplyReply,
   InspectReply,
@@ -166,16 +168,21 @@ async function compare(): Promise<void> {
   await chrome.tabs.create({ url: chrome.runtime.getURL("report.html") });
 }
 
+/** Opens the "Check before saving" box; the file is written only after the person presses Save. */
 function download(): void {
   if (!last) return;
-  const url = URL.createObjectURL(
-    new Blob([JSON.stringify(last, null, 2)], { type: "application/json" }),
+  const $ = (id: string) => document.getElementById(id) as HTMLElement;
+  showPreview(
+    {
+      box: $("exportBox"),
+      summary: $("exportSummary"),
+      problems: $("exportProblems"),
+      json: $("exportJson"),
+      save: $("exportSave") as HTMLButtonElement,
+      cancel: $("exportCancel") as HTMLButtonElement,
+    },
+    prepareMeasurementExport(last),
   );
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = measurementFileName(last);
-  a.click();
-  URL.revokeObjectURL(url);
 }
 
 async function init(): Promise<void> {

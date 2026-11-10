@@ -60,6 +60,24 @@
           <button id="download" type="button" disabled>Download JSON</button>
         </div>
         <table id="metrics" class="metrics" hidden></table>
+        <section id="exportBox" class="export" hidden aria-labelledby="exportTitle">
+          <h3 id="exportTitle">Check before saving</h3>
+          <p class="muted">
+            This is everything the file will contain. It is saved on this device only; nothing is
+            sent anywhere. Check it before you share it.
+          </p>
+          <dl id="exportSummary"></dl>
+          <div id="exportProblems" role="alert"></div>
+          <details>
+            <summary>Show the whole file</summary>
+            <pre id="exportJson"></pre>
+          </details>
+          <div class="row">
+            <button id="exportSave" class="primary" type="button">Save this file</button>
+            <button id="exportCancel" type="button">Cancel</button>
+          </div>
+        </section>
+
         <div class="row">
           <button id="inspect" type="button">Check compatibility</button>
         </div>

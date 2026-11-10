@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "xsuit comparison report (xsuit.report/2)",
+  "description": "CLOSED. Screenshots are never part of the file.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "createdAt",
+    "page",
+    "profile",
+    "depth",
+    "pageType",
+    "transformed",
+    "rules",
+    "undoneByGuard",
+    "skipped",
+    "metrics",
+    "notes"
+  ],
+  "properties": {
+    "schema": {
+      "const": "xsuit.report/2"
+    },
+    "createdAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T[\\d:.]+Z$"
+    },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["host", "pageType"],
+      "properties": {
+        "host": {
+          "type": "string",
+          "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$",
+          "maxLength": 253
+        },
+        "pageType": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,30}$"
+        }
+      }
+    },
+    "profile": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,40}$"
+    },
+    "depth": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,40}$"
+    },
+    "pageType": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,40}$"
+    },
+    "transformed": {
+      "type": "boolean"
+    },
+    "rules": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "evidence", "elements"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(\\.[a-z0-9-]+)+$"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "evidence": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,40}$"
+          },
+          "elements": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "undoneByGuard": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ruleId", "reason"],
+        "properties": {
+          "ruleId": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(\\.[a-z0-9-]+)+$"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 300
+          }
+        }
+      }
+    },
+    "skipped": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ruleId", "reason"],
+        "properties": {
+          "ruleId": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(\\.[a-z0-9-]+)+$"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 300
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["metric", "before", "after", "delta"],
+        "properties": {
+          "metric": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9]{1,40}$"
+          },
+          "before": {
+            "type": ["number", "null"]
+          },
+          "after": {
+            "type": ["number", "null"]
+          },
+          "delta": {
+            "type": ["number", "null"]
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "string",
+        "maxLength": 300
+      }
+    }
+  }
+}
