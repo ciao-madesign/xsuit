@@ -63,13 +63,17 @@ function blocker(rule: Rule, input: PlanInput): string | null {
     if (c.type === "confidence-min" && confidenceOf(rule, ctx) < RANK[c.value as Confidence])
       return `component recognition below "${c.value}" confidence`;
   }
-  // Non-token actions act on specific components: they need at least low-confidence recognition,
-  // and low confidence falls back as the rule says.
+  // Actions on specific components need recognition. Unsure (low) means the rule's fallback decides:
+  // only a visual rule that explicitly allows "visual-only" still applies; everything else skips.
+  // Structural rules never run on components we are not sure about.
   if (rule.action.type !== "set-token") {
     const conf = confidenceOf(rule, ctx);
     if (conf === 0) return "target component not recognized";
-    if (conf === RANK.low && rule.fallback !== "skip")
-      return `low confidence, fallback "${rule.fallback}"`;
+    if (conf === RANK.low) {
+      const keepsVisual = rule.mode === "visual" && rule.fallback === "visual-only";
+      if (!keepsVisual)
+        return `low confidence in the target component, fallback "${rule.fallback}"`;
+    }
   }
   return null;
 }

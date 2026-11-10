@@ -1,8 +1,9 @@
-import { buildContext, createResolver, findAdapter } from "../adapters";
+import { analyzePage, type Analysis } from "../analyzer";
+import { findAdapter } from "../adapters";
 import { defaultEffects } from "../engine/effects";
 import { Engine } from "../engine/engine";
 import { needsMetrics } from "../engine/plan";
-import type { PageContext } from "../engine/types";
+import type { PageContext, Resolver } from "../engine/types";
 import { measurePage } from "../metrics/metrics";
 import westernRules from "../../rules/western.json";
 import chinaRules from "../../rules/china.json";
@@ -28,18 +29,23 @@ declare global {
 function main(): void {
   const ruleSets = [westernRules, chinaRules] as unknown as RuleSet[];
 
-  // Components come from the site adapter for now; the generic analyzer arrives in B7.
-  // Sites without an adapter get an empty context, so only page-wide token rules can apply.
+  // Recognition: the site adapter first, the generic analyzer for what it does not cover.
+  // It is re-run on every engine run (cheap, read-only) because components can appear later.
   const adapter = findAdapter(location.hostname);
   // Metrics of the ORIGINAL page, measured once per page (not on every change): stable and light.
   let metrics: Partial<Record<string, number | null>> | undefined;
+  let analysis: Analysis | null = null;
+  const analyze = (): Analysis =>
+    (analysis = analyzePage(document, adapter, location.pathname, location.search));
   const context = (): PageContext => ({
-    ...buildContext(adapter, document, location.pathname, window.innerWidth),
+    ...analyze().context,
+    viewportWidth: window.innerWidth,
     metrics,
   });
+  const resolve: Resolver = (component) => (analysis ?? analyze()).resolver(component);
   const engine = new Engine({
     doc: document,
-    resolve: createResolver(adapter, document),
+    resolve,
     effects: defaultEffects,
     getContext: context,
   });
@@ -98,6 +104,8 @@ function main(): void {
           applied: engine.status.active,
           rules: engine.status.plan?.entries.length ?? 0,
           skipped: engine.status.plan?.skipped ?? [],
+          recognized: analysis?.recognized ?? [],
+          pageType: analysis?.context.pageType ?? "any",
         } satisfies ApplyReply);
         break;
       case "xsuit/measure": {

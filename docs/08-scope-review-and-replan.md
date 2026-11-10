@@ -1,6 +1,6 @@
 # 08 — Scope review, feature deepening and re-plan (2026-11-09)
 
-Written after B0–B4, before continuing. Status: **approved by the user on 2026-11-09** (decision #15); B5, B6 done. Every point states its reason.
+Written after B0–B4, before continuing. Status: **approved by the user on 2026-11-09** (decision #15); B5, B6, B7 done. Every point states its reason.
 
 ## 1. Where we stand, honestly
 

@@ -1,3 +1,4 @@
+import type { RecognizedComponent } from "../analyzer";
 import type { Measurement } from "../metrics/metrics";
 
 export type Message =
@@ -22,6 +23,9 @@ export interface ApplyReply {
   rules: number;
   /** Rules left out and why (feeds the explain panel in B8). */
   skipped: { ruleId: string; reason: string }[];
+  /** What was recognized on the page, from which source and why (explain panel). */
+  recognized: RecognizedComponent[];
+  pageType: string;
 }
 export interface MeasureReply {
   ok: true;

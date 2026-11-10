@@ -11,7 +11,7 @@ A browser extension (Chrome, TypeScript, MV3) that adapts a web page's UX to the
 - Repo `ciao-madesign/xsuit`, branch `claude/great-curie-8yfsjr`. Only documentation exists; B0 done (scaffold + toolchain).
 - Docs 01–06 written in English. README lists the reading order.
 - Decisions made: user = UX designer/researcher; stack = TypeScript + Chrome MV3; everything in English; sites = paired Western + Chinese set (Google/Baidu, Amazon/Alibaba, BBC/Chinese entertainment, Guardian/non-state Chinese news, YouTube-Reddit-Instagram/Weibo-WeChat-RED); see `05-decisions.md`.
-- Build plan B0–B8 defined in `docs/06-builds.md`. B0-B6 complete; B7 next (new plan in doc 08).
+- Build plan B0–B8 defined in `docs/06-builds.md`. B0-B7 complete; B8 next (new plan in doc 08).
 
 ## How the user wants to work
 
@@ -33,11 +33,10 @@ V1 targets IX researchers, but the final product is a simple public toggle that 
 
 ## Next steps
 
-1. B6 done. Start **B7 (Analyzer, semantic mapper, classifier)**: propose its design choices one at a time first (decision #25).
-2. Known gap that B7 closes: on sites without an adapter the page type is "any", so page-type-specific rules (including both density rules) do not apply there. Checked in real Chromium.
-3. B8 must define what the simple toggle does for a non-expert (default style, plain-language summary); the ApplyReply already carries `skipped` reasons for the explain panel.
-4. Evidence track (needs the user's PC): verify li2022 / li2026; collect measurements per `research/measurements/README.md`; replace provisional baselines. Do not spoof user agents.
-5. Not testable headless: the permission prompt for "Personalize this site" and the toolbar popup click.
+1. B7 done (see `docs/09-recognition.md`). Start **B8 (Transparency & safety)**: propose its design choices one at a time first (decision #25). Must include: what the simple toggle does for a non-expert (default style, plain-language summary), explain panel (layer 3), per-rule toggles (layer 2), compatibility indicator, runtime accessibility guard.
+2. ApplyReply already carries `skipped`, `recognized`, `pageType` for the explain panel.
+3. Evidence track (needs the user's PC): verify li2022 / li2026; collect measurements per `research/measurements/README.md`; replace provisional baselines. Do not spoof user agents.
+4. Not testable headless: the permission prompt for "Personalize this site" and the toolbar popup click. Shadow DOM / iframes not handled yet (B11).
 
 Commands: `npm run check`, `npm run evidence`.
-B6 delivered: metric conditions (`metric-above/below`), `rules/baselines.json`, delta-based density rules, measure-once + SPA re-measure in the content script; 103 tests; real Chromium checked (China compact skipped on dense page 58.7, applied on sparse 4.9; Western reverse).
+B7 delivered: `src/analyzer/` (components, pageType, adapter-first merge), fallback fix in the planner, 122 tests; real Chromium: article page classified `article` with 6 components, div-soup page recognizes nothing and changes nothing; restore identical.

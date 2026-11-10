@@ -12,3 +12,4 @@ Foundations of the **Cross-Market UX Localization Extension**. Reading order:
 
 - `07-evidence-audit.md`: generated evidence audit per rule.
 - `08-scope-review-and-replan.md`: scope review, gaps, candidate rules, re-planned builds B5–B11.
+- `09-recognition.md`: B7 recognition design (signals, confidence, page types, fallback).

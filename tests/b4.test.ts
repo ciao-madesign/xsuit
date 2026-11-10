@@ -139,18 +139,18 @@ describe("visual transformations on the first adapters", () => {
     expect(wCss).not.toBe(cCss);
   });
 
-  it("China profile on Baidu emphasizes the hot-search area; Western leaves it alone", () => {
+  it("Unverified (low confidence) adapter selectors are not acted on, and the plan says why", () => {
     setup("baidu-like.html");
     const c = run("www.baidu.com", "/", "china");
-    expect(document.getElementById("s-hotsearch-wrapper")!.getAttribute("data-xsuit-emph")).toBe(
-      "medium",
-    );
-    c.restore();
-    const w = run("www.baidu.com", "/", "western");
+    // The hot-search selector is a draft with low confidence, so the rule falls back to "skip".
     expect(document.getElementById("s-hotsearch-wrapper")!.hasAttribute("data-xsuit-emph")).toBe(
       false,
     );
-    w.restore();
+    const reason = c.status.plan!.skipped.find(
+      (x) => x.ruleId === "visual.china.discovery-feed",
+    )?.reason;
+    expect(reason).toContain("low confidence");
+    c.restore();
   });
 
   it("sites without an adapter are left untouched", () => {
