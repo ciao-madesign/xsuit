@@ -114,7 +114,21 @@ export function rgbToHsl(r: number, g: number, b: number): { h: number; s: numbe
 
 const OWN = "[data-xsuit-ui]"; // anything the extension itself adds is never measured
 
-export function measurePage(doc: Document, now: Date = new Date()): Measurement {
+interface Computed {
+  metrics: PageMetrics;
+  hasLayout: boolean;
+  sampled: number;
+}
+
+/**
+ * The numbers rules compare with thresholds. This is all the release build needs; the exportable
+ * measurement file (with host, page type, definitions) is built by measurePage, developer build only.
+ */
+export function computeMetrics(doc: Document): PageMetrics {
+  return compute(doc).metrics;
+}
+
+function compute(doc: Document): Computed {
   const win = doc.defaultView!;
   const root = doc.documentElement;
   const body = doc.body ?? root;
@@ -266,6 +280,14 @@ export function measurePage(doc: Document, now: Date = new Date()): Measurement 
     whitespaceRatio: hasLayout ? round(Math.max(0, 1 - leafArea / (pageWidth * pageHeight))) : null,
   };
 
+  return { metrics, hasLayout, sampled };
+}
+
+/** The exportable measurement of the page (developer build only). */
+export function measurePage(doc: Document, now: Date = new Date()): Measurement {
+  const win = doc.defaultView!;
+  const root = doc.documentElement;
+  const { metrics, hasLayout, sampled } = compute(doc);
   return {
     schema: METRICS_SCHEMA,
     capturedAt: now.toISOString(),

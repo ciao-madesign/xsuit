@@ -52,6 +52,7 @@
         </div>
       </details>
 
+      <!-- dev:start -->
       <!-- Layer 3: researcher tools (IX researchers are the V1 audience, not the final one). -->
       <details>
         <summary>Research tools</summary>
@@ -78,19 +79,24 @@
           </div>
         </section>
 
+        <!-- dev:start -->
         <div class="row">
           <button id="inspect" type="button">Check compatibility</button>
         </div>
+        <!-- dev:end -->
         <div class="row">
           <label><input type="radio" name="profile" value="hybrid" /> Use Hybrid style</label>
           <a href="options.html#hybrid" class="muted">Compose</a>
         </div>
+        <!-- dev:start -->
         <div class="row">
           <button id="compare" type="button">Comparison report</button>
         </div>
         <div id="compat" class="muted" hidden></div>
+        <!-- dev:end -->
         <p class="muted">Runs locally. Nothing is sent anywhere.</p>
       </details>
+      <!-- dev:end -->
     </main>
     <script src="popup.js"></script>
   </body>

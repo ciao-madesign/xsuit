@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
+    "build:dev": "node scripts/build.mjs --dev",
     "build:firefox": "node scripts/build.mjs --target=firefox",
     "build:edge": "node scripts/build.mjs --target=edge",
     "build:all": "npm run build && npm run build:firefox && npm run build:edge",
@@ -16,7 +17,7 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "evidence": "node scripts/evidence-report.mjs",
-    "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build:all",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build:all && npm run build:dev",
     "replication": "node scripts/replication.mjs",
     "corpus": "node scripts/corpus-report.mjs",
     "lock": "node scripts/lock-data.mjs",

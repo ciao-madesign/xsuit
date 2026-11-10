@@ -4,3 +4,6 @@ dist
 .replication.cjs
 dist-firefox
 dist-edge
+dist-dev-firefox
+dist-dev-edge
+dist-dev

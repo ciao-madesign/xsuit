@@ -1,5 +1,8 @@
 dist
 dist-firefox
 dist-edge
+dist-dev
+dist-dev-firefox
+dist-dev-edge
 node_modules
 package-lock.json

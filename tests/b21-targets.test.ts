@@ -80,11 +80,10 @@ describe("a build per target", () => {
         m.options_page,
         m.background.service_worker ?? m.background.scripts[0],
         "content.js",
-        "report.html",
       ];
       for (const f of files) expect(existsSync(`${dir}/${f}`), `${t}: ${f}`).toBe(true);
       // The built code never loads remote code or evaluates strings.
-      for (const js of ["background.js", "content.js", "popup.js", "options.js", "report.js"]) {
+      for (const js of ["background.js", "content.js", "popup.js", "options.js"]) {
         const code = readFileSync(`${dir}/${js}`, "utf8");
         expect(code, `${t}: ${js}`).not.toMatch(/\beval\(|new Function\(|importScripts\(/);
       }

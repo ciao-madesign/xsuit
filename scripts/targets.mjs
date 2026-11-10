@@ -9,8 +9,10 @@ export const FIREFOX_ID = "{4f6c1b0e-6a52-4d0e-9c1e-5b3a0c7e2d41}";
 /** Conservative: the Firefox version MDN uses in its own example. Lower it only after a smoke test. */
 export const FIREFOX_MIN_VERSION = "140.0";
 
-export function outDir(target) {
-  return target === "chrome" ? "dist" : `dist-${target}`;
+/** Release builds go to dist / dist-<target>; developer builds to dist-dev / dist-dev-<target>. */
+export function outDir(target, dev = false) {
+  const base = dev ? "dist-dev" : "dist";
+  return target === "chrome" ? base : `${base}-${target}`;
 }
 
 /** Returns the manifest for a target without changing the one passed in. */

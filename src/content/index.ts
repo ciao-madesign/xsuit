@@ -1,33 +1,20 @@
 import { findAdapter } from "../adapters";
 import { analyzePage, type Analysis } from "../analyzer";
-import { compatibility } from "../analyzer/compatibility";
 import { defaultEffects } from "../engine/effects";
 import { Engine, type EngineStatus } from "../engine/engine";
 import { needsMetrics } from "../engine/plan";
 import type { PageContext, Resolver } from "../engine/types";
-import { measurePage } from "../metrics/metrics";
+import { computeMetrics } from "../metrics/metrics";
 import westernRules from "../../rules/western.json";
 import chinaRules from "../../rules/china.json";
 import profiles from "../../rules/profiles.json";
 import type { Profile, RuleSet } from "../rules/types";
-import type {
-  ApplyReply,
-  InspectReply,
-  MeasureReply,
-  Message,
-  PingReply,
-  ReportReply,
-  RestoreReply,
-} from "../shared/messages";
+import type { ApplyReply, Message, PingReply, RestoreReply } from "../shared/messages";
 import type { Settings } from "../shared/settings";
 import { computeStatus } from "../shared/state";
 import { loadSettings, onSettingsChanged } from "../shared/storage";
-import { buildReport } from "../report/report";
-import { buildScorecard, type Baselines } from "../report/scorecard";
-import dimensionData from "../../rules/dimensions.json";
-import baselineData from "../../rules/baselines.json";
-import type { Dimension } from "../rules/configuration";
 import { Overlay } from "../ui/overlay";
+import { DEV_MESSAGE_TYPES, handleDevMessage } from "./dev";
 import { summarizeChanges } from "../ui/summary";
 
 declare global {
@@ -40,9 +27,7 @@ const MESSAGE_TYPES = new Set<string>([
   "xsuit/ping",
   "xsuit/restore",
   "xsuit/apply-once",
-  "xsuit/measure",
-  "xsuit/inspect",
-  "xsuit/report",
+  ...(__DEV__ ? DEV_MESSAGE_TYPES : []),
 ]);
 function isMessage(x: unknown): x is Message {
   return (
@@ -133,7 +118,7 @@ function main(): void {
       hybridRuleIds: settings.hybridRules,
     };
     if (needsMetrics(input))
-      metrics = measurePage(document).metrics as unknown as Partial<Record<string, number | null>>;
+      metrics = computeMetrics(document) as unknown as Partial<Record<string, number | null>>;
     engine.start({
       ...input,
       depth: settings.depth,
@@ -147,6 +132,22 @@ function main(): void {
     if (sender.id !== chrome.runtime.id || sender.tab) return false;
     if (!isMessage(raw)) return false;
     const msg = raw;
+    if (__DEV__) {
+      const dev = handleDevMessage(
+        msg,
+        {
+          engine,
+          overlay,
+          adapter,
+          allRules,
+          current: () => current,
+          sync,
+          analysis: () => analysis ?? analyze(),
+        },
+        sendResponse,
+      );
+      if (dev) return false;
+    }
     switch (msg.type) {
       case "xsuit/ping":
         sendResponse({
@@ -183,65 +184,6 @@ function main(): void {
           reverted: engine.status.reverted,
         } satisfies ApplyReply);
         break;
-      case "xsuit/measure": {
-        // Measure the ORIGINAL page: undo our changes first, then put them back.
-        const wasActive = engine.status.active;
-        engine.restore();
-        overlay.hide();
-        const measurement = measurePage(document);
-        if (wasActive && current) sync(current);
-        sendResponse({ ok: true, measurement } satisfies MeasureReply);
-        break;
-      }
-      case "xsuit/report": {
-        // "After" is measured with the changes in place, "before" on the restored original page.
-        const wasActive = engine.status.active;
-        const st = engine.status;
-        const after = wasActive ? measurePage(document) : null;
-        const { changes, reverted } = st;
-        const skipped = st.plan?.skipped ?? [];
-        engine.restore();
-        overlay.hide();
-        const before = measurePage(document);
-        if (wasActive && current) sync(current);
-        sendResponse({
-          ok: true,
-          report: buildReport({
-            profile: current?.profile ?? "original",
-            depth: current?.depth ?? "visual",
-            pageType: (analysis ?? analyze()).context.pageType,
-            before,
-            after,
-            changes,
-            reverted,
-            skipped,
-            allRules,
-            confidences: (analysis ?? analyze()).context.components,
-            scorecard: buildScorecard(
-              before.metrics as unknown as Record<string, unknown>,
-              after ? (after.metrics as unknown as Record<string, unknown>) : null,
-              (dimensionData as { dimensions: Dimension[] }).dimensions,
-              (baselineData as { metrics: Baselines }).metrics,
-              profiles as unknown as Profile[],
-            ),
-          }),
-        } satisfies ReportReply);
-        break;
-      }
-      case "xsuit/inspect": {
-        const a = analysis ?? analyze();
-        sendResponse({
-          ok: true,
-          pageType: a.context.pageType,
-          classificationNote: a.classification.note,
-          recognized: a.recognized,
-          skipped: engine.status.plan?.skipped ?? [],
-          reverted: engine.status.reverted,
-          compatibility: compatibility(a, adapter),
-          adapterHits: a.adapterHits,
-        } satisfies InspectReply);
-        break;
-      }
     }
     return false;
   });

@@ -1,15 +1,4 @@
-import { ifAvailable } from "../shared/features";
-import type { Measurement } from "../metrics/metrics";
-import { prepareMeasurementExport } from "../research/exportGate";
-import { showPreview } from "../pages/exportPreview";
-import type {
-  ApplyReply,
-  InspectReply,
-  MeasureReply,
-  Message,
-  ReportReply,
-  RestoreReply,
-} from "../shared/messages";
+import type { ApplyReply, Message, RestoreReply } from "../shared/messages";
 import {
   DEPTHS,
   PROFILE_CHOICES,
@@ -20,19 +9,21 @@ import {
   type ProfileChoice,
   type Settings,
 } from "../shared/settings";
+import { initDev } from "./dev";
 import { computeStatus } from "../shared/state";
 import { loadSettings, saveSettings } from "../shared/storage";
-import { summarize } from "./summary";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
 let settings: Settings;
 let tab: chrome.tabs.Tab | undefined;
-let last: Measurement | null = null;
 
 function say(text: string): void {
   $("status").textContent = text;
 }
+
+/** Set by the developer module; absent from the release build. */
+let renderDev: (supported: boolean) => void = () => undefined;
 
 function render(): void {
   const status = computeStatus(settings, tab?.url);
@@ -45,8 +36,8 @@ function render(): void {
   const always = $<HTMLInputElement>("always");
   always.disabled = !supported;
   always.checked = status.kind === "active";
-  for (const id of ["restore", "measure", "inspect", "compare"])
-    $<HTMLButtonElement>(id).disabled = !supported;
+  $<HTMLButtonElement>("restore").disabled = !supported;
+  if (__DEV__) renderDev(supported);
   $<HTMLButtonElement>("apply").disabled =
     !supported || !settings.enabled || settings.profile === "original";
   const box = $("status");
@@ -104,93 +95,6 @@ async function setAlways(on: boolean): Promise<void> {
   }
 }
 
-async function measure(): Promise<void> {
-  const reply = await send<MeasureReply>({ type: "xsuit/measure" });
-  if (!reply) return;
-  last = reply.measurement;
-  const table = $<HTMLTableElement>("metrics");
-  table.replaceChildren();
-  for (const [label, value] of summarize(last)) {
-    const tr = table.insertRow();
-    tr.insertCell().textContent = label;
-    tr.insertCell().textContent = value;
-  }
-  table.hidden = false;
-  $<HTMLButtonElement>("download").disabled = false;
-}
-
-const LEVEL_TEXT = { full: "Full", partial: "Partial", minimal: "Minimal" } as const;
-
-async function inspect(): Promise<void> {
-  const r = await send<InspectReply>({ type: "xsuit/inspect" });
-  if (!r) return;
-  const box = $("compat");
-  box.replaceChildren();
-  const add = (text: string, strong = false) => {
-    const p = document.createElement("p");
-    if (strong) p.style.fontWeight = "600";
-    p.textContent = text;
-    box.append(p);
-  };
-  add(`Compatibility: ${LEVEL_TEXT[r.compatibility.level]}`, true);
-  add(r.compatibility.reason);
-  add(`Page type: ${r.pageType} (${r.classificationNote})`);
-  for (const c of r.recognized)
-    add(`${c.component}: ${c.confidence}, from ${c.source} (${c.signals.join("; ")})`);
-  for (const h of r.adapterHits)
-    add(`adapter ${h.component}: ${h.result} (${h.selectors} selector(s))`);
-  if (r.skipped.length) add(`Skipped rules: ${r.skipped.length}`);
-  for (const s of r.skipped.slice(0, 8)) add(`- ${s.ruleId}: ${s.reason}`);
-  box.hidden = false;
-}
-
-/** Before/after report: numbers from the page, plus two screenshots of the visible area. */
-async function compare(): Promise<void> {
-  say("Preparing the report…");
-  const r = await send<ReportReply>({ type: "xsuit/report" });
-  if (!r) return;
-  const images: { before: string | null; after: string | null } = { before: null, after: null };
-  // Screenshots are optional: a browser without the API simply gets a report without images.
-  const shot = (): Promise<string | null> =>
-    ifAvailable(
-      "tabs.captureVisibleTab",
-      () => chrome.tabs.captureVisibleTab(tab!.windowId, { format: "png" }).catch(() => null),
-      Promise.resolve(null),
-    );
-  if (r.report.transformed) {
-    images.after = await shot();
-    await send<RestoreReply>({ type: "xsuit/restore" });
-    await new Promise((res) => setTimeout(res, 300));
-    images.before = await shot();
-    await send<ApplyReply>({ type: "xsuit/apply-once" });
-  }
-  try {
-    await chrome.storage.session.set({ report: { report: r.report, images } });
-  } catch {
-    await chrome.storage.session.set({
-      report: { report: r.report, images: { before: null, after: null } },
-    });
-  }
-  await chrome.tabs.create({ url: chrome.runtime.getURL("report.html") });
-}
-
-/** Opens the "Check before saving" box; the file is written only after the person presses Save. */
-function download(): void {
-  if (!last) return;
-  const $ = (id: string) => document.getElementById(id) as HTMLElement;
-  showPreview(
-    {
-      box: $("exportBox"),
-      summary: $("exportSummary"),
-      problems: $("exportProblems"),
-      json: $("exportJson"),
-      save: $("exportSave") as HTMLButtonElement,
-      cancel: $("exportCancel") as HTMLButtonElement,
-    },
-    prepareMeasurementExport(last),
-  );
-}
-
 async function init(): Promise<void> {
   [settings, [tab]] = await Promise.all([
     loadSettings(),
@@ -233,10 +137,7 @@ async function init(): Promise<void> {
       await send<ApplyReply>({ type: "xsuit/apply-once" });
     });
   }
-  $("inspect").addEventListener("click", inspect);
-  $("measure").addEventListener("click", measure);
-  $("download").addEventListener("click", download);
-  $("compare").addEventListener("click", compare);
+  if (__DEV__) renderDev = initDev({ send, say, windowId: () => tab?.windowId });
   render();
 }
 

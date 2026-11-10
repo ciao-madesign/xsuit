@@ -86,3 +86,8 @@ Written 2026-11-10 after the merge of the security work and B11 and the privacy 
 ## Order and gates
 
 B12 → B13 → B14 → B15 → B16 → B17 → B18 → B19 → B20 → B21 → B22. B13 and B14 are the most important: until recognition works on unseen pages and the adapters are verified, no new transformation is added. B17 may move earlier if sharing data starts sooner.
+
+## Product plan P1–P6 (replaces the B22 direction; see docs/25-product-replan.md)
+
+- **P1 DONE 2026-11-10**: release and developer builds; research code leaves the shipped extension.
+- P2 one click; P3 visible value and adjustable intensity; P4 plain words and languages; P5 localization brief for companies; P6 release readiness.

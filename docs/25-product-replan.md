@@ -1,4 +1,4 @@
-# 25 — Product re-plan: a tool for people first (PROPOSED, awaiting the owner's validation)
+# 25 — Product re-plan: a tool for people first (ACCEPTED 2026-11-10)
 
 **Direction given by the owner (2026-11-10).** xsuit is a practical browser extension for people: one click and the page takes the conventions of the user's reference market. Companies may also use it to see how their pages would look localized. Research, measurement and data collection are marginal and developer-side only.
 
@@ -63,11 +63,15 @@ Install → choose your market once → on any page, one click on the icon adapt
 
 `npm run` scripts for corpus, replication, measurements, privacy checks, adapters verification and the B22 study. They help developers test whether the tool works; they are not features.
 
-## Open choices for the owner
+## Owner's decisions (2026-11-10)
 
-1. **Market names** shown to users: "Western" / "Chinese" (as now) or something else?
-2. **Intensity setting** (light / standard) in P3: wanted, or one fixed level?
-3. **Interface languages** for the first release: English + Italian, or others (which need a native reviewer)?
+1. **Market names** stay as they are: "Western" and "China".
+2. **Intensity is adjustable** (light / standard) in P3, only where the sources allow it.
+3. **Interface language:** English is the reference. Other languages are **machine-translated without human review** (P4). This must be said clearly to the user, in the interface and in the store text. The translation is done when the strings are built, not by a service at run time, so nothing leaves the device. This replaces the earlier idea of waiting for native reviewers; a native review can still be added later and replaces the label.
+
+## Progress
+
+- **P1 done**: release and developer builds (see decision #58).
 
 ## Honest limits to keep in view
 
