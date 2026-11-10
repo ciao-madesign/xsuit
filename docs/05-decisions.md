@@ -74,6 +74,8 @@ Notes:
 | 48  | Adapters are hints  | A draft adapter never overrides the generic analyzer: it can confirm a generic result (weak becomes medium) or fill a gap with low confidence only; on disagreement the generic result is kept. A tested adapter (verification sheet passing) wins. Draft page-type hints are used only when the generic classifier says "any". Validated by the user. | 2026-11-10 |
 | 49  | Measurement privacy | Measurement files keep numbers, host, page-type label and language only; no URL path. A gate rejects other fields. Replication counts distinct sites and page types.                                                                                                                                                                                   | 2026-11-10 |
 
+| 50 | Anti-misuse | Adapters locate blocks only (never links/buttons/inputs/frames, except the search box); apply to their listed host only; elements must be plausible for their role; rules/adapters are locked by hash and bundled only. Shortcut links: visible, same site, plain text, no actions or downloads. Warnings, non-search forms and file/download blocks are never hidden or moved. Credential/payment pages: spacing and typography only. The label cannot be silenced: if the page hides it, everything is undone; structural changes force it visible. | 2026-11-10 |
+
 ## Still open
 
 None. All initial decisions are made.

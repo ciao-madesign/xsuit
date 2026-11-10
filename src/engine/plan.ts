@@ -73,6 +73,9 @@ function blocker(rule: Rule, input: PlanInput): string | null {
     if (c.type === "confidence-min" && confidenceOf(rule, ctx) < RANK[c.value as Confidence])
       return `component recognition below "${c.value}" confidence`;
   }
+  // Pages that ask for credentials or payment: no structural change, no emphasis (anti-abuse).
+  if (ctx.sensitive && rule.action.type !== "set-token")
+    return "this page asks for a password or payment details: xsuit only changes spacing and typography here";
   // Actions on specific components need recognition. Unsure (low) means the rule's fallback decides:
   // only a visual rule that explicitly allows "visual-only" still applies; everything else skips.
   // Structural rules never run on components we are not sure about.

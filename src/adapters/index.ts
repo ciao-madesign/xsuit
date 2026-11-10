@@ -29,7 +29,11 @@ export const adapters = [
   xiaohongshuAdapter,
 ] as unknown as Adapter[];
 
-/** Adapter for a host, matching the host itself or its subdomains. */
+/**
+ * Adapter for a host: the listed host itself only (www is ignored). Subdomains are NOT matched:
+ * they often hold content written by other people (user sites, blogs, uploads), and an adapter
+ * must never be applied to those by accident.
+ */
 export function findAdapter(host: string, list: Adapter[] = adapters): Adapter | null {
   const h = normalizeHost(host);
   if (!h) return null;
@@ -37,7 +41,7 @@ export function findAdapter(host: string, list: Adapter[] = adapters): Adapter |
     list.find((a) =>
       a.hosts.some((x) => {
         const ah = normalizeHost(x);
-        return ah !== null && (h === ah || h.endsWith(`.${ah}`));
+        return ah !== null && h === ah;
       }),
     ) ?? null
   );

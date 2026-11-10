@@ -40,6 +40,16 @@ const MAX_SELECTOR_LENGTH = 200;
 const MAX_SELECTORS = 8;
 /** A selector that is only a common tag or "*" matches unrelated things on every page. */
 const BROAD_SELECTOR_RE = /^(\*|html|body|div|span|a|p|ul|li|section|main|img|form|input)$/i;
+/**
+ * Adapters locate BLOCKS of a page, never things a user clicks or sends. A selector that aims at
+ * links, buttons, inputs, frames or at href/action/onclick/download attributes could be used to
+ * steer people toward an action, so it is refused (a search box may use form/input).
+ */
+const ACTION_TAG_RE =
+  /(^|[\s>+~,(])(a|button|input|select|textarea|form|iframe|object|embed|area|label)(?=[\s.#[:>+~,)]|$)/i;
+const ACTION_ATTR_RE =
+  /\[\s*(href|action|onclick|onsubmit|formaction|download|src|data|srcdoc|target|type|ping)\s*([\]=~|^$*])/i;
+const SEARCH_ONLY_TAGS_RE = /(^|[\s>+~,(])(form|input|textarea)(?=[\s.#[:>+~,)]|$)/gi;
 const NESTED_QUANTIFIER_RE = /\([^)]*[+*][^)]*\)[+*{]/;
 const UNSAFE_RE = /[{};]|url\(|expression\(|javascript:|<|>\s*script/i;
 
@@ -283,10 +293,20 @@ export function validateAdapter(input: unknown): ValidationResult<Adapter> {
     else if (x.length > MAX_SELECTOR_LENGTH)
       c.add(p, `is longer than ${MAX_SELECTOR_LENGTH} characters`);
   };
-  const selector = (p: string, x: unknown) => {
+  const selector = (p: string, x: unknown, component?: unknown) => {
     safe(p, x);
-    if (isStr(x) && BROAD_SELECTOR_RE.test(x.trim()))
+    if (!isStr(x)) return;
+    if (BROAD_SELECTOR_RE.test(x.trim()))
       c.add(p, "is too broad: it would match unrelated parts of any page");
+    // The search box is the one component that is a form/input; everything else must not be.
+    const isSearch = component === "search-box";
+    const probe = isSearch ? x.replace(SEARCH_ONLY_TAGS_RE, "$1") : x;
+    const attrProbe = isSearch ? x.replace(/\[\s*(type|action)\s*(?=[\]=~|^$*])/gi, "[x") : x;
+    if (ACTION_TAG_RE.test(probe) || ACTION_ATTR_RE.test(attrProbe))
+      c.add(
+        p,
+        "targets something a user clicks or submits (link, button, input, frame, or an href/action attribute): adapters may only locate page blocks",
+      );
   };
   const pattern = (p: string, x: unknown) => {
     safe(p, x);
@@ -313,7 +333,7 @@ export function validateAdapter(input: unknown): ValidationResult<Adapter> {
       c.strArray(`components[${i}].selectors`, m.selectors, {
         min: 1,
         max: MAX_SELECTORS,
-        item: selector,
+        item: (p, x) => selector(p, x, m.component),
       });
       c.oneOf(`components[${i}].confidence`, m.confidence, CONFIDENCE);
     });

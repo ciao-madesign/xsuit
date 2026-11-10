@@ -10,6 +10,7 @@ A browser extension (Chrome, TypeScript, MV3) that adapts a web page's UX to the
 
 - Repo `ciao-madesign/xsuit`, working branch `claude/loving-hopper-lif32i` (contains B0–B11 plus security hardening and B11b/B12). Earlier work was on `claude/great-curie-8yfsjr`, now merged.
 - Built: rule system, engine with rollback and loop guard, recognition (analyzer + adapters), accessibility guard, on-page label, comparison report, Hybrid editor, observation sheets, measurement tools, replication check.
+- Anti-misuse (adapters/rules cannot be used to steer clicks or disguise pages) is in `docs/14-security-model.md`, tested in `tests/attacks.test.ts`; rule/adapter data is hash-locked (`npm run lock` after a reviewed change).
 - Security and privacy are enforced by tests (`tests/security.test.ts`, `tests/privacy.test.ts`); model in `docs/14-security-model.md`, policy in `SECURITY.md`.
 - Measurement files (`xsuit.metrics/2`) hold numbers, host, page type and language only; no URL path.
 - Not validated: adapters on real sites, replication on real measurements, behaviour with real users, Li 2022 / Li 2026 / WCAG 2.2 primary texts (see `rules/sources.json`, `attempts`).

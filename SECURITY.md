@@ -20,7 +20,7 @@ Include: what you found, steps to reproduce, the affected version and browser, a
 
 In scope: the extension code, its manifest and permissions, build scripts, rules and adapters, exported files.
 
-Examples of issues we want to hear about: code execution from a web page, a page controlling the extension, data leaving the device, permissions broader than needed, unsafe links or CSS produced by rules/adapters, personal data in exports.
+Examples of issues we want to hear about: a rule, adapter or page that makes xsuit steer users toward a click, hide a warning or disguise a changed page (see the misuse section of the security model), code execution from a web page, a page controlling the extension, data leaving the device, permissions broader than needed, unsafe links or CSS produced by rules/adapters, personal data in exports.
 
 Out of scope: vulnerabilities of the browser itself, of third-party sites xsuit runs on, and social engineering.
 

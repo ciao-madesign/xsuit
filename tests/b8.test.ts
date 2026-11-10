@@ -308,7 +308,8 @@ describe("compatibility indicator", () => {
     document.documentElement.innerHTML =
       "<head></head><body><footer><a href='/1'>1</a><a href='/2'>2</a><a href='/3'>3</a></footer></body>";
     expect(compatibility(analyzePage(document, null, "/"), null).level).toBe("partial");
-    document.documentElement.innerHTML = "<head></head><body><form></form></body>";
+    document.documentElement.innerHTML =
+      '<head></head><body><form><input type="text"></form></body>';
     const draft = adapter("draft");
     // A draft adapter alone is only a low-confidence hint, so xsuit still understands too little.
     expect(compatibility(analyzePage(document, draft, "/"), draft)).toMatchObject({

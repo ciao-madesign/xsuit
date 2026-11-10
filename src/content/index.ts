@@ -52,6 +52,11 @@ function isMessage(x: unknown): x is Message {
 function main(): void {
   const ruleSets = [westernRules, chinaRules] as unknown as RuleSet[];
   const allRules = ruleSets.flatMap((s) => s.rules);
+  const STRUCTURAL = new Set(
+    allRules
+      .filter((r) => ["collapse", "reorder", "group", "surface-shortcut"].includes(r.action.type))
+      .map((r) => r.id),
+  );
 
   // Recognition: the site adapter first, the generic analyzer for what it does not cover.
   // It is re-run on every engine run (cheap, read-only) because components can appear later.
@@ -83,9 +88,13 @@ function main(): void {
   // Runs after every engine run, while the page observer is paused.
   const onRun = (st: EngineStatus) => {
     const summary = summarizeChanges(st.changes, st.reverted, allRules);
+    // Hiding the label is allowed for spacing/typography only. When xsuit moved, hid or added
+    // content, a visible notice is mandatory (anti-abuse: a changed page must be recognizable).
+    const structural = st.changes.some((c) => STRUCTURAL.has(c.ruleId));
+    const wanted = current?.labelPosition ?? "bottom-left";
     overlay.show(
       summary,
-      current?.labelPosition ?? "bottom-left",
+      wanted === "hidden" && structural ? "bottom-left" : wanted,
       st.report?.guard.unverifiable ?? 0,
     );
   };
@@ -231,6 +240,14 @@ function main(): void {
   const nav = (window as unknown as { navigation?: EventTarget }).navigation;
   nav?.addEventListener("navigatesuccess", onNavigate);
   window.addEventListener("popstate", onNavigate);
+
+  // Watchdog: if the page hides or removes the xsuit label, undo everything (fail safe).
+  setInterval(() => {
+    if (!engine.status.active || overlay.intact()) return;
+    suspended = true;
+    engine.restore();
+    overlay.hide();
+  }, 1500);
 
   // Zoom or resize changes the viewport width in CSS pixels: re-check the accessibility guard
   // at the new width (reflow, WCAG 1.4.10). Only when the width really changed.

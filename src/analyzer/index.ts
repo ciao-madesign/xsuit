@@ -3,6 +3,8 @@ import type { Confidence, PageContext, Resolver } from "../engine/types";
 import { createResolver } from "../adapters";
 import { recognizeComponents, type Recognition } from "./components";
 import { classifyPage, type Classification } from "./pageType";
+import { isSensitivePage } from "../engine/safety";
+import { plausible } from "./plausible";
 
 export interface RecognizedComponent {
   component: Component;
@@ -16,12 +18,12 @@ export interface RecognizedComponent {
 export interface AdapterHit {
   component: Component;
   /** agreed = same block as the generic analyzer; conflict = different block, generic kept. */
-  result: "tested-used" | "agreed" | "conflict" | "filled-gap" | "no-match";
+  result: "tested-used" | "agreed" | "conflict" | "filled-gap" | "no-match" | "implausible";
   selectors: number;
 }
 
 export interface Analysis {
-  context: Pick<PageContext, "pageType" | "components">;
+  context: Pick<PageContext, "pageType" | "components" | "sensitive">;
   recognized: RecognizedComponent[];
   adapterHits: AdapterHit[];
   classification: Classification;
@@ -87,11 +89,17 @@ export function analyzePage(
   };
   for (const c of names) {
     const entry = adapter?.components.find((x) => x.component === c);
-    const adapterEls = entry ? fromAdapter(c) : [];
+    const rawEls = entry ? fromAdapter(c) : [];
+    // An adapter can point at any element; xsuit only accepts one that really looks like the
+    // component (a "search box" must hold an input, a "nav" must hold links...).
+    const adapterEls = rawEls.filter((el) => plausible(c, el));
     const g = generic[c];
     const hit = (result: AdapterHit["result"]) =>
       entry && adapterHits.push({ component: c, result, selectors: entry.selectors.length });
-    if (entry && adapterEls.length && tested) {
+    if (entry && rawEls.length && !adapterEls.length) {
+      hit("implausible");
+      if (g) useGeneric(c);
+    } else if (entry && adapterEls.length && tested) {
       hit("tested-used");
       components[c] = entry.confidence;
       chosen.set(c, adapterEls);
@@ -124,7 +132,7 @@ export function analyzePage(
     } else if (entry) hit("no-match");
   }
   return {
-    context: { pageType, components },
+    context: { pageType, components, sensitive: isSensitivePage(doc) },
     recognized,
     adapterHits,
     classification,

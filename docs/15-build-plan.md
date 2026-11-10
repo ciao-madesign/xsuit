@@ -6,7 +6,7 @@ Written 2026-11-10 after the merge of the security work and B11 and the privacy 
 
 - **Works on any site.** Recognition is generic first. Adapters are optional hints for known sites; with no adapter xsuit must still recognize components or do nothing. Rules speak about components, never about site names.
 - **When in doubt, do nothing.** Low recognition confidence → no transformation, with the reason shown.
-- **Security and privacy gates stay green** (`tests/security.test.ts`, `tests/privacy.test.ts`). A build that weakens them needs a written decision.
+- **Security and privacy gates stay green** (`tests/security.test.ts`, `tests/privacy.test.ts`, `tests/attacks.test.ts`, `tests/integrity.test.ts`). Changing rules/adapters/schemas needs a reviewed diff and `npm run lock`. A build that weakens them needs a written decision.
 - **Everything reversible**, and `npm run check` green before every commit.
 
 ## Done: B11b — privacy and replication fixes

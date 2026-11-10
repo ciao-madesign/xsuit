@@ -2,6 +2,7 @@ import type { A11yGuard, Snapshot } from "./a11y";
 import { buildCss, NS, STYLE_ID } from "./css";
 import type { Journal } from "./journal";
 import { isProtected } from "./protect";
+import { isActionRisky, isNotice, isSafeShortcut } from "./safety";
 import type { ApplyReport, EffectCatalog, Plan, Resolver } from "./types";
 
 /** Remembers which (rule, element) pairs are done, so applying twice changes nothing. */
@@ -52,6 +53,9 @@ function collapse(doc: Document, journal: Journal, el: Element, component: strin
 function reorder(journal: Journal, el: Element, position: string, refs: Element[], tag: string) {
   const parent = el.parentNode;
   if (!parent) return false;
+  // Never reshuffle a container that holds a warning, dialog or protected area.
+  for (const sib of Array.from(parent.children))
+    if (sib !== el && (isNotice(sib) || isProtected(sib))) return false;
   if (position === "first" || position === "last") {
     const ref = position === "first" ? parent.firstChild : null;
     if (ref === el || (position === "last" && !el.nextSibling)) return false;
@@ -77,35 +81,18 @@ function group(doc: Document, journal: Journal, members: Element[], tag: string)
   return true;
 }
 
-// Links that change state or end a session must never be promoted to a one-click shortcut.
-const RISKY_LINK =
-  /(log-?out|sign-?out|delete|remove|unsubscribe|deactivate|close-?account|checkout|pay(ment)?|purchase|buy-?now|confirm|transfer)/i;
-
-/** Only plain http(s) navigation to a real address, never a risky action, never in protected areas. */
-export function isSafeLink(href: string, a: Element, base: string): boolean {
-  if (!href.trim() || href.trim() === "#") return false;
-  let url: URL;
-  try {
-    url = new URL(href.trim(), base);
-  } catch {
-    return false;
-  }
-  if (url.protocol !== "http:" && url.protocol !== "https:") return false;
-  if (url.username || url.password) return false;
-  if (RISKY_LINK.test(url.pathname) || RISKY_LINK.test(url.search)) return false;
-  return !isProtected(a);
-}
-
 /** Copies up to a few existing, safe links (text + address) from the source blocks. */
 function shortcutLinks(sources: Element[]): { text: string; href: string }[] {
   const out: { text: string; href: string }[] = [];
   const seen = new Set<string>();
   for (const src of sources) {
+    if (isProtected(src) || isActionRisky(src)) continue;
+    const pageHost = src.ownerDocument.defaultView?.location.hostname ?? "";
     for (const a of Array.from(src.querySelectorAll("a[href]"))) {
       const text = (a.textContent ?? "").replace(/\s+/g, " ").trim();
       const href = a.getAttribute("href") ?? "";
       if (!text || text.length > 30 || seen.has(text)) continue;
-      if (!isSafeLink(href, a, src.ownerDocument.baseURI)) continue;
+      if (isProtected(a) || !isSafeShortcut(a, text, pageHost, src.ownerDocument.baseURI)) continue;
       seen.add(text);
       out.push({ text, href });
       if (out.length === MAX_SHORTCUTS) return out;
@@ -125,10 +112,22 @@ function insertShortcuts(
   if (!parent) return;
   const nav = doc.createElement("nav");
   nav.setAttribute(`data-${NS}-shortcuts`, "");
-  nav.setAttribute("aria-label", "Shortcuts");
+  nav.setAttribute("aria-label", "Shortcuts added by xsuit");
+  nav.title = "Shortcuts added by xsuit: copies of links already on this page";
+  const note = doc.createElement("span");
+  note.textContent = "xsuit shortcuts:";
+  nav.appendChild(note);
   for (const l of links) {
     const a = doc.createElement("a");
     a.setAttribute("href", l.href);
+    a.setAttribute("rel", "noopener noreferrer");
+    // Always say where the link goes, so nobody is surprised by the destination.
+    try {
+      const u = new URL(l.href, doc.baseURI);
+      a.title = `Goes to ${u.hostname}${u.pathname}`;
+    } catch {
+      /* the href was validated before; nothing to show */
+    }
     a.textContent = l.text;
     nav.appendChild(a);
   }
@@ -181,7 +180,7 @@ export function applyPlan(
       for (const el of resolve(component)) {
         if (seen.has(el)) continue;
         seen.add(el);
-        if (isProtected(el)) {
+        if (isProtected(el) || (a.type !== "set-token" && isActionRisky(el))) {
           report.protectedSkipped++;
           continue;
         }

@@ -3,7 +3,8 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { normalizeHost, normalizeSettings, sitePatterns } from "../src/shared/settings";
 import { safeFilePart } from "../src/metrics/metrics";
-import { isSafeLink } from "../src/engine/apply";
+import { isProtected } from "../src/engine/protect";
+import { isSafeShortcut } from "../src/engine/safety";
 
 const root = join(__dirname, "..");
 const read = (p: string) => readFileSync(join(root, p), "utf8");
@@ -57,6 +58,22 @@ describe("security invariants: source code", () => {
       for (const [re, name] of FORBIDDEN) expect(code, name).not.toMatch(re);
     });
   }
+  it("focus is moved only inside xsuit's own label", () => {
+    for (const f of files(join(root, "src")))
+      if (!/ui\/overlay\.ts$/.test(f))
+        expect(readFileSync(f, "utf8"), f).not.toMatch(/\.focus\s*\(/);
+  });
+  it("event listeners on page elements exist only on buttons xsuit creates itself", () => {
+    for (const f of files(join(root, "src/engine")).concat(
+      files(join(root, "src/analyzer")),
+      files(join(root, "src/adapters")),
+    ))
+      if (!/engine\/apply\.ts$/.test(f))
+        expect(readFileSync(f, "utf8"), f).not.toMatch(/addEventListener/);
+    const apply = readFileSync(join(root, "src/engine/apply.ts"), "utf8");
+    expect(apply.match(/addEventListener/g)).toHaveLength(1);
+    expect(apply).toMatch(/btn\.addEventListener/);
+  });
   it("screenshots are captured only by the popup, and shown only as inline PNG", () => {
     for (const f of files(join(root, "src")))
       if (!f.endsWith("popup/index.ts"))
@@ -79,6 +96,28 @@ describe("security invariants: source code", () => {
   });
 });
 
+describe("security invariants: code that runs inside web pages never acts for the user", () => {
+  // Everything except the extension's own pages (popup, options, report) and the service worker.
+  const PAGE_CODE = (f: string) => !/src\/(popup|options|report|background)\//.test(f);
+  const FORBIDDEN_IN_PAGE: [RegExp, string][] = [
+    [
+      /createElement\(["'](form|input|img|link|meta|textarea|select)["']\)/,
+      "creating forms, inputs or images",
+    ],
+    [/\.click\s*\(/, "programmatic click"],
+    [/window\.open|\bopen\s*\(\s*["'`]http/, "window.open"],
+    [/location\.(assign|replace|reload)\s*\(|location(\.href)?\s*=[^=]/, "navigation"],
+    [/\.submit\s*\(|requestSubmit/, "form submission"],
+    [/dispatchEvent|new\s+(Mouse|Pointer|Keyboard|Touch|Input)Event/, "synthetic events"],
+    [/execCommand|navigator\.clipboard|\.select\s*\(\)|\.setSelectionRange/, "clipboard/selection"],
+  ];
+  for (const f of files(join(root, "src")).filter(PAGE_CODE))
+    it(`${f.slice(root.length + 1)}`, () => {
+      const code = readFileSync(f, "utf8").replace(/\/\/.*|\/\*[\s\S]*?\*\//g, "");
+      for (const [re, name] of FORBIDDEN_IN_PAGE) expect(code, name).not.toMatch(re);
+    });
+});
+
 describe("hosts and settings", () => {
   it("rejects hosts that are too broad or not real sites", () => {
     for (const bad of ["co.uk", "com.cn", "github.io", "127.0.0.1", "10.0.0.1", "a.1", "x.123"])
@@ -97,13 +136,16 @@ describe("hosts and settings", () => {
 });
 
 describe("shortcut links", () => {
-  const ok = (href: string, inner = "") => {
-    document.body.innerHTML = `<div>${inner}<a id="x" href="${href}">x</a></div>`;
-    return isSafeLink(href, document.getElementById("x")!, "https://example.com/");
+  const HOST = "example.com";
+  const ok = (href: string, inner = "", text = "Latest news") => {
+    document.body.innerHTML = `<div>${inner}<a id="x" href="${href}">${text}</a></div>`;
+    const a = document.getElementById("x")!;
+    return !isProtected(a) && isSafeShortcut(a, text, HOST, `https://${HOST}/`);
   };
-  it("accepts plain http(s) and relative links", () => {
+  it("accepts plain same-site links", () => {
     expect(ok("/news")).toBe(true);
     expect(ok("https://example.com/a")).toBe(true);
+    expect(ok("https://news.example.com/a")).toBe(true);
   });
   it("rejects script, data, blob, file, credentials and hidden-character tricks", () => {
     for (const bad of [
@@ -119,8 +161,19 @@ describe("shortcut links", () => {
     ])
       expect(ok(bad), bad).toBe(false);
   });
-  it("rejects links that log out, delete, pay or unsubscribe", () => {
-    for (const bad of ["/account/logout", "/delete?id=1", "/pay", "/x?action=unsubscribe"])
+  it("rejects links to another site", () => {
+    expect(ok("https://evil.test/offer")).toBe(false);
+    expect(ok("https://example.com.evil.test/")).toBe(false);
+  });
+  it("rejects links that log out, delete, pay, download or unsubscribe", () => {
+    for (const bad of [
+      "/account/logout",
+      "/delete?id=1",
+      "/pay",
+      "/x?action=unsubscribe",
+      "/tool.exe",
+      "/get/setup.msi",
+    ])
       expect(ok(bad), bad).toBe(false);
   });
   it("rejects links inside protected areas", () => {

@@ -47,9 +47,31 @@ export class Overlay {
     private handlers: OverlayHandlers,
   ) {}
 
+  /** True while a label is supposed to be on screen. */
+  expected = false;
+
   hide(): void {
     this.host?.remove();
     this.host = null;
+    this.expected = false;
+  }
+
+  /**
+   * The label is how a person knows the page was changed by xsuit. If the page removes it, hides
+   * it, makes it transparent or shrinks it, this returns false and the caller undoes everything
+   * (fail safe: no changes without a visible notice).
+   */
+  intact(): boolean {
+    if (!this.expected) return true;
+    const host = this.host;
+    if (!host || !host.isConnected || host.parentNode !== this.doc.documentElement) return false;
+    const win = this.doc.defaultView!;
+    const cs = win.getComputedStyle(host);
+    if (cs.display === "none" || cs.visibility !== "visible") return false;
+    if (parseFloat(cs.opacity || "1") < 0.5) return false;
+    const r = host.getBoundingClientRect();
+    const layout = this.doc.documentElement.getBoundingClientRect().width > 0;
+    return !layout || (r.width >= 8 && r.height >= 8);
   }
 
   show(summary: ChangeSummary, position: LabelPosition, unverifiable = 0): void {
@@ -59,7 +81,8 @@ export class Overlay {
     const host = doc.createElement("div");
     host.setAttribute(HOST_ATTR, "");
     const side = position === "bottom-right" ? "right" : "left";
-    host.style.cssText = `all: initial; position: fixed; bottom: 12px; ${side}: 12px; z-index: 2147483647;`;
+    // !important in the inline style: page CSS cannot override it.
+    host.style.cssText = `all: initial !important; display: block !important; visibility: visible !important; opacity: 1 !important; position: fixed !important; bottom: 12px !important; ${side}: 12px !important; z-index: 2147483647 !important;`;
     const root = host.attachShadow({ mode: "closed" });
     const style = doc.createElement("style");
     style.textContent = CSS;
@@ -146,5 +169,6 @@ export class Overlay {
     root.append(style, wrap);
     doc.documentElement.append(host);
     this.host = host;
+    this.expected = true;
   }
 }

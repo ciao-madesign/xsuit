@@ -84,7 +84,8 @@ describe("adapters", () => {
   it("match hosts and subdomains only", () => {
     expect(findAdapter("www.google.com")?.id).toBe("site.google");
     expect(findAdapter("google.com")?.id).toBe("site.google");
-    expect(findAdapter("news.baidu.com")?.id).toBe("site.baidu");
+    expect(findAdapter("news.baidu.com")).toBeNull(); // subdomains are never matched implicitly
+    expect(findAdapter("sites.google.com")).toBeNull();
     expect(findAdapter("notgoogle.com")).toBeNull();
   });
   it("selectors are valid CSS", () => {
