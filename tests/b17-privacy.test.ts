@@ -4,6 +4,7 @@ import Ajv from "ajv/dist/2020";
 import { describe, expect, it, vi } from "vitest";
 import { measurePage, METRIC_DEFINITIONS, type Measurement } from "../src/metrics/metrics";
 import { buildReport } from "../src/report/report";
+import { buildScorecard } from "../src/report/scorecard";
 import { prepareMeasurementExport, prepareReportExport } from "../src/research/exportGate";
 import { validateObservation } from "../src/research/observation";
 import { scanForPersonalData } from "../src/research/personal";
@@ -24,8 +25,19 @@ function measure(html: string): Measurement {
 }
 const PAGE = `<head><title>Inbox of Jane Doe</title></head><body><header><nav>${"<a href='/u/1'>Home</a>".repeat(4)}</nav></header><main><p>Hello</p></main></body>`;
 const rules = [
-  { id: "visual.china.vivid-palette", title: "Vivid palette", evidence: { level: "emerging" } },
+  {
+    id: "visual.china.vivid-palette",
+    title: "Vivid palette",
+    version: "1.0.0",
+    dimension: "palette",
+    pole: "vivid",
+    components: ["hero"],
+    evidence: { level: "emerging", sources: [{ id: "li2026" }] },
+  },
 ] as never;
+const dimsData = load("rules/dimensions.json").dimensions;
+const baselineData = load("rules/baselines.json").metrics;
+const profilesData = load("rules/profiles.json");
 const report = (m: Measurement) =>
   buildReport({
     profile: "china",
@@ -37,6 +49,14 @@ const report = (m: Measurement) =>
     reverted: [],
     skipped: [{ ruleId: "visual.china.compact-density", reason: "page already at the target" }],
     allRules: rules,
+    confidences: { hero: "high" },
+    scorecard: buildScorecard(
+      m.metrics as never,
+      m.metrics as never,
+      dimsData,
+      baselineData,
+      profilesData,
+    ),
   });
 
 describe("the schemas are closed and agree with the gate", () => {

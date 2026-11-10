@@ -1,7 +1,7 @@
 {
   "version": "0.1.0",
   "status": "provisional",
-  "note": "Provisional thresholds used by delta-based rules. Each is the midpoint of two sample means from one study of municipal homepages, compared against our own metric definition. Replace with our own measurements (research/measurements/, analysis A2) as soon as they exist. Only metrics with a number in the source are listed: for the others no threshold is invented.",
+  "note": "Provisional thresholds used by delta-based rules. Each is the midpoint of two sample means from one study of municipal homepages, compared against our own metric definition. Replace with our own measurements (research/measurements/, analysis A2) as soon as they exist. Only metrics with a number in the source are listed: for the others no threshold is invented. mainBlocks and peripheralBlocks are listed as references for the scorecard only (no rule uses them).",
   "metrics": {
     "mediaPer1000Px": {
       "west": 12.87,
@@ -18,6 +18,38 @@
         "Our metric counts images, pictures, videos, canvases and large SVGs; the study counts images and videos."
       ],
       "usedByRules": ["visual.china.compact-density", "visual.western.spacious-density"]
+    },
+    "mainBlocks": {
+      "west": 3.14,
+      "china": 5.91,
+      "threshold": 4.525,
+      "method": "midpoint of the two sample means (reference only)",
+      "source": {
+        "id": "li2026",
+        "locator": "Section 2.2 table: main content blocks 5.91 China vs 3.14 West"
+      },
+      "caveats": [
+        "Sample is municipal homepages, not commercial sites.",
+        "Figures as reported in docs/01; the primary text is not yet verified (rules/sources.json).",
+        "Reference only: no rule uses it as a threshold. Our metric definition is approximate and may differ from the study's."
+      ],
+      "usedByRules": []
+    },
+    "peripheralBlocks": {
+      "west": 0.61,
+      "china": 1.61,
+      "threshold": 1.11,
+      "method": "midpoint of the two sample means (reference only)",
+      "source": {
+        "id": "li2026",
+        "locator": "Section 2.2 table: peripheral blocks 1.61 China vs 0.61 West"
+      },
+      "caveats": [
+        "Sample is municipal homepages, not commercial sites.",
+        "Figures as reported in docs/01; the primary text is not yet verified (rules/sources.json).",
+        "Reference only: no rule uses it as a threshold. Our metric definition is approximate and may differ from the study's."
+      ],
+      "usedByRules": []
     }
   },
   "notQuantified": [

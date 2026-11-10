@@ -42,9 +42,33 @@ async function init(): Promise<void> {
   const rules = $<HTMLTableElement>("rules");
   for (const x of r.rules) {
     const tr = rules.insertRow();
-    tr.insertCell().textContent = x.title;
+    tr.insertCell().textContent = `${x.title} (v${x.version})`;
+    tr.insertCell().textContent = `${x.dimension}: ${x.pole}`;
     tr.insertCell().textContent = x.evidence;
+    tr.insertCell().textContent = x.sources.join(", ") || "none";
+    tr.insertCell().textContent = x.confidence;
     tr.insertCell().textContent = String(x.elements);
+  }
+  $("scorecard-note").textContent = r.scorecard.disclaimer;
+  const sc = $<HTMLTableElement>("scorecard");
+  const NEAR: Record<string, string> = {
+    western: "Western sample",
+    china: "China sample",
+    "in-between": "in between",
+  };
+  for (const row of r.scorecard.rows) {
+    const tr = sc.insertRow();
+    tr.insertCell().textContent = row.name;
+    tr.insertCell().textContent = row.measured.length
+      ? row.measured.map((m) => `${m.metric}: ${fmt(m.before)} → ${fmt(m.after)}`).join("; ")
+      : "no metric yet";
+    tr.insertCell().textContent = row.reference
+      ? `${row.reference.metric}: ${row.reference.west} / ${row.reference.china} (provisional, ${row.reference.source})`
+      : "no number in the sources";
+    tr.insertCell().textContent = row.nearest
+      ? `${row.nearest.before ? NEAR[row.nearest.before] : "n/a"} → ${row.nearest.after ? NEAR[row.nearest.after] : "n/a"}`
+      : "n/a";
+    tr.insertCell().textContent = `Western: ${row.poles.western ?? "page unchanged"}; China: ${row.poles.china ?? "page unchanged"}`;
   }
   const ul = $("undone");
   for (const x of r.undoneByGuard) {

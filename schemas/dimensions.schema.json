@@ -55,6 +55,14 @@
                 }
               }
             }
+          },
+          "measures": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9]{1,40}$"
+            },
+            "description": "Page metrics that describe this dimension (our own approximate operationalisation)."
           }
         }
       }

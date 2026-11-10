@@ -82,6 +82,8 @@ Notes:
 
 | 53 | Market profile model | A profile is a configuration: one pole per dimension (density, palette, hierarchy, promotions...), or nothing. Rules belong to one pole of one dimension and are versioned. Western and China stay as reference configurations with identical behaviour (proven by a golden recording from before the change); Hybrid = the person's choice of pole per dimension. Validated by the user. | 2026-11-10 |
 
+| 54 | Scorecard and explanation | The scorecard is descriptive: per dimension, measured metrics and, only where the sources give sample means, the page's position between the two samples (one visible formula). No quality score, grade or ranking; no invented references. Every change is explained (what, dimension and pole, evidence, sources, rule version, recognition confidence, limit, how to turn off) in the on-page panel and the report (xsuit.report/3). | 2026-11-10 |
+
 ## Still open
 
 None. All initial decisions are made.

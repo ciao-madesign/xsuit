@@ -122,7 +122,10 @@ export class Overlay {
       const e = doc.createElement("span");
       e.className = "muted";
       e.textContent = `(${r.evidence}; ${r.sources.map((s) => s.split(":")[0]).join(", ")})`;
-      li.append(b, d, e);
+      const more = doc.createElement("div");
+      more.className = "muted";
+      more.textContent = `${r.dimension} · rule v${r.version} · recognition: ${r.confidence} · ${r.elements} element(s). ${r.limit ? `Not shown by the evidence: ${r.limit} ` : ""}To turn off: ${r.switchOff}.`;
+      li.append(b, d, e, more);
       list.append(li);
     }
     details.append(sum, list);

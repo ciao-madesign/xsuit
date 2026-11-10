@@ -6,6 +6,16 @@ export interface ReasonItem {
   /** Plain-language evidence label, never hidden. */
   evidence: string;
   sources: string[];
+  /** What it acts on, e.g. "Information density: compact". */
+  dimension: string;
+  version: string;
+  /** How sure xsuit was about the part of the page it acted on. */
+  confidence: string;
+  /** What the evidence does not show (first gap). */
+  limit: string;
+  elements: number;
+  /** How to switch this rule off. */
+  switchOff: string;
 }
 
 export interface ChangeSummary {
@@ -22,11 +32,21 @@ const EVIDENCE_LABEL: Record<string, string> = {
   hypothesis: "Hypothesis, not yet validated",
 };
 
+const RANK = { low: 1, medium: 2, high: 3 } as const;
+const lowest = (
+  names: string[],
+  known: Partial<Record<string, "low" | "medium" | "high">>,
+): string => {
+  const seen = names.map((n) => known[n]).filter((x): x is "low" | "medium" | "high" => !!x);
+  return seen.length ? seen.reduce((a, b) => (RANK[a] <= RANK[b] ? a : b)) : "n/a";
+};
+
 /** Plain-language summary of what changed, built only from rule data (nothing invented). */
 export function summarizeChanges(
   changes: { ruleId: string; elements: number }[],
   reverted: { ruleId: string; reason: string }[],
   rules: Rule[],
+  components: Partial<Record<string, "low" | "medium" | "high">> = {},
 ): ChangeSummary {
   const byId = new Map(rules.map((r) => [r.id, r]));
   const done = changes.filter((c) => c.elements > 0 && byId.has(c.ruleId));
@@ -37,6 +57,12 @@ export function summarizeChanges(
       description: r.description,
       evidence: EVIDENCE_LABEL[r.evidence.level] ?? r.evidence.level,
       sources: r.evidence.sources.map((s) => `${s.id}: ${s.locator}`),
+      dimension: `${r.dimension}: ${r.pole}`,
+      version: r.version,
+      confidence: lowest(r.components, components),
+      limit: r.evidence.gaps[0] ?? "",
+      elements: c.elements,
+      switchOff: `Options, then rule "${r.title}" (${r.id})`,
     };
   });
   const undone = reverted.map((x) => ({

@@ -68,7 +68,7 @@ export function checkMeasurementFile(raw: unknown): MeasurementCheck {
   return { ok: problems.length === 0, problems, cleaned };
 }
 
-// ---- comparison report (xsuit.report/2) ------------------------------------------------------
+// ---- comparison report (xsuit.report/3) ------------------------------------------------------
 
 const REPORT_TOP = [
   "schema",
@@ -82,6 +82,7 @@ const REPORT_TOP = [
   "undoneByGuard",
   "skipped",
   "metrics",
+  "scorecard",
   "notes",
 ];
 const RULE_ID_RE = /^[a-z0-9]+(\.[a-z0-9-]+)+$/;
@@ -102,7 +103,7 @@ const num = (v: unknown) => v === null || (typeof v === "number" && Number.isFin
 export function checkReportFile(raw: unknown): MeasurementCheck {
   const p: string[] = [];
   if (!isObj(raw)) return { ok: false, problems: ["not an object"], cleaned: null };
-  if (raw.schema !== "xsuit.report/2")
+  if (raw.schema !== "xsuit.report/3")
     return { ok: false, problems: ["unknown schema"], cleaned: null };
   keysOk(raw, REPORT_TOP, "report", p);
   if (typeof raw.createdAt !== "string" || !/^\d{4}-\d{2}-\d{2}T[\d:.]+Z$/.test(raw.createdAt))
@@ -124,8 +125,36 @@ export function checkReportFile(raw: unknown): MeasurementCheck {
       : (p.push(`${k} must be a list of at most ${MAX_ITEMS}`), []);
   list("rules").forEach((r, i) => {
     if (!isObj(r)) return p.push(`rules[${i}] invalid`);
-    keysOk(r, ["id", "title", "evidence", "elements"], `rules[${i}]`, p);
+    keysOk(
+      r,
+      [
+        "id",
+        "title",
+        "version",
+        "dimension",
+        "pole",
+        "evidence",
+        "sources",
+        "confidence",
+        "elements",
+      ],
+      `rules[${i}]`,
+      p,
+    );
     if (typeof r.id !== "string" || !RULE_ID_RE.test(r.id)) p.push(`rules[${i}].id invalid`);
+    if (typeof r.version !== "string" || !/^\d+\.\d+\.\d+$/.test(r.version))
+      p.push(`rules[${i}].version invalid`);
+    for (const k of ["dimension", "pole"])
+      if (typeof r[k] !== "string" || !NAME_RE.test(r[k] as string))
+        p.push(`rules[${i}].${k} invalid`);
+    if (
+      !Array.isArray(r.sources) ||
+      r.sources.length > 20 ||
+      r.sources.some((s) => typeof s !== "string" || !/^[a-z0-9-]{1,40}$/.test(s))
+    )
+      p.push(`rules[${i}].sources must be source ids`);
+    if (!["low", "medium", "high", "n/a"].includes(r.confidence as string))
+      p.push(`rules[${i}].confidence invalid`);
     text(r.title, `rules[${i}].title`, p);
     if (typeof r.evidence !== "string" || !NAME_RE.test(r.evidence))
       p.push(`rules[${i}].evidence invalid`);
@@ -149,7 +178,92 @@ export function checkReportFile(raw: unknown): MeasurementCheck {
       if (!num(r[k])) p.push(`metrics[${i}].${k} is not a number`);
   });
   list("notes").forEach((n, i) => text(n, `notes[${i}]`, p));
+  checkScorecard(raw.scorecard, p);
   // Whatever the structure, nothing in the strings may look like personal data.
   for (const w of scanValue(raw)) p.push(w);
   return { ok: p.length === 0, problems: p, cleaned: p.length ? null : raw };
+}
+
+const NEAREST = ["western", "china", "in-between", null];
+function checkScorecard(sc: unknown, p: string[]): void {
+  if (!isObj(sc)) return void p.push("scorecard missing");
+  keysOk(sc, ["disclaimer", "rows"], "scorecard", p);
+  text(sc.disclaimer, "scorecard.disclaimer", p);
+  if (!Array.isArray(sc.rows) || sc.rows.length > 50) return void p.push("scorecard.rows invalid");
+  sc.rows.forEach((r, i) => {
+    const at = `scorecard.rows[${i}]`;
+    if (!isObj(r)) return void p.push(`${at} invalid`);
+    keysOk(
+      r,
+      [
+        "dimension",
+        "name",
+        "family",
+        "measured",
+        "reference",
+        "position",
+        "nearest",
+        "poles",
+        "note",
+      ],
+      at,
+      p,
+    );
+    for (const k of ["dimension", "family"])
+      if (typeof r[k] !== "string" || !NAME_RE.test(r[k] as string)) p.push(`${at}.${k} invalid`);
+    text(r.name, `${at}.name`, p);
+    text(r.note, `${at}.note`, p);
+    if (!Array.isArray(r.measured) || r.measured.length > 20) p.push(`${at}.measured invalid`);
+    else
+      r.measured.forEach((m, k) => {
+        if (!isObj(m)) return void p.push(`${at}.measured[${k}] invalid`);
+        keysOk(m, ["metric", "before", "after"], `${at}.measured[${k}]`, p);
+        if (typeof m.metric !== "string" || !/^[A-Za-z0-9]{1,40}$/.test(m.metric))
+          p.push(`${at}.measured[${k}].metric invalid`);
+        for (const f of ["before", "after"])
+          if (!num(m[f])) p.push(`${at}.measured[${k}].${f} is not a number`);
+      });
+    if (r.reference !== null) {
+      if (!isObj(r.reference)) p.push(`${at}.reference invalid`);
+      else {
+        keysOk(
+          r.reference,
+          ["metric", "west", "china", "source", "provisional"],
+          `${at}.reference`,
+          p,
+        );
+        if (
+          typeof r.reference.metric !== "string" ||
+          !/^[A-Za-z0-9]{1,40}$/.test(r.reference.metric)
+        )
+          p.push(`${at}.reference.metric invalid`);
+        if (typeof r.reference.west !== "number" || typeof r.reference.china !== "number")
+          p.push(`${at}.reference values invalid`);
+        if (typeof r.reference.source !== "string" || !/^[a-z0-9-]{1,40}$/.test(r.reference.source))
+          p.push(`${at}.reference.source invalid`);
+        if (r.reference.provisional !== true) p.push(`${at}.reference must be marked provisional`);
+      }
+    }
+    for (const k of ["position", "nearest"] as const) {
+      const v = r[k];
+      if (v === null) continue;
+      if (!isObj(v)) {
+        p.push(`${at}.${k} invalid`);
+        continue;
+      }
+      keysOk(v, ["before", "after"], `${at}.${k}`, p);
+      for (const f of ["before", "after"])
+        if (k === "position" ? !num(v[f]) : !NEAREST.includes(v[f] as never))
+          p.push(`${at}.${k}.${f} invalid`);
+    }
+    if (!isObj(r.poles)) p.push(`${at}.poles invalid`);
+    else {
+      keysOk(r.poles, ["western", "china"], `${at}.poles`, p);
+      for (const f of ["western", "china"]) {
+        const v = (r.poles as Record<string, unknown>)[f];
+        if (v !== null && (typeof v !== "string" || !NAME_RE.test(v)))
+          p.push(`${at}.poles.${f} invalid`);
+      }
+    }
+  });
 }

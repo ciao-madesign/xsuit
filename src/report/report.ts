@@ -1,12 +1,21 @@
 import { safeFilePart, type Measurement } from "../metrics/metrics";
 import type { Rule } from "../rules/types";
+import type { Scorecard } from "./scorecard";
 
-export const REPORT_SCHEMA = "xsuit.report/2";
+export const REPORT_SCHEMA = "xsuit.report/3";
 
+/** One change, explained: what, why (dimension, pole, evidence, sources), how sure, which version. */
 export interface ReportRule {
   id: string;
   title: string;
+  version: string;
+  dimension: string;
+  pole: string;
   evidence: string;
+  /** Source ids from the registry (rules/sources.json). */
+  sources: string[];
+  /** Lowest recognition confidence among the rule's components ("n/a" when none was recognized). */
+  confidence: string;
   elements: number;
 }
 
@@ -31,6 +40,7 @@ export interface Report {
   undoneByGuard: { ruleId: string; reason: string }[];
   skipped: { ruleId: string; reason: string }[];
   metrics: ReportRow[];
+  scorecard: Scorecard;
   notes: string[];
 }
 
@@ -44,7 +54,20 @@ export interface ReportInput {
   changes: { ruleId: string; elements: number }[];
   reverted: { ruleId: string; reason: string }[];
   skipped: { ruleId: string; reason: string }[];
-  allRules: Pick<Rule, "id" | "title" | "evidence">[];
+  allRules: Pick<
+    Rule,
+    "id" | "title" | "evidence" | "version" | "dimension" | "pole" | "components"
+  >[];
+  /** How sure xsuit was about each recognized component on this page. */
+  confidences: Partial<Record<string, "low" | "medium" | "high">>;
+  scorecard: Scorecard;
+}
+
+const RANK = { low: 1, medium: 2, high: 3 } as const;
+function lowestConfidence(components: string[], known: ReportInput["confidences"]): string {
+  const seen = components.map((c) => known[c]).filter((x): x is "low" | "medium" | "high" => !!x);
+  if (!seen.length) return "n/a";
+  return seen.reduce((a, b) => (RANK[a] <= RANK[b] ? a : b));
 }
 
 const num = (v: unknown): number | null => (typeof v === "number" && isFinite(v) ? v : null);
@@ -83,15 +106,24 @@ export function buildReport(i: ReportInput): Report {
     transformed: i.after !== null,
     rules: i.changes
       .filter((c) => c.elements > 0)
-      .map((c) => ({
-        id: c.ruleId,
-        title: byId.get(c.ruleId)?.title ?? c.ruleId,
-        evidence: byId.get(c.ruleId)?.evidence.level ?? "unknown",
-        elements: c.elements,
-      })),
+      .map((c) => {
+        const r = byId.get(c.ruleId);
+        return {
+          id: c.ruleId,
+          title: r?.title ?? c.ruleId,
+          version: r?.version ?? "0.0.0",
+          dimension: r?.dimension ?? "unknown",
+          pole: r?.pole ?? "unknown",
+          evidence: r?.evidence.level ?? "unknown",
+          sources: [...new Set((r?.evidence.sources ?? []).map((s) => s.id))].sort(),
+          confidence: lowestConfidence(r?.components ?? [], i.confidences),
+          elements: c.elements,
+        };
+      }),
     undoneByGuard: i.reverted,
     skipped: i.skipped,
     metrics: rows,
+    scorecard: i.scorecard,
     notes,
   };
 }

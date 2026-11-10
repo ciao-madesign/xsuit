@@ -62,7 +62,7 @@ Written 2026-11-10 after the merge of the security work and B11 and the privacy 
 - Rule versioning: version, introduced, sources, evidence level, tests, last review.
 - Checks (A): **snapshot tests prove the two existing profiles produce identical output before and after the change**; validator for the new profile schema.
 
-## B19 — Scorecard and explanation
+## B19 — Scorecard and explanation (DONE 2026-11-10, see docs/21-scorecard-and-explanation.md)
 
 - Descriptive scorecard: distance of a page from a reference configuration per dimension, never a "quality" score. Explanation per change: what, why, evidence, confidence, switch-off.
 - Checks (A): scorecard is deterministic on fixtures; every change in the report links to a rule version and a source.

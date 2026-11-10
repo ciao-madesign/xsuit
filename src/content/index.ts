@@ -23,6 +23,10 @@ import type { Settings } from "../shared/settings";
 import { computeStatus } from "../shared/state";
 import { loadSettings, onSettingsChanged } from "../shared/storage";
 import { buildReport } from "../report/report";
+import { buildScorecard, type Baselines } from "../report/scorecard";
+import dimensionData from "../../rules/dimensions.json";
+import baselineData from "../../rules/baselines.json";
+import type { Dimension } from "../rules/configuration";
 import { Overlay } from "../ui/overlay";
 import { summarizeChanges } from "../ui/summary";
 
@@ -87,7 +91,12 @@ function main(): void {
 
   // Runs after every engine run, while the page observer is paused.
   const onRun = (st: EngineStatus) => {
-    const summary = summarizeChanges(st.changes, st.reverted, allRules);
+    const summary = summarizeChanges(
+      st.changes,
+      st.reverted,
+      allRules,
+      analysis?.context.components,
+    );
     // Hiding the label is allowed for spacing/typography only. When xsuit moved, hid or added
     // content, a visible notice is mandatory (anti-abuse: a changed page must be recognizable).
     const structural = st.changes.some((c) => STRUCTURAL.has(c.ruleId));
@@ -207,6 +216,14 @@ function main(): void {
             reverted,
             skipped,
             allRules,
+            confidences: (analysis ?? analyze()).context.components,
+            scorecard: buildScorecard(
+              before.metrics as unknown as Record<string, unknown>,
+              after ? (after.metrics as unknown as Record<string, unknown>) : null,
+              (dimensionData as { dimensions: Dimension[] }).dimensions,
+              (baselineData as { metrics: Baselines }).metrics,
+              profiles as unknown as Profile[],
+            ),
           }),
         } satisfies ReportReply);
         break;

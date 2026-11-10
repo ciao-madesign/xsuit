@@ -16,6 +16,8 @@ export interface Dimension {
   family: "visual" | "information-architecture";
   description: string;
   poles: Pole[];
+  /** Page metrics that describe this dimension (our own approximate operationalisation). */
+  measures?: string[];
 }
 /** dimension id -> pole id. A dimension that is missing keeps the page as it is. */
 export type Configuration = Record<string, string>;

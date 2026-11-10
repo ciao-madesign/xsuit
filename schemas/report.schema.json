@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "xsuit comparison report (xsuit.report/2)",
+  "title": "xsuit comparison report (xsuit.report/3)",
   "description": "CLOSED. Screenshots are never part of the file.",
   "type": "object",
   "additionalProperties": false,
@@ -16,11 +16,12 @@
     "undoneByGuard",
     "skipped",
     "metrics",
-    "notes"
+    "notes",
+    "scorecard"
   ],
   "properties": {
     "schema": {
-      "const": "xsuit.report/2"
+      "const": "xsuit.report/3"
     },
     "createdAt": {
       "type": "string",
@@ -63,7 +64,17 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "title", "evidence", "elements"],
+        "required": [
+          "id",
+          "title",
+          "version",
+          "dimension",
+          "pole",
+          "evidence",
+          "sources",
+          "confidence",
+          "elements"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -80,6 +91,29 @@
           "elements": {
             "type": "integer",
             "minimum": 0
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$"
+          },
+          "dimension": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,40}$"
+          },
+          "pole": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,40}$"
+          },
+          "sources": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9-]{1,40}$"
+            }
+          },
+          "confidence": {
+            "enum": ["low", "medium", "high", "n/a"]
           }
         }
       }
@@ -152,6 +186,161 @@
       "items": {
         "type": "string",
         "maxLength": 300
+      }
+    },
+    "scorecard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["disclaimer", "rows"],
+      "properties": {
+        "disclaimer": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "rows": {
+          "type": "array",
+          "maxItems": 50,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "dimension",
+              "name",
+              "family",
+              "measured",
+              "reference",
+              "position",
+              "nearest",
+              "poles",
+              "note"
+            ],
+            "properties": {
+              "dimension": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]{0,40}$"
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 300
+              },
+              "family": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]{0,40}$"
+              },
+              "measured": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["metric", "before", "after"],
+                  "properties": {
+                    "metric": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9]{1,40}$"
+                    },
+                    "before": {
+                      "type": ["number", "null"]
+                    },
+                    "after": {
+                      "type": ["number", "null"]
+                    }
+                  }
+                }
+              },
+              "reference": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["metric", "west", "china", "source", "provisional"],
+                    "properties": {
+                      "metric": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9]{1,40}$"
+                      },
+                      "west": {
+                        "type": "number"
+                      },
+                      "china": {
+                        "type": "number"
+                      },
+                      "source": {
+                        "type": "string",
+                        "pattern": "^[a-z0-9-]{1,40}$"
+                      },
+                      "provisional": {
+                        "const": true
+                      }
+                    }
+                  }
+                ]
+              },
+              "position": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["before", "after"],
+                    "properties": {
+                      "before": {
+                        "type": ["number", "null"]
+                      },
+                      "after": {
+                        "type": ["number", "null"]
+                      }
+                    }
+                  }
+                ]
+              },
+              "nearest": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["before", "after"],
+                    "properties": {
+                      "before": {
+                        "enum": ["western", "china", "in-between", null]
+                      },
+                      "after": {
+                        "enum": ["western", "china", "in-between", null]
+                      }
+                    }
+                  }
+                ]
+              },
+              "poles": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["western", "china"],
+                "properties": {
+                  "western": {
+                    "type": ["string", "null"],
+                    "pattern": "^[a-z][a-z0-9-]{0,40}$"
+                  },
+                  "china": {
+                    "type": ["string", "null"],
+                    "pattern": "^[a-z][a-z0-9-]{0,40}$"
+                  }
+                }
+              },
+              "note": {
+                "type": "string",
+                "maxLength": 300
+              }
+            }
+          }
+        }
       }
     }
   }

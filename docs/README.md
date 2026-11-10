@@ -30,4 +30,6 @@ Foundations of the **Cross-Market UX Localization Extension**. Reading order:
 
 - `20-market-profile-model.md`: B18 dimensions, poles, configurations, rule versions, how to add a market.
 
+- `21-scorecard-and-explanation.md`: B19 descriptive scorecard per dimension and the explanation shown for every change.
+
 Repository root: [README](../README.md), [SECURITY](../SECURITY.md).

@@ -293,6 +293,8 @@ export function validateDimensions(input: unknown): ValidationResult<Dimension[]
     c.str(`${p}.name`, d.name);
     c.str(`${p}.description`, d.description);
     c.oneOf(`${p}.family`, d.family, ["visual", "information-architecture"]);
+    if (d.measures !== undefined)
+      c.strArray(`${p}.measures`, d.measures, { item: (q, x) => c.oneOf(q, x, METRIC_NAMES) });
     if (!Array.isArray(d.poles) || d.poles.length === 0)
       return c.add(`${p}.poles`, "needs at least one pole");
     const poles = new Set<string>();
