@@ -38,6 +38,10 @@ Where a site adapter matches a component, its confidence is used; the generic an
 
 For actions on specific components: not recognized → skip. Low confidence → skip, unless the rule is a visual rule that explicitly allows `visual-only`. Structural rules never run on low-confidence components. Before B7, "skip" rules wrongly still ran at low confidence; fixed. Consequence: the draft Baidu hot-search selector (low confidence) no longer triggers `visual.china.discovery-feed`.
 
+## Measured without adapters (B13)
+
+On 34 varied synthetic pages the generic analyzer is measured with no adapter; results in `16-generality-report.md`, thresholds enforced in CI. Adapters are optional hints, never required.
+
 ## Known limits
 
 - Desktop web only. Shadow DOM, iframes and closed shadow roots are not searched (listed for the B11 compatibility tests; not yet handled).

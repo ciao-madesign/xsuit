@@ -1,0 +1,206 @@
+[
+  {
+    "file": "news-article.html",
+    "pageType": "article",
+    "path": "/news/2026/story-title",
+    "kind": "semantic"
+  },
+  {
+    "file": "blog-post.html",
+    "pageType": "article",
+    "path": "/blog/my-first-post",
+    "kind": "semantic"
+  },
+  {
+    "file": "shop-home.html",
+    "pageType": "home",
+    "path": "/",
+    "kind": "semantic"
+  },
+  {
+    "file": "shop-product-detail.html",
+    "pageType": "product-detail",
+    "path": "/product/12345",
+    "kind": "semantic"
+  },
+  {
+    "file": "shop-category-list.html",
+    "pageType": "product-list",
+    "path": "/category/shoes?sort=price",
+    "kind": "semantic"
+  },
+  {
+    "file": "search-results.html",
+    "pageType": "search-results",
+    "path": "/search?q=running",
+    "kind": "semantic"
+  },
+  {
+    "file": "video-watch.html",
+    "pageType": "video",
+    "path": "/watch?v=abc",
+    "kind": "semantic"
+  },
+  {
+    "file": "docs-page.html",
+    "pageType": "article",
+    "path": "/docs/getting-started",
+    "kind": "semantic"
+  },
+  {
+    "file": "forum-thread.html",
+    "pageType": "any",
+    "path": "/t/topic-123",
+    "kind": "semantic"
+  },
+  {
+    "file": "portal-home-cjk.html",
+    "pageType": "home",
+    "path": "/",
+    "kind": "semantic-cjk"
+  },
+  {
+    "file": "portal-home-cjk-divsoup.html",
+    "pageType": "any",
+    "path": "/",
+    "kind": "divsoup-cjk"
+  },
+  {
+    "file": "divsoup-shop.html",
+    "pageType": "any",
+    "path": "/shop",
+    "kind": "divsoup"
+  },
+  {
+    "file": "aria-only-app.html",
+    "pageType": "any",
+    "path": "/app",
+    "kind": "aria-only"
+  },
+  {
+    "file": "rtl-news.html",
+    "pageType": "article",
+    "path": "/news/story",
+    "kind": "rtl"
+  },
+  {
+    "file": "spa-shell-empty.html",
+    "pageType": "any",
+    "path": "/",
+    "kind": "spa-shell"
+  },
+  {
+    "file": "login-page.html",
+    "pageType": "any",
+    "path": "/login",
+    "kind": "protected"
+  },
+  {
+    "file": "checkout-page.html",
+    "pageType": "any",
+    "path": "/checkout",
+    "kind": "protected"
+  },
+  {
+    "file": "error-404.html",
+    "pageType": "any",
+    "path": "/missing",
+    "kind": "minimal-page"
+  },
+  {
+    "file": "landing-marketing.html",
+    "pageType": "home",
+    "path": "/",
+    "kind": "semantic"
+  },
+  {
+    "file": "dashboard.html",
+    "pageType": "any",
+    "path": "/dashboard",
+    "kind": "app"
+  },
+  {
+    "file": "recipe-article.html",
+    "pageType": "article",
+    "path": "/recipes/soup",
+    "kind": "semantic"
+  },
+  {
+    "file": "wiki-like.html",
+    "pageType": "article",
+    "path": "/wiki/Topic",
+    "kind": "semantic"
+  },
+  {
+    "file": "trap-two-link-nav.html",
+    "pageType": "any",
+    "path": "/",
+    "kind": "trap"
+  },
+  {
+    "file": "trap-aside-in-article.html",
+    "pageType": "article",
+    "path": "/blog/pullquote",
+    "kind": "trap"
+  },
+  {
+    "file": "trap-hidden-decoys.html",
+    "pageType": "any",
+    "path": "/",
+    "kind": "trap"
+  },
+  {
+    "file": "trap-carousel-lookalike.html",
+    "pageType": "any",
+    "path": "/",
+    "kind": "trap"
+  },
+  {
+    "file": "trap-search-lookalike.html",
+    "pageType": "product-list",
+    "path": "/category/shirts",
+    "kind": "trap"
+  },
+  {
+    "file": "image-gallery.html",
+    "pageType": "any",
+    "path": "/gallery",
+    "kind": "semantic"
+  },
+  {
+    "file": "video-autoplay-bg.html",
+    "pageType": "any",
+    "path": "/",
+    "kind": "trap"
+  },
+  {
+    "file": "news-home-grid.html",
+    "pageType": "home",
+    "path": "/",
+    "kind": "semantic"
+  },
+  {
+    "file": "iframe-heavy.html",
+    "pageType": "any",
+    "path": "/embed",
+    "kind": "semantic"
+  },
+  {
+    "file": "nested-header.html",
+    "pageType": "article",
+    "path": "/blog/nested",
+    "kind": "trap"
+  },
+  {
+    "file": "search-heuristic-only.html",
+    "pageType": "any",
+    "path": "/",
+    "kind": "heuristic"
+  },
+  {
+    "file": "zh-article.html",
+    "pageType": "article",
+    "path": "/news/story",
+    "kind": "semantic-cjk"
+  }
+]
