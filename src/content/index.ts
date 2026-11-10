@@ -1,6 +1,6 @@
 import { findAdapter } from "../adapters";
 import { analyzePage, type Analysis } from "../analyzer";
-import { defaultEffects } from "../engine/effects";
+import { effectFile, toCatalog } from "../engine/effects";
 import { Engine, type EngineStatus } from "../engine/engine";
 import { needsMetrics } from "../engine/plan";
 import type { PageContext, Resolver } from "../engine/types";
@@ -96,7 +96,7 @@ function main(): void {
   const engine = new Engine({
     doc: document,
     resolve,
-    effects: defaultEffects,
+    effects: () => toCatalog(effectFile, current?.intensity ?? "standard"),
     getContext: context,
     onRun,
     onStop: () => overlay.hide(),

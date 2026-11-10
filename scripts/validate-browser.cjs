@@ -91,6 +91,7 @@ function bigPage(n) {
 
   const results = [];
   // Desktop width for every page; phone width (B20) for the pages where text and layout are most at risk.
+  // Strength (P3): the strong level is also run on every page, structural, for both markets.
   const PHONE = [
     "rtl-arabic.html",
     "cjk-zh.html",
@@ -103,7 +104,11 @@ function bigPage(n) {
     { name: n, width: 1280 },
     ...(PHONE.includes(n) ? [{ name: n, width: 390 }] : []),
   ]);
-  for (const { name, width } of runs) {
+  const withStrength = runs.flatMap((r) => [
+    { ...r, intensity: "standard" },
+    ...(r.width === 1280 ? [{ ...r, intensity: "strong" }] : []),
+  ]);
+  for (const { name, width, intensity } of withStrength) {
     for (const profile of ["western", "china", "hybrid"]) {
       for (const depth of ["visual", "structural"]) {
         const page = await ctx.newPage();
@@ -147,9 +152,16 @@ function bigPage(n) {
           });
         const probeBefore = await probe();
         const r = await sw.evaluate(
-          async ({ profile, depth, port }) => {
+          async ({ profile, depth, intensity, port }) => {
             await chrome.storage.local.set({
-              settings: { enabled: true, profile, depth, enabledSites: [] },
+              settings: {
+                enabled: true,
+                onboarded: true,
+                profile,
+                depth,
+                intensity,
+                enabledSites: [],
+              },
             });
             const [t] = await chrome.tabs.query({ url: `http://127.0.0.1:${port}/*` });
             await chrome.scripting.executeScript({
@@ -162,7 +174,7 @@ function bigPage(n) {
             const ms = Date.now() - t0;
             return { rules: a.rules, ms, reverted: a.reverted, pageType: a.pageType };
           },
-          { profile, depth, port },
+          { profile, depth, intensity, port },
         );
         const probeAfter = await probe();
         const changed =
@@ -177,6 +189,7 @@ function bigPage(n) {
         results.push({
           page: name,
           width,
+          intensity,
           overflowIntroduced: probeAfter.overflow && !probeBefore.overflow,
           lineHeightLoweredBelow15:
             name.startsWith("cjk-") &&

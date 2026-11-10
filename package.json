@@ -24,6 +24,7 @@
     "study": "node scripts/run-ts.mjs src/research/study-cli.ts",
     "privacy": "node scripts/run-ts.mjs src/research/privacy-cli.ts",
     "adapters": "node scripts/run-ts.mjs src/research/adapters-cli.ts",
+    "value": "npm run build:dev && node scripts/value-audit.cjs",
     "validate:browser": "npm run build && node scripts/validate-browser.cjs"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "note": "Concrete CSS for rule actions. Direction of each effect comes from the evidence cited by the rules that use it. The MAGNITUDE (how much) is a design choice, kept deliberately modest, and must be tuned during the internal review (B11). Effects only use properties that cannot hide content, move elements or shrink targets (checked by tests). Saturation filters CAN lower text contrast (see contrastSimulation, a correction made in B8): every changed element is therefore checked at runtime by the accessibility guard, which undoes a rule that measurably worsens contrast, target size or horizontal scroll.",
+  "note": "Concrete CSS for rule actions. Direction of each effect comes from the evidence cited by the rules that use it. The MAGNITUDE (how much) is a design choice, kept deliberately modest, and must be tuned during the internal review (B11). Effects only use properties that cannot hide content, move elements or shrink targets (checked by tests). Saturation filters CAN lower text contrast (see contrastSimulation, a correction made in B8): every changed element is therefore checked at runtime by the accessibility guard, which undoes a rule that measurably worsens contrast, target size or horizontal scroll. Intensity (P3): each effect with a magnitude has three levels. `declarations` is Standard (the default, unchanged since B8); `levels.light` and `levels.strong` are weaker and stronger values chosen by the same design judgment: the direction always comes from the cited evidence, the size never does. Every level passes the same forbidden-property checks and the runtime accessibility guard.",
   "effects": [
     {
       "key": "density=compact",
@@ -10,28 +10,44 @@
         "Line height stays at or above 1.4 so text remains readable; no font-size change.",
         "gap only affects flex/grid containers, so non-grid layouts are untouched."
       ],
-      "ruleIds": ["visual.china.compact-density"]
+      "ruleIds": ["visual.china.compact-density"],
+      "levels": {
+        "light": ["line-height: 1.5", "gap: 0.75rem"],
+        "strong": ["line-height: 1.35", "gap: 0.25rem"]
+      }
     },
     {
       "key": "density=spacious",
       "declarations": ["line-height: 1.7", "gap: 1.5rem"],
       "basis": "Direction: Western homepages show lower visual density and fewer blocks (li2026); weak supporting evidence from nng2016 that foreign participants tolerated simple sites. Magnitude is a design choice.",
       "constraints": ["No content is hidden; only spacing grows."],
-      "ruleIds": ["visual.western.spacious-density"]
+      "ruleIds": ["visual.western.spacious-density"],
+      "levels": {
+        "light": ["line-height: 1.6", "gap: 1rem"],
+        "strong": ["line-height: 1.8", "gap: 2rem"]
+      }
     },
     {
       "key": "spacing-scale=tight",
       "declarations": ["padding-block: 0.5rem"],
       "basis": "Direction: less white space on Chinese sites (li2022). Magnitude is a design choice.",
       "constraints": ["Block padding only; interactive targets keep their own size."],
-      "ruleIds": ["visual.china.tight-spacing"]
+      "ruleIds": ["visual.china.tight-spacing"],
+      "levels": {
+        "light": ["padding-block: 0.75rem"],
+        "strong": ["padding-block: 0.25rem"]
+      }
     },
     {
       "key": "spacing-scale=airy",
       "declarations": ["padding-block: 1.5rem"],
       "basis": "Direction: more white space on Western sites (li2022). Magnitude is a design choice.",
       "constraints": ["Block padding only."],
-      "ruleIds": ["visual.western.airy-spacing"]
+      "ruleIds": ["visual.western.airy-spacing"],
+      "levels": {
+        "light": ["padding-block: 1.25rem"],
+        "strong": ["padding-block: 2.25rem"]
+      }
     },
     {
       "key": "palette-saturation=muted",
@@ -41,7 +57,11 @@
         "Hue is not changed (no red/gold stereotype).",
         "Can lower text contrast on some colour pairs (see contrastSimulation): the runtime accessibility guard undoes the rule on any element where contrast measurably gets worse."
       ],
-      "ruleIds": ["visual.western.muted-palette"]
+      "ruleIds": ["visual.western.muted-palette"],
+      "levels": {
+        "light": ["filter: saturate(0.9)"],
+        "strong": ["filter: saturate(0.7)"]
+      }
     },
     {
       "key": "palette-saturation=vivid",
@@ -51,7 +71,11 @@
         "Saturation only; hue untouched.",
         "Can lower text contrast on some colour pairs (see contrastSimulation): the runtime accessibility guard undoes the rule on any element where contrast measurably gets worse."
       ],
-      "ruleIds": ["visual.china.vivid-palette"]
+      "ruleIds": ["visual.china.vivid-palette"],
+      "levels": {
+        "light": ["filter: saturate(1.12)"],
+        "strong": ["filter: saturate(1.4)"]
+      }
     },
     {
       "key": "image-prominence=high@img",
@@ -77,7 +101,11 @@
         "Content stays fully visible and readable; no opacity change.",
         "Can lower text contrast on some colour pairs (see contrastSimulation): the runtime accessibility guard undoes the rule on any element where contrast measurably gets worse."
       ],
-      "ruleIds": ["visual.western.quiet-promos", "visual.western.quiet-carousel"]
+      "ruleIds": ["visual.western.quiet-promos", "visual.western.quiet-carousel"],
+      "levels": {
+        "light": ["filter: saturate(0.85)"],
+        "strong": ["filter: saturate(0.55)"]
+      }
     },
     {
       "key": "emphasize=medium",
@@ -90,7 +118,11 @@
         "visual.china.prominent-promos",
         "visual.china.prominent-carousel",
         "visual.china.discovery-feed"
-      ]
+      ],
+      "levels": {
+        "light": ["filter: saturate(1.1)"],
+        "strong": ["filter: saturate(1.35)"]
+      }
     },
     {
       "key": "emphasize=high",
@@ -99,7 +131,11 @@
       "constraints": [
         "currentColor keeps contrast equal to the text; outline does not affect layout."
       ],
-      "ruleIds": ["visual.western.search-first"]
+      "ruleIds": ["visual.western.search-first"],
+      "levels": {
+        "light": ["outline: 1px solid currentColor", "outline-offset: 2px"],
+        "strong": ["outline: 3px solid currentColor", "outline-offset: 2px"]
+      }
     }
   ],
   "intentionallyEmpty": [

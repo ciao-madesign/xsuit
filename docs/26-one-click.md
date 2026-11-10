@@ -4,7 +4,7 @@ What a person sees and does. Nothing about the research or the rules needs to be
 
 ## First run
 
-The popup opens on one question: **"Which web style are you used to?"** with two choices, Western and China, each with one plain line. A suggestion based on the browser language appears underneath (Chinese browser language: China; any other language: Western). It is only a suggestion: nothing is chosen until the person presses a button. The choice is saved (`onboarded`) and the screen does not come back.
+The popup opens on one question: **"Adapt the style"** with two choices, Western and China, each with one plain line. A suggestion based on the browser language appears underneath (Chinese browser language: China; any other language: Western). It is only a suggestion: nothing is chosen until the person presses a button. The choice is saved (`onboarded`) and the screen does not come back.
 
 ## Normal use
 

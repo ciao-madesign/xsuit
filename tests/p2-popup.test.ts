@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { adaptResult, marketName, suggestMarket, viewFor } from "../src/popup/model";
+import { marketName, suggestMarket, viewFor } from "../src/popup/model";
 import { DEFAULT_SETTINGS, type Settings } from "../src/shared/settings";
 
 const base = (o: Partial<Settings> = {}): Settings => ({
@@ -48,12 +48,6 @@ describe("what the popup shows", () => {
     expect(suggestMarket("")).toBeNull();
     expect(marketName("hybrid")).toBe("Custom mix");
     expect(marketName("china")).toBe("China");
-  });
-
-  it("says plainly what happened", () => {
-    expect(adaptResult(true, 1)).toMatch(/1 change\./);
-    expect(adaptResult(true, 4)).toMatch(/4 changes/);
-    expect(adaptResult(false, 0)).toMatch(/Nothing needed changing/);
   });
 });
 

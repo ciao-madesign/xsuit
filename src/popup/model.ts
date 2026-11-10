@@ -67,9 +67,38 @@ export function viewFor(i: ViewInput): View {
       };
 }
 
-/** Plain-words result of pressing "Adapt this page". */
-export function adaptResult(applied: boolean, rules: number): string {
-  return applied
-    ? `Done: ${rules} change${rules === 1 ? "" : "s"}. The label on the page tells you what changed.`
-    : "Nothing needed changing on this page.";
+export interface AdaptOutcome {
+  applied: boolean;
+  rules: number;
+  skipped: { ruleId: string; reason: string }[];
+  recognized: { component: string }[];
+  reverted: { ruleId: string; reason: string }[];
+  intensity: Settings["intensity"];
+  market: string;
+}
+
+const has = (o: AdaptOutcome, re: RegExp) => o.skipped.some((s) => re.test(s.reason));
+
+/**
+ * Plain-words result of pressing "Adapt this page". When nothing (or little) changed it says why,
+ * so a person is never left guessing whether xsuit worked.
+ */
+export function adaptMessage(o: AdaptOutcome): string {
+  if (!o.applied) {
+    if (o.reverted.length)
+      return "xsuit undid its changes because they would have made this page harder to read or use.";
+    if (has(o, /asks for a password or payment/))
+      return "This page asks for a password or payment details, so xsuit leaves it alone.";
+    if (has(o, /phone-sized viewport/))
+      return "This window is phone-sized. xsuit's measured styles only run on desktop-width pages: widen the window.";
+    if (has(o, /already at or (below|above) the target/))
+      return `This page is already close to the ${o.market} style.`;
+    if (!o.recognized.length)
+      return "xsuit could not recognise the parts of this page, so it left it alone.";
+    return "Nothing needed changing on this page.";
+  }
+  const done = `Done: ${o.rules} change${o.rules === 1 ? "" : "s"}. The label on the page tells you what changed.`;
+  return o.rules <= 2 && o.intensity !== "strong"
+    ? `${done} For a stronger effect, set Strength to Strong.`
+    : done;
 }

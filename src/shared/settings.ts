@@ -2,6 +2,8 @@ import { PROFILE_IDS } from "../rules/vocab";
 
 export const PROFILE_CHOICES = ["original", ...PROFILE_IDS] as const;
 export type ProfileChoice = (typeof PROFILE_CHOICES)[number];
+export const INTENSITY_CHOICES = ["light", "standard", "strong"] as const;
+export type IntensityChoice = (typeof INTENSITY_CHOICES)[number];
 export const DEPTHS = ["visual", "structural"] as const;
 export type Depth = (typeof DEPTHS)[number];
 
@@ -14,6 +16,8 @@ export interface Settings {
   enabled: boolean;
   profile: ProfileChoice;
   depth: Depth;
+  /** How strongly styles are applied (the direction never changes, only the size). */
+  intensity: IntensityChoice;
   /** Sites where xsuit runs automatically. Everywhere else it runs only on request. */
   enabledSites: string[];
   /** Rules the user turned off (all sites). */
@@ -30,6 +34,7 @@ export const DEFAULT_SETTINGS: Settings = {
   enabled: true,
   profile: "original",
   depth: "visual",
+  intensity: "standard",
   enabledSites: [],
   disabledRules: [],
   labelPosition: "bottom-left",
@@ -115,6 +120,8 @@ export function normalizeSettings(raw: unknown): Settings {
   // Settings saved before the first-run screen existed: a chosen style means it was done.
   if (typeof r.onboarded !== "boolean" && s.profile !== "original") s.onboarded = true;
   if (DEPTHS.includes(r.depth as Depth)) s.depth = r.depth as Depth;
+  if (INTENSITY_CHOICES.includes(r.intensity as IntensityChoice))
+    s.intensity = r.intensity as IntensityChoice;
   if (LABEL_POSITIONS.includes(r.labelPosition as LabelPosition))
     s.labelPosition = r.labelPosition as LabelPosition;
   if (Array.isArray(r.disabledRules)) {

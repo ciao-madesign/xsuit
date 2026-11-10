@@ -1,6 +1,8 @@
 import type { ApplyReply, Message, PingReply, RestoreReply } from "../shared/messages";
 import {
   DEPTHS,
+  INTENSITY_CHOICES,
+  type IntensityChoice,
   normalizeHost,
   sitePatterns,
   withSite,
@@ -11,7 +13,7 @@ import {
 import { computeStatus } from "../shared/state";
 import { loadSettings, saveSettings } from "../shared/storage";
 import { initDev } from "./dev";
-import { adaptResult, marketName, MARKETS, suggestMarket, viewFor, type Market } from "./model";
+import { adaptMessage, marketName, MARKETS, suggestMarket, viewFor, type Market } from "./model";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -79,6 +81,7 @@ function render(): void {
   }
   $<HTMLInputElement>("enabled").checked = settings.enabled;
   $<HTMLSelectElement>("depth").value = settings.depth;
+  $<HTMLSelectElement>("intensity").value = settings.intensity;
   $<HTMLInputElement>("custom").checked = settings.profile === "hybrid";
   renderDev(supported);
 }
@@ -147,7 +150,15 @@ async function toggle(): Promise<void> {
     const r = await send<ApplyReply>({ type: "xsuit/apply-once" });
     if (r) {
       adapted = r.applied;
-      message = adaptResult(r.applied, r.rules);
+      message = adaptMessage({
+        applied: r.applied,
+        rules: r.rules,
+        skipped: r.skipped,
+        recognized: r.recognized,
+        reverted: r.reverted,
+        intensity: settings.intensity,
+        market: marketName(settings.profile),
+      });
     }
   }
   render();
@@ -196,6 +207,10 @@ async function init(): Promise<void> {
   $<HTMLInputElement>("enabled").addEventListener("change", (e) =>
     update({ ...settings, enabled: (e.target as HTMLInputElement).checked }),
   );
+  $<HTMLSelectElement>("intensity").addEventListener("change", (e) => {
+    const v = (e.target as HTMLSelectElement).value as IntensityChoice;
+    if (INTENSITY_CHOICES.includes(v)) update({ ...settings, intensity: v });
+  });
   $<HTMLSelectElement>("depth").addEventListener("change", (e) => {
     const v = (e.target as HTMLSelectElement).value as Depth;
     if (DEPTHS.includes(v)) update({ ...settings, depth: v });

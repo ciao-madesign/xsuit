@@ -8,7 +8,8 @@ import type { ApplyReport, EffectCatalog, PageContext, Plan, Resolver } from "./
 export interface EngineOptions {
   doc: Document;
   resolve: Resolver;
-  effects?: EffectCatalog;
+  /** The catalog, or a function giving the current one (the strength can change while the page is open). */
+  effects?: EffectCatalog | (() => EffectCatalog);
   /** Fresh view of the page on every run (components can appear later). */
   getContext?: () => PageContext;
   /** Called after every run, with the observer paused (safe place to update on-page UI). */
@@ -160,7 +161,7 @@ export class Engine {
       this.o.doc,
       plan,
       this.o.resolve,
-      this.o.effects ?? {},
+      typeof this.o.effects === "function" ? this.o.effects() : (this.o.effects ?? {}),
       this.journal,
       this.state,
       this.input.profile,

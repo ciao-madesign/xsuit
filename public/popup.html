@@ -12,7 +12,7 @@
 
       <!-- First run: choose a market. -->
       <section id="onboarding" hidden aria-labelledby="onboardingTitle">
-        <h2 id="onboardingTitle">Which web style are you used to?</h2>
+        <h2 id="onboardingTitle">Adapt the style</h2>
         <p class="muted">
           xsuit makes pages look and work the way sites in that market usually do. You can change
           this at any time.
@@ -30,6 +30,14 @@
         <div id="marketPicker" hidden></div>
         <button id="toggle" type="button" class="primary big">Adapt this page</button>
         <div id="hint" class="status" role="status"></div>
+        <div class="row">
+          <label for="intensity">Strength</label>
+          <select id="intensity">
+            <option value="light">Light</option>
+            <option value="standard">Standard</option>
+            <option value="strong">Strong</option>
+          </select>
+        </div>
         <div class="row">
           <label for="always">Always on this site</label>
           <input type="checkbox" id="always" />

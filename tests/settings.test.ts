@@ -42,6 +42,7 @@ describe("normalizeSettings", () => {
       enabled: false,
       profile: "china",
       depth: "structural",
+      intensity: "standard",
       enabledSites: ["a.com", "b.com"],
       disabledRules: [],
       labelPosition: "bottom-left",
