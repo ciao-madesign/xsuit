@@ -205,7 +205,7 @@ describe("engine: apply, restore, idempotency", () => {
     engine.restore();
   });
 
-  it("reports structural actions that are not implemented instead of faking them", () => {
+  it("runs structural actions without reporting them as unsupported", () => {
     document.documentElement.innerHTML = `<head></head><body><aside data-test="sidebar">s</aside></body>`;
     const engine = new Engine({ doc: document, resolve: resolver, effects });
     engine.start(
@@ -215,9 +215,7 @@ describe("engine: apply, restore, idempotency", () => {
         context: ctx({ components: { hero: "high", recommendations: "high" } }),
       }),
     );
-    expect(engine.status.report!.unsupported.map((u) => u.ruleId)).toContain(
-      "structure.china.recommendations-up",
-    );
+    expect(engine.status.report!.unsupported).toEqual([]);
     engine.restore();
   });
 });

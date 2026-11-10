@@ -18,11 +18,17 @@ function run(
   pageType: string,
   components: PageContext["components"],
   body: string,
+  sel: Record<string, string> = {},
 ) {
   document.documentElement.innerHTML = `<head></head><body>${body}</body>`;
   const before = document.documentElement.outerHTML;
-  const sel: Record<string, string> = { "primary-nav": "#h", hero: "#hero", sidebar: "#side" };
-  const resolve: Resolver = (c) => [...document.querySelectorAll(sel[c] ?? "#none")];
+  const map: Record<string, string> = {
+    "primary-nav": "#h",
+    hero: "#hero",
+    sidebar: "#side",
+    ...sel,
+  };
+  const resolve: Resolver = (c) => [...document.querySelectorAll(map[c] ?? "#none")];
   const context: PageContext = {
     pageType,
     components,
@@ -84,11 +90,66 @@ describe("B9 structural actions", () => {
     engine.restore();
   });
 
-  it("reorder and group stay unsupported and are reported", () => {
-    const { engine } = run("china", "home", { recommendations: "high", hero: "high" }, BODY);
-    expect(engine.status.report!.unsupported.map((u) => u.ruleId)).toContain(
-      "structure.china.recommendations-up",
+  it("reorders only siblings, and restores the original order", () => {
+    const { engine, before } = run(
+      "china",
+      "home",
+      { recommendations: "high", hero: "high" },
+      `<main><section id="hero">h</section><div id="mid">m</div><div id="rec">r</div></main>`,
+      { recommendations: "#rec" },
     );
+    expect([...document.querySelector("main")!.children].map((c) => c.id)).toEqual([
+      "hero",
+      "rec",
+      "mid",
+    ]);
     engine.restore();
+    expect(document.documentElement.outerHTML).toBe(before);
+  });
+
+  it("does not reorder across different parents", () => {
+    const { engine, before } = run(
+      "china",
+      "home",
+      { recommendations: "high", hero: "high" },
+      `<section id="hero">h</section><div><div id="rec">r</div></div>`,
+      { recommendations: "#rec" },
+    );
+    expect(document.getElementById("rec")!.parentElement!.tagName).toBe("DIV");
+    expect(document.querySelector("[data-xsuit-group]")).toBeNull();
+    engine.restore();
+    expect(document.documentElement.outerHTML).toBe(before);
+  });
+
+  it("groups sibling components in one container and restores exactly", () => {
+    const rule = {
+      ...western.rules.find((r) => r.id === "structure.western.collapse-sidebar")!,
+      id: "structure.western.test-group",
+      components: ["sidebar", "footer"],
+      conditions: [],
+      pageTypes: ["any"],
+      action: { type: "group", targets: ["sidebar", "footer"] },
+    } as unknown as RuleSet["rules"][number];
+    document.documentElement.innerHTML = `<head></head><body><p id="a">a</p><aside id="s">s</aside><footer id="f">f</footer></body>`;
+    const before = document.documentElement.outerHTML;
+    const sel: Record<string, string> = { sidebar: "#s", footer: "#f" };
+    const resolve: Resolver = (c) => [...document.querySelectorAll(sel[c] ?? "#none")];
+    const engine = new Engine({ doc: document, resolve, a11yGuard: false });
+    engine.start({
+      ruleSets: [{ ...western, rules: [rule] }],
+      profiles,
+      profile: "western",
+      depth: "structural",
+      context: {
+        pageType: "article",
+        components: { sidebar: "high", footer: "high" },
+        viewportWidth: 1280,
+        metrics: {},
+      },
+    });
+    const box = document.querySelector("[data-xsuit-group]")!;
+    expect([...box.children].map((c) => c.id)).toEqual(["s", "f"]);
+    engine.restore();
+    expect(document.documentElement.outerHTML).toBe(before);
   });
 });

@@ -1,6 +1,7 @@
 type Op =
   | { kind: "attr"; el: Element; name: string; previous: string | null; tag?: string }
-  | { kind: "node"; node: Node; tag?: string };
+  | { kind: "node"; node: Node; tag?: string }
+  | { kind: "move"; node: Node; parent: Node; next: Node | null; tag?: string };
 
 /**
  * Records every change the engine makes, so all of them can be undone in reverse order.
@@ -26,6 +27,26 @@ export class Journal {
     this.ops.push({ kind: "node", node, tag });
   }
 
+  /** Moves `node` before `ref` (null = end of `parent`), remembering where it was. */
+  move(node: Node, parent: Node, ref: Node | null, tag?: string): void {
+    this.ops.push({
+      kind: "move",
+      node,
+      parent: node.parentNode!,
+      next: node.nextSibling,
+      tag,
+    });
+    parent.insertBefore(node, ref);
+  }
+
+  private undo(op: Op): void {
+    if (op.kind === "attr") {
+      if (op.previous === null) op.el.removeAttribute(op.name);
+      else op.el.setAttribute(op.name, op.previous);
+    } else if (op.kind === "node") op.node.parentNode?.removeChild(op.node);
+    else op.parent.insertBefore(op.node, op.next?.parentNode === op.parent ? op.next : null);
+  }
+
   /** Undoes only the changes made under `tag`, newest first. */
   rollbackTag(tag: string): void {
     const keep: Op[] = [];
@@ -34,10 +55,7 @@ export class Journal {
         keep.unshift(op);
         continue;
       }
-      if (op.kind === "attr") {
-        if (op.previous === null) op.el.removeAttribute(op.name);
-        else op.el.setAttribute(op.name, op.previous);
-      } else op.node.parentNode?.removeChild(op.node);
+      this.undo(op);
     }
     this.ops = keep;
   }
@@ -47,12 +65,7 @@ export class Journal {
   }
 
   rollback(): void {
-    for (const op of this.ops.reverse()) {
-      if (op.kind === "attr") {
-        if (op.previous === null) op.el.removeAttribute(op.name);
-        else op.el.setAttribute(op.name, op.previous);
-      } else op.node.parentNode?.removeChild(op.node);
-    }
+    for (const op of this.ops.reverse()) this.undo(op);
     this.ops = [];
   }
 }

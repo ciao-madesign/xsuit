@@ -45,6 +45,38 @@ function collapse(doc: Document, journal: Journal, el: Element, component: strin
   return true;
 }
 
+/**
+ * Moves `el` only when that is reliable: it must share a parent with the reference element
+ * (for before/after), so no layout container is crossed. Returns false when nothing was moved.
+ */
+function reorder(journal: Journal, el: Element, position: string, refs: Element[], tag: string) {
+  const parent = el.parentNode;
+  if (!parent) return false;
+  if (position === "first" || position === "last") {
+    const ref = position === "first" ? parent.firstChild : null;
+    if (ref === el || (position === "last" && !el.nextSibling)) return false;
+    journal.move(el, parent, ref, tag);
+    return true;
+  }
+  const ref = refs.find((r) => r !== el && r.parentNode === parent);
+  if (!ref) return false;
+  const next = position === "before" ? ref : ref.nextSibling;
+  if (next === el || (position === "after" && ref.nextSibling === el)) return false;
+  journal.move(el, parent, next, tag);
+  return true;
+}
+
+/** Wraps components that already share one parent in a single container; otherwise does nothing. */
+function group(doc: Document, journal: Journal, members: Element[], tag: string) {
+  const parent = members[0]?.parentNode;
+  if (!parent || members.length < 2 || members.some((m) => m.parentNode !== parent)) return false;
+  const box = doc.createElement("div");
+  box.setAttribute(`data-${NS}-group`, "");
+  journal.insertBefore(parent, box, members[0]!, tag);
+  for (const m of members) journal.move(m, box, null, tag);
+  return true;
+}
+
 /** Copies up to a few existing, safe links (text + address) from the source blocks. */
 function shortcutLinks(sources: Element[]): { text: string; href: string }[] {
   const out: { text: string; href: string }[] = [];
@@ -109,7 +141,7 @@ export function applyPlan(
   for (const { rule } of plan.entries) {
     const a = rule.action;
     const visual = a.type === "set-token" || a.type === "emphasize" || a.type === "de-emphasize";
-    if (!visual && !structural[a.type]) {
+    if (!visual && !structural[a.type] && a.type !== "reorder" && a.type !== "group") {
       report.unsupported.push({
         ruleId: rule.id,
         reason: `action "${a.type}" is not implemented in V1 (decision #37)`,
@@ -121,7 +153,9 @@ export function applyPlan(
         ? rule.components
         : a.type === "surface-shortcut"
           ? [a.to!]
-          : [a.target!];
+          : a.type === "group"
+            ? a.targets!
+            : [a.target!];
     const els: Todo["els"] = [];
     const seen = new Set<Element>();
     for (const component of targets) {
@@ -135,6 +169,11 @@ export function applyPlan(
         if (!isDone(el, rule.id, state)) els.push({ el, component });
       }
       if (a.type === "surface-shortcut") els.splice(1); // one strip per page
+    }
+    if (a.type === "group") {
+      // One group per page; only when every listed component was found (else not reliable).
+      const found = targets.filter((c) => els.some((x) => x.component === c));
+      els.splice(0, els.length, ...(found.length === targets.length ? els : []));
     }
     // Structural changes hide or add content; the contrast check has nothing to compare.
     const snaps =
@@ -153,6 +192,19 @@ export function applyPlan(
       if (a.type === "collapse") {
         if (!collapse(doc, journal, el, component, rule.id)) continue;
         markDone(el, rule.id, state);
+        continue;
+      }
+      if (a.type === "reorder") {
+        if (!reorder(journal, el, a.position!, a.relativeTo ? resolve(a.relativeTo) : [], rule.id))
+          continue;
+        markDone(el, rule.id, state);
+        continue;
+      }
+      if (a.type === "group") {
+        const members = t.els.map((x) => x.el);
+        if (el !== members[0]) continue; // handled once, from the first member
+        if (!group(doc, journal, members, rule.id)) continue;
+        for (const m of members) markDone(m, rule.id, state);
         continue;
       }
       if (a.type === "surface-shortcut") {
