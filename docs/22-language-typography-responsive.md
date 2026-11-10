@@ -31,7 +31,7 @@ Fewer than 30 letters: the script is not reported. A page with Arabic text but n
 - **No machine translation, no language detection service.** A test scans the source for translation and language-detection calls.
 - **No number, date or currency rewriting.** Changing a price or a date on a page is changing its meaning, and is exactly what a scam would do (decision #50). Formats are only _read_ as part of the language facts.
 - **No font changes.** Font family and size stay forbidden effect properties; the browser's own fallback fonts apply.
-- Labels xsuit adds stay English. Translated labels need a native reviewer, so they are a person task (see below).
+- Labels xsuit adds on a page follow the interface language of the person (decision #61; machine-translated, not reviewed, with a notice). Marked with the language they are in. They are never produced by a translation service at run time.
 
 ## Checks
 
@@ -43,4 +43,4 @@ Fewer than 30 letters: the script is not reported. A page with Arabic text but n
 - The CJK floor comes from layout guides for typeset pages, not screens; it is a lower bound, not a recommendation to raise every page.
 - Right-to-left support is by construction (logical properties, DOM-order moves). Reading an adapted Arabic or Hebrew page with a native reader is a person task.
 - Vertical writing and Korean-specific rules are not handled.
-- Localized labels (Chinese, Arabic, German…) need native review before they are added.
+- The machine-translated interface languages would benefit from native review (see `29-plain-words-and-languages.md`).

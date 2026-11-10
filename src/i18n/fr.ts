@@ -1,0 +1,130 @@
+// Français: machine-translated from English, NOT reviewed by a person (see notice.auto).
+import type { Key } from "./en";
+
+export const fr: Record<Key, string> = {
+  "onboarding.title": "Adapter le style",
+  "onboarding.intro":
+    "xsuit donne aux pages l'apparence et le fonctionnement habituels des sites de ce marché. Vous pouvez changer à tout moment.",
+  "onboarding.suggestion":
+    "Suggestion d'après la langue de votre navigateur : {market}. Le choix vous appartient.",
+  "market.western.name": "Occidental",
+  "market.western.blurb":
+    "Pages calmes : plus d'espace, un point d'attention clair, recherche en premier.",
+  "market.china.name": "Chine",
+  "market.china.blurb":
+    "Pages riches : plus denses, plus d'images et de promotions, flux de découverte.",
+  "market.custom": "Mélange personnalisé",
+  "market.none": "Aucun choisi",
+  "home.market": "Marché :",
+  "home.change": "Changer",
+  "home.adapt": "Adapter cette page",
+  "home.restore": "Revenir à l'original",
+  "home.always": "Toujours sur ce site",
+  "home.strength": "Intensité",
+  "strength.light": "Légère",
+  "strength.standard": "Standard",
+  "strength.strong": "Forte",
+  "hint.adapted": "Cette page est adaptée au style « {market} ».",
+  "hint.ready": "Un clic : cette page prend le style « {market} ».",
+  "hint.off": "xsuit est désactivé. Réactivez-le dans Avancé.",
+  "msg.restored": "Page d'origine rétablie.",
+  "msg.noReach": "Impossible d'accéder à la page. Rechargez-la et réessayez.",
+  "msg.noAccess": "L'accès n'a pas été accordé : xsuit ne s'exécutera pas ici automatiquement.",
+  "msg.marketChanged": "Marché changé en {market}.",
+  "result.done":
+    "Terminé. Modifications effectuées : {n}. L'étiquette sur la page indique ce qui a changé.",
+  "result.stronger": "Pour un effet plus marqué, réglez l'intensité sur Forte.",
+  "result.undone":
+    "xsuit a annulé ses modifications car elles auraient rendu cette page plus difficile à lire ou à utiliser.",
+  "result.sensitive":
+    "Cette page demande un mot de passe ou des données de paiement : xsuit n'y touche pas.",
+  "result.phone":
+    "Cette fenêtre a la taille d'un téléphone. Les styles mesurés de xsuit ne fonctionnent que sur des pages de largeur bureau : agrandissez la fenêtre.",
+  "result.close": "Cette page est déjà proche du style « {market} ».",
+  "result.unknown":
+    "xsuit n'a pas pu reconnaître les parties de cette page et l'a laissée telle quelle.",
+  "result.nothing": "Rien à changer sur cette page.",
+  "support.noPage": "Aucune page n'est ouverte dans cet onglet.",
+  "support.badAddress": "L'adresse de cette page n'est pas valide.",
+  "support.internal":
+    "Les pages internes du navigateur, les fichiers et les pages d'extensions ne peuvent pas être adaptés.",
+  "support.store": "Le navigateur n'autorise pas les extensions sur sa boutique.",
+  "advanced.title": "Avancé",
+  "advanced.enabled": "xsuit activé partout",
+  "advanced.depth": "Profondeur",
+  "advanced.depthVisual": "Visuelle (espaces et mise en avant)",
+  "advanced.depthStructural": "Structurelle (déplace et regroupe aussi)",
+  "advanced.custom": "Utiliser mon mélange personnalisé",
+  "advanced.compose": "Composer mon mélange",
+  "advanced.options": "Toutes les options",
+  "advanced.language": "Langue",
+  "advanced.privacy": "Fonctionne sur cet appareil. Rien n'est envoyé nulle part.",
+  "language.auto": "Automatique (langue du navigateur)",
+  "notice.auto":
+    "Cette langue a été traduite automatiquement et n'a pas été relue par une personne. Elle peut contenir des erreurs. L'anglais fait référence.",
+  "overlay.pill": "xsuit · {n}",
+  "overlay.pillAria": "xsuit a fait {n} modifications sur cette page. Ouvrir les détails.",
+  "overlay.panelAria": "Détails de xsuit",
+  "overlay.line": "xsuit a adapté cette page. Modifications effectuées : {n}.",
+  "overlay.why": "Ce qui a changé et pourquoi",
+  "overlay.reason": "Les sites de ce marché font généralement ainsi.",
+  "overlay.sources": "Sources : {list}",
+  "overlay.technical": "Détails techniques",
+  "overlay.turnOff": "Pour le désactiver : Options, puis Règles.",
+  "overlay.notApplied": "« {title} » n'a pas été appliquée : {reason}.",
+  "overlay.unverified": "{n} éléments n'ont pas pu être vérifiés pour l'accessibilité.",
+  "overlay.undo": "Annuler",
+  "overlay.close": "Fermer",
+  "evidence.strong": "Appuyé par des études solides",
+  "evidence.moderate": "Appuyé par quelques études",
+  "evidence.emerging": "Premières preuves",
+  "evidence.hypothesis": "Une idée pas encore testée",
+  "rule.visual.western.spacious-density":
+    "Plus d'aération : des écarts plus grands entre lignes et blocs.",
+  "rule.visual.western.airy-spacing": "Plus d'espace entre les parties de la page.",
+  "rule.visual.western.muted-palette": "Des couleurs plus calmes : un peu moins saturées.",
+  "rule.visual.western.strong-hierarchy": "Met en valeur l'élément le plus important de la page.",
+  "rule.visual.western.quiet-promos": "Les bannières promotionnelles deviennent plus discrètes.",
+  "rule.visual.western.quiet-carousel": "Les carrousels deviennent plus discrets.",
+  "rule.visual.western.search-first": "La zone de recherche ressort davantage.",
+  "rule.visual.western.underlined-links": "Les liens sont soulignés pour qu'on les reconnaisse.",
+  "rule.structure.western.collapse-sidebar":
+    "La colonne latérale est repliée ; un clic la réaffiche.",
+  "rule.visual.china.compact-density": "Plus de contenu à l'écran : lignes et écarts plus serrés.",
+  "rule.visual.china.tight-spacing": "Moins d'espace entre les parties de la page.",
+  "rule.visual.china.vivid-palette": "Des couleurs plus vives : un peu plus saturées.",
+  "rule.visual.china.image-led": "Les images des cartes gagnent de la place.",
+  "rule.visual.china.flat-hierarchy": "De nombreux points d'entrée de poids similaire.",
+  "rule.visual.china.prominent-promos": "Les bannières promotionnelles ressortent davantage.",
+  "rule.visual.china.prominent-carousel": "La zone de bannière principale ressort davantage.",
+  "rule.visual.china.discovery-feed": "Les zones de recommandations ressortent davantage.",
+  "rule.structure.china.recommendations-up":
+    "Les recommandations remontent, juste sous la bannière principale.",
+  "rule.structure.china.surface-shortcuts":
+    "Une petite bande de raccourcis est ajoutée en haut, copiant des liens déjà présents sur la page.",
+  "options.title": "Options de xsuit",
+  "options.label.title": "Étiquette sur la page",
+  "options.label.intro":
+    "Quand xsuit modifie une page, une petite étiquette semi-transparente apparaît dans un coin.",
+  "options.label.position": "Position",
+  "options.pos.bl": "En bas à gauche",
+  "options.pos.br": "En bas à droite",
+  "options.pos.hidden": "Masquée",
+  "options.sites.title": "Sites où xsuit agit toujours",
+  "options.sites.intro":
+    "xsuit n'agit automatiquement que sur ces sites. Ailleurs, il n'agit que si vous appuyez sur l'interrupteur du popup.",
+  "options.sites.none": "Aucun site pour l'instant.",
+  "options.sites.remove": "Retirer",
+  "options.rules.title": "Règles",
+  "options.rules.intro":
+    "Désactivez n'importe quelle règle pour tous les sites. Chaque règle indique la solidité de ses preuves. Les noms des règles restent en anglais.",
+  "options.reset.title": "Réinitialiser",
+  "options.reset.button": "Rétablir les paramètres par défaut",
+  "options.privacy.title": "Confidentialité",
+  "options.privacy.text":
+    "Tout fonctionne en local. xsuit n'envoie aucune donnée. Sur cet appareil, il conserve : vos réglages et la liste des sites où vous le laissez agir.",
+  "options.privacy.delete": "Supprimer toutes les données de xsuit",
+  "options.privacy.confirm":
+    "Supprimer toutes les données de xsuit de ce navigateur ? L'accès aux sites sera aussi retiré.",
+  "options.privacy.done": "Toutes les données de xsuit ont été supprimées.",
+};

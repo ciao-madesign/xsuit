@@ -51,7 +51,8 @@ describe("release build", () => {
       readdirSync(dir)
         .filter((f) => f.endsWith(".js"))
         .reduce((n, f) => n + readFileSync(`${dir}/${f}`).length, 0);
-    expect(size(outDir("chrome", false))).toBeLessThan(size(outDir("chrome", true)) * 0.9);
+    // The interface texts are in both; what only the developer build has is research code.
+    expect(size(outDir("chrome", false)) + 20000).toBeLessThan(size(outDir("chrome", true)));
   }, 30000);
 
   it("still adapts pages: the engine, rules and the one-click messages are there", () => {

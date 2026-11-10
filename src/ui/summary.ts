@@ -1,6 +1,9 @@
 import type { Rule } from "../rules/types";
 
 export interface ReasonItem {
+  ruleId: string;
+  /** strong | moderate | emerging | hypothesis: the overlay shows it in plain words. */
+  evidenceLevel: string;
   title: string;
   description: string;
   /** Plain-language evidence label, never hidden. */
@@ -53,6 +56,8 @@ export function summarizeChanges(
   const reasons: ReasonItem[] = done.map((c) => {
     const r = byId.get(c.ruleId)!;
     return {
+      ruleId: r.id,
+      evidenceLevel: r.evidence.level,
       title: r.title,
       description: r.description,
       evidence: EVIDENCE_LABEL[r.evidence.level] ?? r.evidence.level,

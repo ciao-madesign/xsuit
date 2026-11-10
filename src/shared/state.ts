@@ -2,7 +2,7 @@ import { checkPageSupport } from "./support";
 import { isSiteEnabled, type Settings } from "./settings";
 
 export type Status =
-  | { kind: "unsupported"; message: string }
+  | { kind: "unsupported"; message: string; messageKey?: string }
   | { kind: "off"; message: string; host: string }
   | { kind: "not-enabled"; message: string; host: string }
   | { kind: "original"; message: string; host: string }
@@ -15,7 +15,11 @@ export type Status =
 export function computeStatus(settings: Settings, url: string | undefined, once = false): Status {
   const page = checkPageSupport(url);
   if (!page.supported || !page.host) {
-    return { kind: "unsupported", message: page.reason ?? "This page is not supported." };
+    return {
+      kind: "unsupported",
+      message: page.reason ?? "This page is not supported.",
+      messageKey: page.reasonKey,
+    };
   }
   const host = page.host;
   if (!settings.enabled) return { kind: "off", host, message: "xsuit is turned off." };

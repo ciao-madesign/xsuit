@@ -13,6 +13,8 @@ import {
   type Settings,
 } from "../shared/settings";
 import { loadSettings, saveSettings } from "../shared/storage";
+import { LANGUAGES, type Translate } from "../i18n";
+import { showLanguageUi } from "../i18n/picker";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const sets = [westernRules, chinaRules] as unknown as RuleSet[];
@@ -23,6 +25,13 @@ const LEVEL: Record<string, string> = {
   hypothesis: "hypothesis, not yet validated",
 };
 let settings: Settings;
+let t: Translate;
+
+/** Texts follow the chosen interface language. */
+function applyLanguage(): void {
+  ({ t } = showLanguageUi(document, settings.language, navigator.language));
+  renderSites();
+}
 
 function renderSites(): void {
   const list = $("sites");
@@ -30,7 +39,7 @@ function renderSites(): void {
   if (settings.enabledSites.length === 0) {
     const li = document.createElement("li");
     li.className = "muted";
-    li.textContent = "No sites yet.";
+    li.textContent = t("options.sites.none");
     list.append(li);
   }
   for (const d of settings.enabledSites) {
@@ -39,7 +48,7 @@ function renderSites(): void {
     name.textContent = d;
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.textContent = "Remove";
+    btn.textContent = t("options.sites.remove");
     btn.addEventListener("click", () => removeSite(d));
     li.append(name, btn);
     list.append(li);
@@ -164,8 +173,7 @@ async function init(): Promise<void> {
     renderRules();
   });
   $("delete-all").addEventListener("click", async () => {
-    if (!confirm("Delete all xsuit data from this browser? Site access will be removed too."))
-      return;
+    if (!confirm(t("options.privacy.confirm"))) return;
     for (const d of settings.enabledSites)
       await chrome.permissions.remove({ origins: sitePatterns(d) }).catch(() => false);
     await chrome.storage.local.clear();
@@ -180,13 +188,21 @@ async function init(): Promise<void> {
     pos.value = settings.labelPosition;
     renderSites();
     renderRules();
-    $("delete-note").textContent = "All xsuit data was deleted.";
+    applyLanguage();
+    $("delete-note").textContent = t("options.privacy.done");
   });
   $("hybrid-default").addEventListener("click", () =>
     update({ ...settings, hybridChoices: null, hybridRules: null }),
   );
   if (location.hash === "#hybrid") $<HTMLDetailsElement>("hybrid").open = true;
-  renderSites();
+  $<HTMLSelectElement>("language").addEventListener("change", async (e) => {
+    const v = (e.target as HTMLSelectElement).value;
+    if (v === "auto" || (LANGUAGES as readonly string[]).includes(v)) {
+      await update({ ...settings, language: v as Settings["language"] });
+      applyLanguage();
+    }
+  });
+  applyLanguage();
   renderRules();
   renderHybrid();
 }

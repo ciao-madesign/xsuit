@@ -5,7 +5,10 @@ import { buildCss } from "../src/engine/css";
 import { effectFile, INTENSITIES, toCatalog } from "../src/engine/effects";
 import { Engine } from "../src/engine/engine";
 import { safeDeclaration } from "../src/engine/css";
-import { adaptMessage, type AdaptOutcome } from "../src/popup/model";
+import { translator } from "../src/i18n";
+import { adaptMessage as adapt, type AdaptOutcome } from "../src/popup/model";
+
+const adaptMessage = (o: AdaptOutcome) => adapt(o, translator("en"));
 import { normalizeSettings } from "../src/shared/settings";
 import type { Profile, RuleSet } from "../src/rules/types";
 
@@ -112,7 +115,7 @@ describe("when little or nothing changes, the popup says why", () => {
 
   it("a small change suggests a stronger setting; a big one or an already strong one does not", () => {
     expect(adaptMessage(outcome({ applied: true, rules: 2 }))).toMatch(/Strength to Strong/);
-    expect(adaptMessage(outcome({ applied: true, rules: 1 }))).toMatch(/1 change\./);
+    expect(adaptMessage(outcome({ applied: true, rules: 1 }))).toMatch(/Changes made: 1\./);
     expect(adaptMessage(outcome({ applied: true, rules: 6 }))).not.toMatch(/Strong/);
     expect(adaptMessage(outcome({ applied: true, rules: 2, intensity: "strong" }))).not.toMatch(
       /Strong/,

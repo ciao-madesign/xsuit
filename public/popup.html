@@ -12,8 +12,8 @@
 
       <!-- First run: choose a market. -->
       <section id="onboarding" hidden aria-labelledby="onboardingTitle">
-        <h2 id="onboardingTitle">Adapt the style</h2>
-        <p class="muted">
+        <h2 id="onboardingTitle" data-i18n="onboarding.title">Adapt the style</h2>
+        <p class="muted" data-i18n="onboarding.intro">
           xsuit makes pages look and work the way sites in that market usually do. You can change
           this at any time.
         </p>
@@ -24,22 +24,28 @@
       <!-- Normal use: one switch. -->
       <section id="home" hidden>
         <div class="row">
-          <span>Market: <strong id="marketName"></strong></span>
-          <button id="changeMarket" type="button" class="link">Change</button>
+          <span
+            ><span data-i18n="home.market">Market:</span> <strong id="marketName"></strong
+          ></span>
+          <button id="changeMarket" type="button" class="link" data-i18n="home.change">
+            Change
+          </button>
         </div>
         <div id="marketPicker" hidden></div>
-        <button id="toggle" type="button" class="primary big">Adapt this page</button>
+        <button id="toggle" type="button" class="primary big" data-i18n="home.adapt">
+          Adapt this page
+        </button>
         <div id="hint" class="status" role="status"></div>
         <div class="row">
-          <label for="intensity">Strength</label>
+          <label for="intensity" data-i18n="home.strength">Strength</label>
           <select id="intensity">
-            <option value="light">Light</option>
-            <option value="standard">Standard</option>
-            <option value="strong">Strong</option>
+            <option value="light" data-i18n="strength.light">Light</option>
+            <option value="standard" data-i18n="strength.standard">Standard</option>
+            <option value="strong" data-i18n="strength.strong">Strong</option>
           </select>
         </div>
         <div class="row">
-          <label for="always">Always on this site</label>
+          <label for="always" data-i18n="home.always">Always on this site</label>
           <input type="checkbox" id="always" />
         </div>
       </section>
@@ -47,25 +53,38 @@
       <div id="unsupported" class="status unsupported" role="status" hidden></div>
 
       <details id="advanced">
-        <summary>Advanced</summary>
+        <summary data-i18n="advanced.title">Advanced</summary>
         <div class="row">
-          <label for="enabled">xsuit enabled everywhere</label>
+          <label for="enabled" data-i18n="advanced.enabled">xsuit enabled everywhere</label>
           <input type="checkbox" id="enabled" />
         </div>
         <div class="row">
-          <label for="depth">Depth</label>
+          <label for="depth" data-i18n="advanced.depth">Depth</label>
           <select id="depth">
-            <option value="visual">Visual (spacing and emphasis)</option>
-            <option value="structural">Structural (also moves and groups)</option>
+            <option value="visual" data-i18n="advanced.depthVisual">
+              Visual (spacing and emphasis)
+            </option>
+            <option value="structural" data-i18n="advanced.depthStructural">
+              Structural (also moves and groups)
+            </option>
           </select>
         </div>
         <div class="row">
-          <label for="custom">Use my custom mix</label>
+          <label for="custom" data-i18n="advanced.custom">Use my custom mix</label>
           <input type="checkbox" id="custom" />
         </div>
         <div class="row">
-          <a href="options.html#hybrid" class="muted">Compose my mix</a>
-          <a href="options.html" id="open-options" class="muted">All options</a>
+          <label for="language" data-i18n="advanced.language">Language</label>
+          <select id="language"></select>
+        </div>
+        <p id="notice" class="muted" hidden></p>
+        <div class="row">
+          <a href="options.html#hybrid" class="muted" data-i18n="advanced.compose"
+            >Compose my mix</a
+          >
+          <a href="options.html" id="open-options" class="muted" data-i18n="advanced.options"
+            >All options</a
+          >
         </div>
         <!-- dev:start -->
         <div class="row">
@@ -76,7 +95,9 @@
         </div>
         <div id="compat" class="muted" hidden></div>
         <!-- dev:end -->
-        <p class="muted">Runs on this device. Nothing is sent anywhere.</p>
+        <p class="muted" data-i18n="advanced.privacy">
+          Runs on this device. Nothing is sent anywhere.
+        </p>
       </details>
 
       <!-- dev:start -->

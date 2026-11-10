@@ -1,6 +1,10 @@
 import { readFileSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { marketName, suggestMarket, viewFor } from "../src/popup/model";
+import { translator } from "../src/i18n";
+import { marketName, suggestMarket, viewFor as view } from "../src/popup/model";
+
+const t = translator("en");
+const viewFor = (i: Parameters<typeof view>[0]) => view(i, t);
 import { DEFAULT_SETTINGS, type Settings } from "../src/shared/settings";
 
 const base = (o: Partial<Settings> = {}): Settings => ({
@@ -34,10 +38,13 @@ describe("what the popup shows", () => {
     const un = viewFor({
       settings: base(),
       supported: false,
-      unsupportedReason: "Browser pages cannot be changed.",
+      unsupportedKey: "support.internal",
       adapted: false,
     });
-    expect(un).toEqual({ kind: "unsupported", message: "Browser pages cannot be changed." });
+    expect(un).toEqual({
+      kind: "unsupported",
+      message: "Browser internal, file and extension pages cannot be adapted.",
+    });
     const off = viewFor({ settings: base({ enabled: false }), supported: true, adapted: false });
     expect(off).toMatchObject({ toggle: { disabled: true } });
   });
@@ -46,8 +53,8 @@ describe("what the popup shows", () => {
     expect(suggestMarket("zh-CN")).toBe("china");
     expect(suggestMarket("it-IT")).toBe("western");
     expect(suggestMarket("")).toBeNull();
-    expect(marketName("hybrid")).toBe("Custom mix");
-    expect(marketName("china")).toBe("China");
+    expect(marketName("hybrid", t)).toBe("Custom mix");
+    expect(marketName("china", t)).toBe("China");
   });
 });
 
@@ -141,7 +148,7 @@ describe("the popup page", () => {
     expect(permissionCalls).toBe(0); // no site permission asked
     expect(sent).toContain("xsuit/apply-once");
     expect($("toggle").textContent).toBe("Back to original");
-    expect($("hint").textContent).toMatch(/3 changes/);
+    expect($("hint").textContent).toMatch(/Changes made: 3/);
     await click($("toggle"));
     expect(sent).toContain("xsuit/restore");
     expect($("toggle").textContent).toBe("Adapt this page");

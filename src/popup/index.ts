@@ -13,13 +13,25 @@ import {
 import { computeStatus } from "../shared/state";
 import { loadSettings, saveSettings } from "../shared/storage";
 import { initDev } from "./dev";
-import { adaptMessage, marketName, MARKETS, suggestMarket, viewFor, type Market } from "./model";
+import {
+  applyToDocument,
+  isMachineTranslated,
+  LANGUAGES,
+  LANGUAGE_NAMES,
+  resolveLanguage,
+  translator,
+  type Lang,
+  type Translate,
+} from "../i18n";
+import { adaptMessage, MARKET_IDS, marketName, suggestMarket, viewFor, type Market } from "./model";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
 let settings: Settings;
 let tab: chrome.tabs.Tab | undefined;
 let adapted = false;
+let lang: Lang = "en";
+let t: Translate = translator("en");
 let message = "";
 
 /** Set by the developer module; absent from the release build. */
@@ -32,31 +44,59 @@ function say(text: string): void {
 
 function marketButtons(into: HTMLElement, onPick: (m: Market) => void): void {
   into.replaceChildren();
-  for (const m of MARKETS) {
+  for (const id of MARKET_IDS) {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "choice";
-    b.dataset.market = m.id;
+    b.dataset.market = id;
     const name = document.createElement("strong");
-    name.textContent = m.name;
+    name.textContent = t(`market.${id}.name`);
     const blurb = document.createElement("span");
     blurb.className = "muted";
-    blurb.textContent = m.blurb;
+    blurb.textContent = t(`market.${id}.blurb`);
     b.append(name, blurb);
-    b.addEventListener("click", () => onPick(m.id));
+    b.addEventListener("click", () => onPick(id));
     into.append(b);
   }
+}
+
+/** Language and texts follow the setting (or the browser). Called at start and when the setting changes. */
+function applyLanguage(): void {
+  lang = resolveLanguage(settings.language, navigator.language);
+  t = translator(lang);
+  applyToDocument(document, lang, t);
+  marketButtons($("marketChoices"), chooseMarket);
+  marketButtons($("marketPicker"), chooseMarket);
+  const sel = $<HTMLSelectElement>("language");
+  sel.replaceChildren();
+  const auto = document.createElement("option");
+  auto.value = "auto";
+  auto.textContent = t("language.auto");
+  sel.append(auto);
+  for (const l of LANGUAGES) {
+    const o = document.createElement("option");
+    o.value = l;
+    o.textContent = LANGUAGE_NAMES[l];
+    sel.append(o);
+  }
+  sel.value = settings.language;
+  const notice = $("notice");
+  notice.hidden = !isMachineTranslated(lang);
+  notice.textContent = isMachineTranslated(lang) ? `${t("notice.auto")}` : "";
 }
 
 function render(): void {
   const page = computeStatus(settings, tab?.url);
   const supported = page.kind !== "unsupported";
-  const view = viewFor({
-    settings,
-    supported,
-    unsupportedReason: supported ? undefined : page.message,
-    adapted,
-  });
+  const view = viewFor(
+    {
+      settings,
+      supported,
+      unsupportedKey: supported ? undefined : (page as { messageKey?: string }).messageKey,
+      adapted,
+    },
+    t,
+  );
   $("onboarding").hidden = view.kind !== "onboarding";
   $("home").hidden = view.kind !== "home";
   $("advanced").hidden = view.kind === "onboarding";
@@ -65,15 +105,13 @@ function render(): void {
   if (view.kind === "unsupported") un.textContent = view.message;
   if (view.kind === "onboarding") {
     const s = suggestMarket(navigator.language);
-    $("suggestion").textContent = s
-      ? `Suggestion from your browser language: ${marketName(s)}. The choice is yours.`
-      : "";
+    $("suggestion").textContent = s ? t("onboarding.suggestion", { market: marketName(s, t) }) : "";
   }
   if (view.kind === "home") {
-    const t = $<HTMLButtonElement>("toggle");
-    t.textContent = view.toggle.label;
-    t.disabled = view.toggle.disabled;
-    $("marketName").textContent = marketName(settings.profile);
+    const sw = $<HTMLButtonElement>("toggle");
+    sw.textContent = view.toggle.label;
+    sw.disabled = view.toggle.disabled;
+    $("marketName").textContent = marketName(settings.profile, t);
     $("hint").textContent = message || view.hint;
     const always = $<HTMLInputElement>("always");
     always.disabled = !supported;
@@ -111,7 +149,7 @@ async function send<T>(msg: Message): Promise<T | null> {
       await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] });
       return (await chrome.tabs.sendMessage(tab.id, msg)) as T;
     } catch {
-      say("Could not reach the page. Reload it and try again.");
+      say(t("msg.noReach"));
       return null;
     }
   }
@@ -133,7 +171,7 @@ async function chooseMarket(m: Market): Promise<void> {
   const wasAdapted = adapted;
   await update(next);
   // The page follows the new market by itself when it is already adapted (storage change).
-  if (wasAdapted) message = `Market changed to ${marketName(m)}.`;
+  if (wasAdapted) message = t("msg.marketChanged", { market: marketName(m, t) });
   render();
 }
 
@@ -144,21 +182,24 @@ async function toggle(): Promise<void> {
     const r = await send<RestoreReply>({ type: "xsuit/restore" });
     if (r) {
       adapted = false;
-      message = "Back to the original page.";
+      message = t("msg.restored");
     }
   } else {
     const r = await send<ApplyReply>({ type: "xsuit/apply-once" });
     if (r) {
       adapted = r.applied;
-      message = adaptMessage({
-        applied: r.applied,
-        rules: r.rules,
-        skipped: r.skipped,
-        recognized: r.recognized,
-        reverted: r.reverted,
-        intensity: settings.intensity,
-        market: marketName(settings.profile),
-      });
+      message = adaptMessage(
+        {
+          applied: r.applied,
+          rules: r.rules,
+          skipped: r.skipped,
+          recognized: r.recognized,
+          reverted: r.reverted,
+          intensity: settings.intensity,
+          market: marketName(settings.profile, t),
+        },
+        t,
+      );
     }
   }
   render();
@@ -175,7 +216,7 @@ async function setAlways(on: boolean): Promise<void> {
     // background worker then records the site.
     const granted = await chrome.permissions.request({ origins }).catch(() => false);
     if (!granted) {
-      message = "Access was not granted, so xsuit will not run here automatically.";
+      message = t("msg.noAccess");
       render();
       return;
     }
@@ -195,8 +236,15 @@ async function init(): Promise<void> {
     chrome.tabs.query({ active: true, currentWindow: true }),
   ]);
   adapted = await isAdapted();
-  marketButtons($("marketChoices"), chooseMarket);
-  marketButtons($("marketPicker"), chooseMarket);
+  applyLanguage();
+  $<HTMLSelectElement>("language").addEventListener("change", async (e) => {
+    const v = (e.target as HTMLSelectElement).value;
+    if (v === "auto" || (LANGUAGES as readonly string[]).includes(v)) {
+      await update({ ...settings, language: v as Settings["language"] });
+      applyLanguage();
+      render();
+    }
+  });
   $("changeMarket").addEventListener("click", () => {
     $("marketPicker").hidden = !$("marketPicker").hidden;
   });

@@ -1,3 +1,4 @@
+import { LANGUAGES, type LanguageChoice } from "../i18n/languages";
 import { PROFILE_IDS } from "../rules/vocab";
 
 export const PROFILE_CHOICES = ["original", ...PROFILE_IDS] as const;
@@ -16,6 +17,8 @@ export interface Settings {
   enabled: boolean;
   profile: ProfileChoice;
   depth: Depth;
+  /** Interface language: "auto" follows the browser. */
+  language: LanguageChoice;
   /** How strongly styles are applied (the direction never changes, only the size). */
   intensity: IntensityChoice;
   /** Sites where xsuit runs automatically. Everywhere else it runs only on request. */
@@ -35,6 +38,7 @@ export const DEFAULT_SETTINGS: Settings = {
   profile: "original",
   depth: "visual",
   intensity: "standard",
+  language: "auto",
   enabledSites: [],
   disabledRules: [],
   labelPosition: "bottom-left",
@@ -120,6 +124,8 @@ export function normalizeSettings(raw: unknown): Settings {
   // Settings saved before the first-run screen existed: a chosen style means it was done.
   if (typeof r.onboarded !== "boolean" && s.profile !== "original") s.onboarded = true;
   if (DEPTHS.includes(r.depth as Depth)) s.depth = r.depth as Depth;
+  if (r.language === "auto" || (LANGUAGES as readonly unknown[]).includes(r.language))
+    s.language = r.language as LanguageChoice;
   if (INTENSITY_CHOICES.includes(r.intensity as IntensityChoice))
     s.intensity = r.intensity as IntensityChoice;
   if (LABEL_POSITIONS.includes(r.labelPosition as LabelPosition))

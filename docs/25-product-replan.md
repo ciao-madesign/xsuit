@@ -74,6 +74,7 @@ Install → choose your market once → on any page, one click on the icon adapt
 - **P1 done**: release and developer builds (see decision #58).
 - **P2 done**: one click (decision #59).
 - **P3 done**: strength and plain feedback (decision #60).
+- **P4 done**: plain words and languages (decision #61).
 
 ## Honest limits to keep in view
 

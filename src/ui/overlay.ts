@@ -1,3 +1,4 @@
+import { isRtl, ruleText, translator, type Key, type Lang, type Translate } from "../i18n";
 import type { LabelPosition } from "../shared/settings";
 import type { ChangeSummary } from "./summary";
 
@@ -41,11 +42,19 @@ export interface OverlayHandlers {
  */
 export class Overlay {
   private host: HTMLElement | null = null;
+  private lang: Lang = "en";
+  private t: Translate = translator("en");
 
   constructor(
     private doc: Document,
     private handlers: OverlayHandlers,
   ) {}
+
+  /** The label is shown in the person's interface language (not the page's). */
+  setLanguage(lang: Lang): void {
+    this.lang = lang;
+    this.t = translator(lang);
+  }
 
   /** True while a label is supposed to be on screen. */
   expected = false;
@@ -92,40 +101,52 @@ export class Overlay {
     const pill = doc.createElement("button");
     pill.className = "pill";
     pill.type = "button";
-    pill.textContent = `xsuit · ${summary.count}`;
-    pill.setAttribute(
-      "aria-label",
-      `xsuit made ${summary.count} changes to this page. Open details.`,
-    );
+    const t = this.t;
+    wrap.dir = isRtl(this.lang) ? "rtl" : "ltr";
+    wrap.lang = this.lang;
+    pill.textContent = t("overlay.pill", { n: summary.count });
+    pill.setAttribute("aria-label", t("overlay.pillAria", { n: summary.count }));
     pill.setAttribute("aria-expanded", "false");
 
     const panel = doc.createElement("div");
     panel.className = "panel";
     panel.hidden = true;
     panel.setAttribute("role", "dialog");
-    panel.setAttribute("aria-label", "xsuit details");
+    panel.setAttribute("aria-label", t("overlay.panelAria"));
     const line = doc.createElement("p");
-    line.textContent = summary.line;
+    line.textContent = t("overlay.line", { n: summary.count });
     panel.append(line);
 
     const details = doc.createElement("details");
     const sum = doc.createElement("summary");
-    sum.textContent = "Why?";
+    sum.textContent = t("overlay.why");
     sum.style.cursor = "pointer";
     const list = doc.createElement("ul");
     for (const r of summary.reasons) {
       const li = doc.createElement("li");
-      const b = doc.createElement("strong");
-      b.textContent = r.title;
-      const d = doc.createElement("span");
-      d.textContent = ` ${r.description} `;
-      const e = doc.createElement("span");
-      e.className = "muted";
-      e.textContent = `(${r.evidence}; ${r.sources.map((s) => s.split(":")[0]).join(", ")})`;
+      // Plain words first: what changed, why, how sure the evidence is. The rule's own
+      // technical text is used only when there is no plain sentence for it.
+      const what = doc.createElement("strong");
+      what.textContent = ruleText(t, r.ruleId) ?? `${r.title}: ${r.description}`;
+      const why = doc.createElement("div");
+      why.className = "muted";
+      const level = `evidence.${r.evidenceLevel}` as Key;
+      const sources = r.sources.map((s) => s.split(":")[0]).join(", ");
+      why.textContent = `${t("overlay.reason")} ${t(level)}. ${t("overlay.sources", { list: sources })}`;
+      // One level down: the exact rule, version, how sure xsuit was about the page part, limits.
+      const tech = doc.createElement("details");
+      const ts = doc.createElement("summary");
+      ts.textContent = t("overlay.technical");
       const more = doc.createElement("div");
       more.className = "muted";
-      more.textContent = `${r.dimension} · rule v${r.version} · recognition: ${r.confidence} · ${r.elements} element(s). ${r.limit ? `Not shown by the evidence: ${r.limit} ` : ""}To turn off: ${r.switchOff}.`;
-      li.append(b, d, e, more);
+      more.lang = "en";
+      more.dir = "ltr";
+      more.textContent = `${r.title} (${r.evidence}) · ${r.dimension} · rule v${r.version} · recognition: ${r.confidence} · ${r.elements} element(s). ${r.limit ? `Not shown by the evidence: ${r.limit} ` : ""}`;
+      const off = doc.createElement("div");
+      off.className = "muted";
+      off.textContent = t("overlay.turnOff");
+      tech.append(ts, more);
+      li.append(what, why, tech, off);
       list.append(li);
     }
     details.append(sum, list);
@@ -135,9 +156,9 @@ export class Overlay {
       const note = doc.createElement("p");
       note.className = "muted";
       const parts: string[] = [];
-      for (const u of summary.undone) parts.push(`"${u.title}" was not applied: ${u.reason}.`);
-      if (unverifiable)
-        parts.push(`${unverifiable} item(s) could not be checked for accessibility.`);
+      for (const u of summary.undone)
+        parts.push(t("overlay.notApplied", { title: u.title, reason: u.reason }));
+      if (unverifiable) parts.push(t("overlay.unverified", { n: unverifiable }));
       note.textContent = parts.join(" ");
       panel.append(note);
     }
@@ -147,12 +168,12 @@ export class Overlay {
     const undo = doc.createElement("button");
     undo.type = "button";
     undo.className = "act primary";
-    undo.textContent = "Undo";
+    undo.textContent = t("overlay.undo");
     undo.addEventListener("click", () => this.handlers.onUndo());
     const close = doc.createElement("button");
     close.type = "button";
     close.className = "act";
-    close.textContent = "Close";
+    close.textContent = t("overlay.close");
     row.append(undo, close);
     panel.append(row);
 

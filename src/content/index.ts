@@ -13,6 +13,7 @@ import type { ApplyReply, Message, PingReply, RestoreReply } from "../shared/mes
 import type { Settings } from "../shared/settings";
 import { computeStatus } from "../shared/state";
 import { loadSettings, onSettingsChanged } from "../shared/storage";
+import { resolveLanguage } from "../i18n";
 import { Overlay } from "../ui/overlay";
 import { DEV_MESSAGE_TYPES, handleDevMessage } from "./dev";
 import { summarizeChanges } from "../ui/summary";
@@ -104,6 +105,7 @@ function main(): void {
 
   function sync(settings: Settings): void {
     current = settings;
+    overlay.setLanguage(resolveLanguage(settings.language, navigator.language));
     engine.restore(); // the page is original again, so it can be measured
     overlay.hide();
     metrics = undefined;
