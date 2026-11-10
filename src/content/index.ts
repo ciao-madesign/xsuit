@@ -93,6 +93,7 @@ function main(): void {
       ruleSets,
       profiles: profiles as unknown as Profile[],
       profile: settings.profile,
+      hybridRuleIds: settings.hybridRules,
     };
     if (needsMetrics(input))
       metrics = measurePage(document).metrics as unknown as Partial<Record<string, number | null>>;

@@ -17,6 +17,8 @@ export interface Settings {
   /** Rules the user turned off (all sites). */
   disabledRules: string[];
   labelPosition: LabelPosition;
+  /** Hybrid composition chosen by the user (rule ids); null = the default composition. */
+  hybridRules: string[] | null;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -26,6 +28,7 @@ export const DEFAULT_SETTINGS: Settings = {
   enabledSites: [],
   disabledRules: [],
   labelPosition: "bottom-left",
+  hybridRules: null,
 };
 
 const RULE_ID_RE = /^[a-z0-9]+(\.[a-z0-9-]+)+$/;
@@ -60,6 +63,13 @@ export function normalizeSettings(raw: unknown): Settings {
     s.disabledRules = [
       ...new Set(
         r.disabledRules.filter((x): x is string => typeof x === "string" && RULE_ID_RE.test(x)),
+      ),
+    ].sort();
+  }
+  if (Array.isArray(r.hybridRules)) {
+    s.hybridRules = [
+      ...new Set(
+        r.hybridRules.filter((x): x is string => typeof x === "string" && RULE_ID_RE.test(x)),
       ),
     ].sort();
   }

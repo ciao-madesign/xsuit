@@ -44,6 +44,7 @@ describe("normalizeSettings", () => {
       enabledSites: ["a.com", "b.com"],
       disabledRules: [],
       labelPosition: "bottom-left",
+      hybridRules: null,
     });
   });
 });

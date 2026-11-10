@@ -10,6 +10,8 @@ export interface PlanInput {
   profile: ProfileChoice;
   depth: Depth;
   context: PageContext;
+  /** Hybrid only: the rules the user composed. Missing = the default composition of the profile. */
+  hybridRuleIds?: string[] | null;
   /** Rules the user turned off. */
   disabledRules?: string[];
   /** Rules undone on this page by the accessibility guard, with the reason. */
@@ -18,18 +20,22 @@ export interface PlanInput {
 
 /** Rules a profile selects. Hybrid is an explicit composition, never an automatic mix. */
 export function selectCandidates(
-  input: Pick<PlanInput, "ruleSets" | "profiles" | "profile">,
+  input: Pick<PlanInput, "ruleSets" | "profiles" | "profile" | "hybridRuleIds">,
 ): Rule[] {
   const all = input.ruleSets.flatMap((s) => s.rules);
   if (input.profile === "original") return [];
   if (input.profile !== "hybrid") return all.filter((r) => r.profile === input.profile);
   const hybrid = input.profiles.find((p) => p.id === "hybrid");
-  const wanted = new Set((hybrid?.composition ?? []).flatMap((c) => c.ruleIds));
+  const wanted = new Set(
+    input.hybridRuleIds ?? (hybrid?.composition ?? []).flatMap((c) => c.ruleIds),
+  );
   return all.filter((r) => wanted.has(r.id));
 }
 
 /** True if any rule of this profile depends on a measured metric, so measuring is worth its cost. */
-export function needsMetrics(input: Pick<PlanInput, "ruleSets" | "profiles" | "profile">): boolean {
+export function needsMetrics(
+  input: Pick<PlanInput, "ruleSets" | "profiles" | "profile" | "hybridRuleIds">,
+): boolean {
   return selectCandidates(input).some((r) =>
     r.conditions.some((c) => c.type === "metric-above" || c.type === "metric-below"),
   );
@@ -82,7 +88,7 @@ function blocker(rule: Rule, input: PlanInput): string | null {
   return null;
 }
 
-function conflictKey(rule: Rule): string | null {
+export function conflictKey(rule: Rule): string | null {
   const a = rule.action;
   if (a.type === "set-token") return `token:${a.token}`;
   if (a.type === "emphasize" || a.type === "de-emphasize") return `emph:${a.target}`;

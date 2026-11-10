@@ -1,6 +1,8 @@
 import chinaRules from "../../rules/china.json";
 import westernRules from "../../rules/western.json";
-import type { RuleSet } from "../rules/types";
+import profiles from "../../rules/profiles.json";
+import { hybridBlockedBy } from "../engine/hybrid";
+import type { Rule, RuleSet } from "../rules/types";
 import {
   DEFAULT_SETTINGS,
   LABEL_POSITIONS,
@@ -75,6 +77,47 @@ function renderRules(): void {
   }
 }
 
+function defaultHybrid(): string[] {
+  const h = (profiles as { id: string; composition?: { ruleIds: string[] }[] }[]).find(
+    (p) => p.id === "hybrid",
+  );
+  return (h?.composition ?? []).flatMap((c) => c.ruleIds);
+}
+
+function renderHybrid(): void {
+  const box = $("hybrid-rules");
+  box.replaceChildren();
+  const all = sets.flatMap((s) => s.rules) as Rule[];
+  const selected = settings.hybridRules ?? defaultHybrid();
+  for (const rule of all) {
+    const on = selected.includes(rule.id);
+    const by = on ? null : hybridBlockedBy(rule.id, selected, all);
+    const row = document.createElement("div");
+    row.className = "row";
+    const label = document.createElement("label");
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = on;
+    cb.disabled = by !== null;
+    cb.addEventListener("change", () => {
+      const rest = selected.filter((x) => x !== rule.id);
+      void update({ ...settings, hybridRules: cb.checked ? [...rest, rule.id] : rest });
+    });
+    const text = document.createElement("span");
+    const origin = rule.profile === "china" ? "China" : "Western";
+    text.textContent = ` ${rule.title} (${origin}) `;
+    const note = document.createElement("span");
+    note.className = "muted";
+    note.textContent = by
+      ? `conflicts with "${all.find((r) => r.id === by)?.title}"`
+      : `(${LEVEL[rule.evidence.level] ?? rule.evidence.level})`;
+    label.append(cb, text, note);
+    row.append(label);
+    row.title = rule.description;
+    box.append(row);
+  }
+}
+
 async function removeSite(host: string): Promise<void> {
   // Give the access back to the browser too, not only forget the site.
   await chrome.permissions.remove({ origins: sitePatterns(host) }).catch(() => false);
@@ -85,6 +128,7 @@ async function update(next: Settings): Promise<void> {
   settings = next;
   await saveSettings(settings);
   renderSites();
+  renderHybrid();
 }
 
 async function init(): Promise<void> {
@@ -98,12 +142,15 @@ async function init(): Promise<void> {
   $("reset").addEventListener("click", async () => {
     for (const d of settings.enabledSites)
       await chrome.permissions.remove({ origins: sitePatterns(d) }).catch(() => false);
-    await update({ ...DEFAULT_SETTINGS, enabledSites: [], disabledRules: [] });
+    await update({ ...DEFAULT_SETTINGS, enabledSites: [], disabledRules: [], hybridRules: null });
     pos.value = settings.labelPosition;
     renderRules();
   });
+  $("hybrid-default").addEventListener("click", () => update({ ...settings, hybridRules: null }));
+  if (location.hash === "#hybrid") $<HTMLDetailsElement>("hybrid").open = true;
   renderSites();
   renderRules();
+  renderHybrid();
 }
 
 init();
