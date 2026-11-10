@@ -1,0 +1,26 @@
+{
+  "schema": "xsuit.observation/1",
+  "platform": "",
+  "pageType": "home",
+  "observedOn": "YYYY-MM-DD",
+  "observer": "",
+  "browser": "",
+  "viewportWidth": 1280,
+  "login": "logged-out",
+  "metrics": {
+    "source": "not-measured",
+    "file": ""
+  },
+  "conventions": {
+    "density": { "status": "not-observed", "note": "" },
+    "hierarchy": { "status": "not-observed", "note": "" },
+    "central-feed": { "status": "not-observed", "note": "" },
+    "navigation": { "status": "not-observed", "note": "" },
+    "media-and-colour": { "status": "not-observed", "note": "" },
+    "promotions": { "status": "not-observed", "note": "" },
+    "social-interaction": { "status": "not-observed", "note": "" },
+    "super-app-features": { "status": "not-observed", "note": "" }
+  },
+  "screenshots": [],
+  "limits": ""
+}

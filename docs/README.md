@@ -14,3 +14,4 @@ Foundations of the **Cross-Market UX Localization Extension**. Reading order:
 - `08-scope-review-and-replan.md`: scope review, gaps, candidate rules, re-planned builds B5–B11.
 - `09-recognition.md`: B7 recognition design (signals, confidence, page types, fallback).
 - `10-transparency-and-safety.md`: B8 layers, on-page label, accessibility guard, the contrast correction.
+- `11-observation-sheets.md`: how to fill observation sheets for login-gated platforms (B10).
