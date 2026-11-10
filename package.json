@@ -13,7 +13,9 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "evidence": "node scripts/evidence-report.mjs",
-    "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build"
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build",
+    "replication": "esbuild src/research/replication-cli.ts --bundle --platform=node --format=cjs --outfile=.replication.cjs --log-level=error && node .replication.cjs; rm -f .replication.cjs",
+    "validate:browser": "npm run build && node scripts/validate-browser.cjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

@@ -15,3 +15,4 @@ Foundations of the **Cross-Market UX Localization Extension**. Reading order:
 - `09-recognition.md`: B7 recognition design (signals, confidence, page types, fallback).
 - `10-transparency-and-safety.md`: B8 layers, on-page label, accessibility guard, the contrast correction.
 - `11-observation-sheets.md`: how to fill observation sheets for login-gated platforms (B10).
+- `12-validation-report.md`: B11 internal validation results, go/no-go criteria and the PC-side evidence protocol.
