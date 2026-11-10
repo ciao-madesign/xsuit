@@ -54,6 +54,41 @@ function bigPage(n) {
   let [sw] = ctx.serviceWorkers();
   if (!sw) sw = await ctx.waitForEvent("serviceworker");
 
+  // The popup page itself loads in the real browser without errors, first run and normal use (P2).
+  const extId = new URL(sw.url()).host;
+  const popupProblems = [];
+  for (const first of [true, false]) {
+    await sw.evaluate(async (first) => {
+      await chrome.storage.local.set({
+        settings: first ? {} : { enabled: true, profile: "western", onboarded: true },
+      });
+    }, first);
+    const pp = await ctx.newPage();
+    const errs = [];
+    pp.on("pageerror", (e) => errs.push(e.message));
+    await pp.goto(`chrome-extension://${extId}/popup.html`);
+    await pp.waitForTimeout(300);
+    const shown = await pp.evaluate(() => ({
+      onboarding: !document.getElementById("onboarding").hidden,
+      // Opened as a page, the "current tab" is the popup itself (not adaptable), so the normal view
+      // shows either the switch or the plain-words explanation, never the first-run screen.
+      toggle:
+        !document.getElementById("onboarding").hidden === false &&
+        (!document.getElementById("home").hidden || !document.getElementById("unsupported").hidden),
+    }));
+    if (errs.length) popupProblems.push(`popup errors: ${errs.join("; ")}`);
+    if (first && !shown.onboarding) popupProblems.push("first run did not show the market choice");
+    if (!first && !shown.toggle)
+      popupProblems.push("normal view showed neither the switch nor an explanation");
+    await pp.close();
+  }
+  console.log(
+    popupProblems.length
+      ? `POPUP PROBLEMS: ${popupProblems.join(" | ")}`
+      : "popup page: ok (first run and normal view)",
+  );
+  if (popupProblems.length) process.exitCode = 1;
+
   const results = [];
   // Desktop width for every page; phone width (B20) for the pages where text and layout are most at risk.
   const PHONE = [

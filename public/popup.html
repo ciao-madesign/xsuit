@@ -10,27 +10,35 @@
     <main>
       <h1>xsuit</h1>
 
-      <!-- Layer 1: what every user sees. -->
-      <div class="row">
-        <label for="always">Personalize this site</label>
-        <input type="checkbox" id="always" />
-      </div>
-      <fieldset>
-        <legend class="muted">Style</legend>
-        <div class="row">
-          <label><input type="radio" name="profile" value="original" /> Original</label>
-        </div>
-        <div class="row">
-          <label><input type="radio" name="profile" value="western" /> Western</label>
-        </div>
-        <div class="row">
-          <label><input type="radio" name="profile" value="china" /> China</label>
-        </div>
-      </fieldset>
-      <div id="status" class="status" role="status"></div>
+      <!-- First run: choose a market. -->
+      <section id="onboarding" hidden aria-labelledby="onboardingTitle">
+        <h2 id="onboardingTitle">Which web style are you used to?</h2>
+        <p class="muted">
+          xsuit makes pages look and work the way sites in that market usually do. You can change
+          this at any time.
+        </p>
+        <div id="marketChoices"></div>
+        <p id="suggestion" class="muted"></p>
+      </section>
 
-      <!-- Layer 2: advanced settings, collapsed by default. -->
-      <details>
+      <!-- Normal use: one switch. -->
+      <section id="home" hidden>
+        <div class="row">
+          <span>Market: <strong id="marketName"></strong></span>
+          <button id="changeMarket" type="button" class="link">Change</button>
+        </div>
+        <div id="marketPicker" hidden></div>
+        <button id="toggle" type="button" class="primary big">Adapt this page</button>
+        <div id="hint" class="status" role="status"></div>
+        <div class="row">
+          <label for="always">Always on this site</label>
+          <input type="checkbox" id="always" />
+        </div>
+      </section>
+
+      <div id="unsupported" class="status unsupported" role="status" hidden></div>
+
+      <details id="advanced">
         <summary>Advanced</summary>
         <div class="row">
           <label for="enabled">xsuit enabled everywhere</label>
@@ -39,23 +47,33 @@
         <div class="row">
           <label for="depth">Depth</label>
           <select id="depth">
-            <option value="visual">Visual</option>
-            <option value="structural">Structural</option>
+            <option value="visual">Visual (spacing and emphasis)</option>
+            <option value="structural">Structural (also moves and groups)</option>
           </select>
         </div>
         <div class="row">
-          <button id="apply" class="primary" type="button">Apply now</button>
-          <button id="restore" type="button">Restore original</button>
+          <label for="custom">Use my custom mix</label>
+          <input type="checkbox" id="custom" />
         </div>
         <div class="row">
+          <a href="options.html#hybrid" class="muted">Compose my mix</a>
           <a href="options.html" id="open-options" class="muted">All options</a>
         </div>
+        <!-- dev:start -->
+        <div class="row">
+          <button id="inspect" type="button">Check compatibility</button>
+        </div>
+        <div class="row">
+          <button id="compare" type="button">Comparison report</button>
+        </div>
+        <div id="compat" class="muted" hidden></div>
+        <!-- dev:end -->
+        <p class="muted">Runs on this device. Nothing is sent anywhere.</p>
       </details>
 
       <!-- dev:start -->
-      <!-- Layer 3: researcher tools (IX researchers are the V1 audience, not the final one). -->
       <details>
-        <summary>Research tools</summary>
+        <summary>Research tools (developer build)</summary>
         <div class="row">
           <button id="measure" type="button">Measure this page</button>
           <button id="download" type="button" disabled>Download JSON</button>
@@ -78,23 +96,6 @@
             <button id="exportCancel" type="button">Cancel</button>
           </div>
         </section>
-
-        <!-- dev:start -->
-        <div class="row">
-          <button id="inspect" type="button">Check compatibility</button>
-        </div>
-        <!-- dev:end -->
-        <div class="row">
-          <label><input type="radio" name="profile" value="hybrid" /> Use Hybrid style</label>
-          <a href="options.html#hybrid" class="muted">Compose</a>
-        </div>
-        <!-- dev:start -->
-        <div class="row">
-          <button id="compare" type="button">Comparison report</button>
-        </div>
-        <div id="compat" class="muted" hidden></div>
-        <!-- dev:end -->
-        <p class="muted">Runs locally. Nothing is sent anywhere.</p>
       </details>
       <!-- dev:end -->
     </main>

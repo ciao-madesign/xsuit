@@ -159,6 +159,7 @@ function main(): void {
       case "xsuit/restore": {
         const wasActive = engine.status.active;
         once = false;
+        suspended = true; // stays original until the next load or until the person adapts again
         engine.restore();
         overlay.hide();
         sendResponse({

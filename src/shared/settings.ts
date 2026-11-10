@@ -9,6 +9,8 @@ export const LABEL_POSITIONS = ["bottom-left", "bottom-right", "hidden"] as cons
 export type LabelPosition = (typeof LABEL_POSITIONS)[number];
 
 export interface Settings {
+  /** The person has chosen a market once (first-run screen done). */
+  onboarded: boolean;
   enabled: boolean;
   profile: ProfileChoice;
   depth: Depth;
@@ -24,6 +26,7 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
+  onboarded: false,
   enabled: true,
   profile: "original",
   depth: "visual",
@@ -107,7 +110,10 @@ export function normalizeSettings(raw: unknown): Settings {
   if (typeof raw !== "object" || raw === null) return s;
   const r = raw as Record<string, unknown>;
   if (typeof r.enabled === "boolean") s.enabled = r.enabled;
+  if (typeof r.onboarded === "boolean") s.onboarded = r.onboarded;
   if (PROFILE_CHOICES.includes(r.profile as ProfileChoice)) s.profile = r.profile as ProfileChoice;
+  // Settings saved before the first-run screen existed: a chosen style means it was done.
+  if (typeof r.onboarded !== "boolean" && s.profile !== "original") s.onboarded = true;
   if (DEPTHS.includes(r.depth as Depth)) s.depth = r.depth as Depth;
   if (LABEL_POSITIONS.includes(r.labelPosition as LabelPosition))
     s.labelPosition = r.labelPosition as LabelPosition;

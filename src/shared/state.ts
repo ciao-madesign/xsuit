@@ -26,7 +26,7 @@ export function computeStatus(settings: Settings, url: string | undefined, once 
     return {
       kind: "not-enabled",
       host,
-      message: `xsuit does not run on ${host} automatically. Use "Apply now" or turn on "Always on this site".`,
+      message: `xsuit does not run on ${host} automatically. Use "Adapt this page" or turn on "Always on this site".`,
     };
   }
   return {

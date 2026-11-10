@@ -1,7 +1,6 @@
-import type { ApplyReply, Message, RestoreReply } from "../shared/messages";
+import type { ApplyReply, Message, PingReply, RestoreReply } from "../shared/messages";
 import {
   DEPTHS,
-  PROFILE_CHOICES,
   normalizeHost,
   sitePatterns,
   withSite,
@@ -9,40 +8,88 @@ import {
   type ProfileChoice,
   type Settings,
 } from "../shared/settings";
-import { initDev } from "./dev";
 import { computeStatus } from "../shared/state";
 import { loadSettings, saveSettings } from "../shared/storage";
+import { initDev } from "./dev";
+import { adaptResult, marketName, MARKETS, suggestMarket, viewFor, type Market } from "./model";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
 let settings: Settings;
 let tab: chrome.tabs.Tab | undefined;
-
-function say(text: string): void {
-  $("status").textContent = text;
-}
+let adapted = false;
+let message = "";
 
 /** Set by the developer module; absent from the release build. */
 let renderDev: (supported: boolean) => void = () => undefined;
 
+function say(text: string): void {
+  message = text;
+  render();
+}
+
+function marketButtons(into: HTMLElement, onPick: (m: Market) => void): void {
+  into.replaceChildren();
+  for (const m of MARKETS) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "choice";
+    b.dataset.market = m.id;
+    const name = document.createElement("strong");
+    name.textContent = m.name;
+    const blurb = document.createElement("span");
+    blurb.className = "muted";
+    blurb.textContent = m.blurb;
+    b.append(name, blurb);
+    b.addEventListener("click", () => onPick(m.id));
+    into.append(b);
+  }
+}
+
 function render(): void {
-  const status = computeStatus(settings, tab?.url);
+  const page = computeStatus(settings, tab?.url);
+  const supported = page.kind !== "unsupported";
+  const view = viewFor({
+    settings,
+    supported,
+    unsupportedReason: supported ? undefined : page.message,
+    adapted,
+  });
+  $("onboarding").hidden = view.kind !== "onboarding";
+  $("home").hidden = view.kind !== "home";
+  $("advanced").hidden = view.kind === "onboarding";
+  const un = $("unsupported");
+  un.hidden = view.kind !== "unsupported";
+  if (view.kind === "unsupported") un.textContent = view.message;
+  if (view.kind === "onboarding") {
+    const s = suggestMarket(navigator.language);
+    $("suggestion").textContent = s
+      ? `Suggestion from your browser language: ${marketName(s)}. The choice is yours.`
+      : "";
+  }
+  if (view.kind === "home") {
+    const t = $<HTMLButtonElement>("toggle");
+    t.textContent = view.toggle.label;
+    t.disabled = view.toggle.disabled;
+    $("marketName").textContent = marketName(settings.profile);
+    $("hint").textContent = message || view.hint;
+    const always = $<HTMLInputElement>("always");
+    always.disabled = !supported;
+    always.checked = supported && isOn();
+  }
   $<HTMLInputElement>("enabled").checked = settings.enabled;
   $<HTMLSelectElement>("depth").value = settings.depth;
-  for (const r of document.querySelectorAll<HTMLInputElement>('input[name="profile"]')) {
-    r.checked = r.value === settings.profile;
-  }
-  const supported = status.kind !== "unsupported";
-  const always = $<HTMLInputElement>("always");
-  always.disabled = !supported;
-  always.checked = status.kind === "active";
-  $<HTMLButtonElement>("restore").disabled = !supported;
-  if (__DEV__) renderDev(supported);
-  $<HTMLButtonElement>("apply").disabled =
-    !supported || !settings.enabled || settings.profile === "original";
-  const box = $("status");
-  box.textContent = status.message;
-  box.className = `status ${status.kind}`;
+  $<HTMLInputElement>("custom").checked = settings.profile === "hybrid";
+  renderDev(supported);
+}
+
+/** "Always on this site" is checked when this site is on the always-on list. */
+function isOn(): boolean {
+  const status = computeStatus(settings, tab?.url);
+  return (
+    "host" in status &&
+    settings.enabledSites.some((d) => status.host === d || status.host.endsWith(`.${d}`))
+  );
 }
 
 async function update(next: Settings): Promise<void> {
@@ -67,6 +114,45 @@ async function send<T>(msg: Message): Promise<T | null> {
   }
 }
 
+/** Is this page adapted right now? Asks the page without injecting anything. */
+async function isAdapted(): Promise<boolean> {
+  if (!tab?.id) return false;
+  try {
+    return ((await chrome.tabs.sendMessage(tab.id, { type: "xsuit/ping" })) as PingReply).applied;
+  } catch {
+    return false;
+  }
+}
+
+async function chooseMarket(m: Market): Promise<void> {
+  const next = { ...settings, profile: m as ProfileChoice, onboarded: true };
+  $("marketPicker").hidden = true;
+  const wasAdapted = adapted;
+  await update(next);
+  // The page follows the new market by itself when it is already adapted (storage change).
+  if (wasAdapted) message = `Market changed to ${marketName(m)}.`;
+  render();
+}
+
+/** The one switch: adapt this page, or go back to the original. Needs only the click (activeTab). */
+async function toggle(): Promise<void> {
+  message = "";
+  if (adapted) {
+    const r = await send<RestoreReply>({ type: "xsuit/restore" });
+    if (r) {
+      adapted = false;
+      message = "Back to the original page.";
+    }
+  } else {
+    const r = await send<ApplyReply>({ type: "xsuit/apply-once" });
+    if (r) {
+      adapted = r.applied;
+      message = adaptResult(r.applied, r.rules);
+    }
+  }
+  render();
+}
+
 async function setAlways(on: boolean): Promise<void> {
   const status = computeStatus(settings, tab?.url);
   if (!("host" in status)) return;
@@ -78,21 +164,18 @@ async function setAlways(on: boolean): Promise<void> {
     // background worker then records the site.
     const granted = await chrome.permissions.request({ origins }).catch(() => false);
     if (!granted) {
-      say("Access was not granted, so xsuit will not run here automatically.");
+      message = "Access was not granted, so xsuit will not run here automatically.";
       render();
       return;
     }
     await update(withSite(settings, host, true));
-    // No style chosen yet: ask in plain words instead of deciding for the user (decision #30).
-    if (settings.profile === "original") {
-      $("picker").hidden = false;
-      return;
-    }
-    await send<ApplyReply>({ type: "xsuit/apply-once" });
+    adapted = (await send<ApplyReply>({ type: "xsuit/apply-once" }))?.applied ?? false;
+    message = "";
   } else {
     await chrome.permissions.remove({ origins }).catch(() => false);
     await update(withSite(settings, host, false));
   }
+  render();
 }
 
 async function init(): Promise<void> {
@@ -100,43 +183,29 @@ async function init(): Promise<void> {
     loadSettings(),
     chrome.tabs.query({ active: true, currentWindow: true }),
   ]);
+  adapted = await isAdapted();
+  marketButtons($("marketChoices"), chooseMarket);
+  marketButtons($("marketPicker"), chooseMarket);
+  $("changeMarket").addEventListener("click", () => {
+    $("marketPicker").hidden = !$("marketPicker").hidden;
+  });
+  $("toggle").addEventListener("click", toggle);
+  $<HTMLInputElement>("always").addEventListener("change", (e) =>
+    setAlways((e.target as HTMLInputElement).checked),
+  );
   $<HTMLInputElement>("enabled").addEventListener("change", (e) =>
     update({ ...settings, enabled: (e.target as HTMLInputElement).checked }),
   );
-  for (const r of document.querySelectorAll<HTMLInputElement>('input[name="profile"]')) {
-    r.addEventListener("change", () => {
-      if (PROFILE_CHOICES.includes(r.value as ProfileChoice))
-        update({ ...settings, profile: r.value as ProfileChoice });
-    });
-  }
   $<HTMLSelectElement>("depth").addEventListener("change", (e) => {
     const v = (e.target as HTMLSelectElement).value as Depth;
     if (DEPTHS.includes(v)) update({ ...settings, depth: v });
   });
-  $<HTMLInputElement>("always").addEventListener("change", (e) =>
-    setAlways((e.target as HTMLInputElement).checked),
-  );
-  $("apply").addEventListener("click", async () => {
-    const r = await send<ApplyReply>({ type: "xsuit/apply-once" });
-    if (r)
-      say(
-        r.applied
-          ? `Applied to this page (${r.rules} rule(s)).`
-          : "Nothing was applied on this page.",
-      );
+  $<HTMLInputElement>("custom").addEventListener("change", (e) => {
+    const on = (e.target as HTMLInputElement).checked;
+    // Back from the custom mix to a market: the one suggested for the browser, or Western.
+    const back: ProfileChoice = (suggestMarket(navigator.language) ?? "western") as ProfileChoice;
+    update({ ...settings, profile: on ? "hybrid" : back, onboarded: true });
   });
-  $("restore").addEventListener("click", async () => {
-    const r = await send<RestoreReply>({ type: "xsuit/restore" });
-    if (r) say(r.note);
-  });
-  for (const b of document.querySelectorAll<HTMLButtonElement>("#picker button")) {
-    b.addEventListener("click", async () => {
-      const style = b.dataset.style as ProfileChoice;
-      $("picker").hidden = true;
-      await update({ ...settings, profile: style });
-      await send<ApplyReply>({ type: "xsuit/apply-once" });
-    });
-  }
   if (__DEV__) renderDev = initDev({ send, say, windowId: () => tab?.windowId });
   render();
 }

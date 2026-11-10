@@ -60,7 +60,7 @@ describe("release build", () => {
     for (const m of ["xsuit/apply-once", "xsuit/restore", "xsuit/ping", "visual.western"])
       expect(c, m).toContain(m);
     expect(text("dist", "popup.html")).toContain('id="always"');
-    expect(text("dist", "popup.html")).toContain('id="restore"');
+    expect(text("dist", "popup.html")).toContain('id="toggle"');
   }, 30000);
 
   it("has the same manifest and security invariants as the developer build", () => {

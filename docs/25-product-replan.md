@@ -72,6 +72,7 @@ Install → choose your market once → on any page, one click on the icon adapt
 ## Progress
 
 - **P1 done**: release and developer builds (see decision #58).
+- **P2 done**: one click (decision #59).
 
 ## Honest limits to keep in view
 

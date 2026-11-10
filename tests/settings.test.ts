@@ -38,6 +38,7 @@ describe("normalizeSettings", () => {
       enabledSites: ["https://www.B.com", "a.com", "a.com", 5, "bad host"],
     });
     expect(s).toEqual({
+      onboarded: true, // saved before the first-run screen existed, with a chosen style
       enabled: false,
       profile: "china",
       depth: "structural",
@@ -47,6 +48,15 @@ describe("normalizeSettings", () => {
       hybridChoices: null,
       hybridRules: null,
     });
+  });
+});
+
+describe("first run", () => {
+  it("is not done by default, and is remembered once set", () => {
+    expect(DEFAULT_SETTINGS.onboarded).toBe(false);
+    expect(normalizeSettings({ onboarded: true, profile: "western" }).onboarded).toBe(true);
+    expect(normalizeSettings({ onboarded: "yes" }).onboarded).toBe(false);
+    expect(normalizeSettings({ profile: "original" }).onboarded).toBe(false);
   });
 });
 
