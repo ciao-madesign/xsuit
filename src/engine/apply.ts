@@ -194,9 +194,11 @@ export function applyPlan(
       const found = targets.filter((c) => els.some((x) => x.component === c));
       els.splice(0, els.length, ...(found.length === targets.length ? els : []));
     }
-    // Structural changes hide or add content; the contrast check has nothing to compare.
-    const snaps =
-      guard && visual ? els.slice(0, MAX_CHECKED_PER_RULE).map((x) => guard.snapshot(x.el)) : [];
+    // Structural changes hide or add content: the contrast check has nothing to compare, but
+    // target size and keyboard reachability are still checked.
+    const snaps = guard
+      ? els.slice(0, MAX_CHECKED_PER_RULE).map((x) => guard.snapshot(x.el, { contrast: visual }))
+      : [];
     todo.push({ ruleId: rule.id, els, snaps });
   }
   const hadOverflow = guard?.overflowsHorizontally() ?? false;
@@ -270,6 +272,7 @@ export function applyPlan(
     reverted.set(ruleId, reason);
   };
   if (guard) {
+    guard.refresh();
     for (const t of todo) {
       for (const snap of t.snaps) {
         const res = guard.compare(snap);

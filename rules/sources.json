@@ -60,7 +60,7 @@
     "url": "https://www.w3.org/TR/WCAG22/",
     "sample": "Accessibility standard (success criteria 1.4.1 use of colour, 1.4.3 contrast minimum, 1.4.12 text spacing, 2.5.8 target size)",
     "verified": true,
-    "notes": "Primary text read on 2026-11-10 (w3.org/TR/WCAG22). Criteria read: 1.4.1 (colour not the only means), 1.4.3 (4.5:1; 3:1 for large text; exceptions: incidental, logotypes), 1.4.12, 2.5.8 (24 by 24 CSS px, with exceptions: spacing, equivalent, inline, user agent control, essential). xsuit's guard uses 24 px as a conservative check and does not model these exceptions (planned in B15). Used only as a constraint on effects, never as evidence of cultural difference.",
+    "notes": "Primary text read on 2026-11-10 (w3.org/TR/WCAG22). Criteria read: 1.4.1 (colour not the only means), 1.4.3 (4.5:1; 3:1 for large text; exceptions: incidental, logotypes), 1.4.12, 2.5.8 (24 by 24 CSS px, with exceptions: spacing, equivalent, inline, user agent control, essential). xsuit's guard models the spacing and inline exceptions (B15); equivalent, user agent control and essential are not modelled, so the guard may undo more than WCAG strictly requires. Used only as a constraint on effects, never as evidence of cultural difference.",
     "checkedOn": "2026-11-10"
   }
 ]

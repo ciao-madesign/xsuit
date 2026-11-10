@@ -18,27 +18,7 @@ export interface EffectFile {
 
 export const effectFile = effectsJson as EffectFile;
 
-/** Properties effects may never use: they could lower contrast, hide content, or break layout/targets. */
-export const FORBIDDEN_PROPERTIES = [
-  "color",
-  "background",
-  "background-color",
-  "opacity",
-  "display",
-  "visibility",
-  "position",
-  "pointer-events",
-  "font-size",
-  "height",
-  "max-height",
-  "min-height",
-  "overflow",
-  "clip",
-  "clip-path",
-  "content",
-  "transform",
-  "z-index",
-];
+export { FORBIDDEN_PROPERTIES } from "./forbidden";
 
 export function toCatalog(file: EffectFile = effectFile): EffectCatalog {
   const catalog: EffectCatalog = {};

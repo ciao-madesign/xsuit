@@ -1,12 +1,13 @@
+import { usesForbiddenProperty } from "./forbidden";
 import type { EffectCatalog, Plan } from "./types";
 
 export const NS = "xsuit";
 export const STYLE_ID = "xsuit-style";
 const UNSAFE = /[{}<>]|url\(|@import|expression\(|javascript:|\/\*/i;
 
-/** Effects are data. Only plain "property: value" declarations are accepted. */
+/** Effects are data. Only plain "property: value" declarations of allowed properties are accepted. */
 export function safeDeclaration(d: string): boolean {
-  return !UNSAFE.test(d) && /^[a-z-]+\s*:\s*[^;]+$/i.test(d.trim());
+  return !UNSAFE.test(d) && /^[a-z-]+\s*:\s*[^;]+$/i.test(d.trim()) && !usesForbiddenProperty(d);
 }
 
 /**

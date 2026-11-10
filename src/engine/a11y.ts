@@ -102,20 +102,87 @@ export function elementContrast(el: Element): ContrastResult {
 }
 
 const INTERACTIVE = "a[href], button, input:not([type=hidden]), select, textarea, [role=button]";
+const FOCUSABLE = `${INTERACTIVE}, [tabindex]:not([tabindex^="-"])`;
+const CIRCLE_RADIUS = MIN_TARGET_PX / 2;
+
+interface Rect {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+const rectOf = (el: Element): Rect => {
+  const r = el.getBoundingClientRect();
+  return { left: r.left, top: r.top, right: r.right, bottom: r.bottom };
+};
+const sideOf = (r: Rect) => Math.min(r.right - r.left, r.bottom - r.top);
+
+/** Distance from a point to a rectangle (0 when inside). */
+function distanceToRect(x: number, y: number, r: Rect): number {
+  const dx = Math.max(r.left - x, 0, x - r.right);
+  const dy = Math.max(r.top - y, 0, y - r.bottom);
+  return Math.hypot(dx, dy);
+}
+
+/**
+ * WCAG 2.2 SC 2.5.8 "Spacing" exception: an undersized target conforms when a 24 CSS px circle
+ * centred on its box intersects no other target and no other undersized target's circle.
+ */
+export function spacingException(self: Rect, others: Rect[]): boolean {
+  const cx = (self.left + self.right) / 2;
+  const cy = (self.top + self.bottom) / 2;
+  for (const o of others) {
+    if (sideOf(o) >= MIN_TARGET_PX) {
+      if (distanceToRect(cx, cy, o) < CIRCLE_RADIUS) return false;
+    } else {
+      const ox = (o.left + o.right) / 2;
+      const oy = (o.top + o.bottom) / 2;
+      if (Math.hypot(cx - ox, cy - oy) < CIRCLE_RADIUS * 2) return false;
+    }
+  }
+  return true;
+}
+
+/** "Inline" exception: a link inside a sentence, sized by the line height of the surrounding text. */
+function isInlineInText(el: Element): boolean {
+  const win = el.ownerDocument.defaultView!;
+  if (win.getComputedStyle(el).display !== "inline") return false;
+  const parent = el.parentElement;
+  if (!parent) return false;
+  let own = 0;
+  for (const n of Array.from(parent.childNodes))
+    if (n.nodeType === 3) own += (n.textContent ?? "").trim().length;
+  return own > 0;
+}
+
+/** True when the element renders and can take focus (not display:none / visibility:hidden). */
+function isRendered(el: Element): boolean {
+  const win = el.ownerDocument.defaultView!;
+  for (let e: Element | null = el; e; e = e.parentElement) {
+    const cs = win.getComputedStyle(e);
+    if (cs.display === "none" || cs.visibility === "hidden") return false;
+  }
+  return true;
+}
 
 export interface Snapshot {
   el: Element;
-  contrast: ContrastResult;
-  targets: { el: Element; minSide: number }[];
+  /** null when contrast is not compared (structural rules). */
+  contrast: ContrastResult | null;
+  /** Each target with whether it met the minimum size (or an exception) before the change. */
+  targets: { el: Element; conformed: boolean }[];
+  /** Interactive elements that were reachable before the change. */
+  focusables: Element[];
 }
 
 export interface Problem {
-  kind: "contrast" | "target-size";
+  kind: "contrast" | "target-size" | "focus";
   detail: string;
 }
 
 export class A11yGuard {
   private win: Window;
+  private all: { el: Element; rect: Rect }[] | null = null;
   constructor(private doc: Document) {
     this.win = doc.defaultView!;
   }
@@ -125,43 +192,91 @@ export class A11yGuard {
     return r.width > 0 && r.height > 0;
   }
 
-  snapshot(el: Element): Snapshot {
-    const targets = [el, ...el.querySelectorAll(INTERACTIVE)]
-      .filter((t) => t.matches(INTERACTIVE))
-      .map((t) => {
-        const r = t.getBoundingClientRect();
-        return { el: t, minSide: Math.min(r.width, r.height) };
-      });
-    return { el, contrast: elementContrast(el), targets };
+  /** Forget cached positions: call after the page changed (before comparing). */
+  refresh(): void {
+    this.all = null;
+  }
+
+  private page(): { el: Element; rect: Rect }[] {
+    return (this.all ??= [...this.doc.querySelectorAll(INTERACTIVE)]
+      .filter(isRendered)
+      .slice(0, 2000)
+      .map((el) => ({ el, rect: rectOf(el) }))
+      .filter((t) => t.rect.right > t.rect.left && t.rect.bottom > t.rect.top));
+  }
+
+  /** Meets 2.5.8: big enough, or inline in text, or well separated from other targets. */
+  private conforms(el: Element): boolean {
+    const r = rectOf(el);
+    if (sideOf(r) >= MIN_TARGET_PX) return true;
+    if (isInlineInText(el)) return true;
+    const others = this.page()
+      .filter((t) => t.el !== el && !t.el.contains(el) && !el.contains(t.el))
+      .map((t) => t.rect)
+      .filter(
+        (o) =>
+          distanceToRect((r.left + r.right) / 2, (r.top + r.bottom) / 2, o) < MIN_TARGET_PX * 2,
+      );
+    return spacingException(r, others);
+  }
+
+  snapshot(el: Element, opts: { contrast?: boolean } = {}): Snapshot {
+    const inside = [el, ...el.querySelectorAll(FOCUSABLE)].filter((t) => t.matches(FOCUSABLE));
+    const layout = this.hasLayout;
+    const targets = layout
+      ? inside
+          .filter((t) => t.matches(INTERACTIVE))
+          .map((t) => ({ el: t, conformed: this.conforms(t) }))
+      : [];
+    return {
+      el,
+      contrast: opts.contrast === false ? null : elementContrast(el),
+      targets,
+      focusables: inside.filter(isRendered),
+    };
   }
 
   /** What got measurably worse since the snapshot, or an empty list (plus how many were unverifiable). */
   compare(before: Snapshot): { problems: Problem[]; unverifiable: number } {
     const problems: Problem[] = [];
     let unverifiable = 0;
-    const after = elementContrast(before.el);
-    if (before.contrast.ratio === null || after.ratio === null) {
-      if (before.contrast.unverifiable !== "no text" && after.unverifiable !== "no text")
-        unverifiable++;
-    } else {
-      const need = after.large ? MIN_CONTRAST_LARGE : MIN_CONTRAST;
-      if (after.ratio < need && after.ratio < before.contrast.ratio - 0.01)
-        problems.push({
-          kind: "contrast",
-          detail: `contrast fell from ${before.contrast.ratio.toFixed(1)} to ${after.ratio.toFixed(1)} (needs ${need})`,
-        });
+    if (before.contrast) {
+      const after = elementContrast(before.el);
+      if (before.contrast.ratio === null || after.ratio === null) {
+        if (before.contrast.unverifiable !== "no text" && after.unverifiable !== "no text")
+          unverifiable++;
+      } else {
+        const need = after.large ? MIN_CONTRAST_LARGE : MIN_CONTRAST;
+        if (after.ratio < need && after.ratio < before.contrast.ratio - 0.01)
+          problems.push({
+            kind: "contrast",
+            detail: `contrast fell from ${before.contrast.ratio.toFixed(1)} to ${after.ratio.toFixed(1)} (needs ${need})`,
+          });
+      }
     }
     if (this.hasLayout) {
       for (const t of before.targets) {
-        const r = t.el.getBoundingClientRect();
-        const now = Math.min(r.width, r.height);
-        if (t.minSide >= MIN_TARGET_PX && now < MIN_TARGET_PX)
+        if (!t.conformed || !t.el.isConnected) continue; // already failing before: not our doing
+        if (!this.conforms(t.el)) {
+          const side = Math.round(sideOf(rectOf(t.el)));
           problems.push({
             kind: "target-size",
-            detail: `a clickable element shrank from ${Math.round(t.minSide)} px to ${Math.round(now)} px (needs ${MIN_TARGET_PX})`,
+            detail: `a clickable element is now ${side} px and no longer meets the 24 px minimum (no spacing or inline exception applies)`,
           });
+        }
       }
     } else unverifiable++;
+    for (const f of before.focusables) {
+      // Hidden on purpose behind a "Show" button (collapse) is fine: the button takes focus.
+      if (f.closest('[data-xsuit-collapsed="1"]')) continue;
+      if (!f.isConnected || !isRendered(f)) {
+        problems.push({
+          kind: "focus",
+          detail: "an interactive element can no longer be reached with the keyboard",
+        });
+        break;
+      }
+    }
     return { problems, unverifiable };
   }
 

@@ -96,6 +96,18 @@ export class Engine {
     };
   }
 
+  /**
+   * The viewport changed (window resized, browser zoom, device rotated). The page is put back,
+   * measured again at the new width, and the rules and the accessibility check run again: a rule
+   * that is fine at 1280 px but makes the page scroll sideways at 640 px (200 % zoom) is undone.
+   */
+  reflow(): void {
+    const input = this.input;
+    if (!input || !this.s.active) return;
+    this.restore();
+    this.start(input);
+  }
+
   /** Runs `fn` without the observer seeing our own page changes (on-page UI, style updates). */
   quietly(fn: () => void): void {
     const watching = this.observer !== null;

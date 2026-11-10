@@ -4,6 +4,7 @@ import { adapters, buildContext, createResolver, findAdapter } from "../src/adap
 import { buildCss, parseEffectKey, safeDeclaration } from "../src/engine/css";
 import { defaultEffects, effectFile, FORBIDDEN_PROPERTIES } from "../src/engine/effects";
 import { Engine } from "../src/engine/engine";
+import { usesForbiddenProperty } from "../src/engine/forbidden";
 import { buildPlan } from "../src/engine/plan";
 import { formatIssues, validateAdapter } from "../src/rules";
 import type { Profile, RuleSet } from "../src/rules/types";
@@ -40,6 +41,7 @@ describe("effect catalog is justified and safe", () => {
         expect(safeDeclaration(d), d).toBe(true);
         const prop = d.split(":")[0]!.trim().toLowerCase();
         expect(FORBIDDEN_PROPERTIES.includes(prop), `${e.key}: ${prop}`).toBe(false);
+        expect(usesForbiddenProperty(d), `${e.key}: ${d}`).toBe(false);
       }
   });
   it("keys parse and the compact line height never goes below 1.4", () => {

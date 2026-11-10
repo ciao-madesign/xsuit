@@ -38,10 +38,10 @@ Written 2026-11-10 after the merge of the security work and B11 and the privacy 
 - Done (A): draft adapters never override generic recognition (decision #48); `adapterHits` shown in research tools; stricter adapter validation; verification sheet format + gate (`tests/b14-adapters.test.ts`: a tested adapter without a passing sheet fails CI); `npm run adapters`; hostile/stale adapter cannot break a page (exact restore on all 34 corpus pages).
 - Still to do (P): verify the 12 adapters on real sites per `adapters/VERIFY.md` and collect measurements per `docs/13-pc-guide.md`. Until then all adapters stay `draft` and `npm run replication` says "insufficient".
 
-## B15 — Accessibility guard v2
+## B15 — Accessibility guard v2 (automatic part DONE 2026-11-10; keyboard/screen-reader pass needs a person)
 
 - Add: focus order and visible focus unchanged, 200 % zoom / reflow without horizontal scroll, WCAG 2.2 target-size exceptions modeled correctly, `prefers-reduced-motion` respected.
-- `docs/20-accessibility-testing.md` lists what is and is not automatically checked (the guard is not a full WCAG audit).
+- `docs/17-accessibility-testing.md` lists what is and is not automatically checked (the guard is not a full WCAG audit).
 - Checks (A): tests per check, including cases that must be undone and cases that must be kept. (P): keyboard and screen-reader pass on 3 pages.
 
 ## B16 — Dynamic pages

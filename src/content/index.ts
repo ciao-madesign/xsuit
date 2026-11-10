@@ -232,6 +232,19 @@ function main(): void {
   nav?.addEventListener("navigatesuccess", onNavigate);
   window.addEventListener("popstate", onNavigate);
 
+  // Zoom or resize changes the viewport width in CSS pixels: re-check the accessibility guard
+  // at the new width (reflow, WCAG 1.4.10). Only when the width really changed.
+  let lastWidth = window.innerWidth;
+  let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+  window.addEventListener("resize", () => {
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (Math.abs(window.innerWidth - lastWidth) < 1) return;
+      lastWidth = window.innerWidth;
+      if (!suspended && engine.status.active) engine.reflow();
+    }, 300);
+  });
+
   loadSettings().then(sync);
   onSettingsChanged(sync);
 }
