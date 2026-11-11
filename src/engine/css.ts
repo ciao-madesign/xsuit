@@ -13,7 +13,23 @@ export function safeDeclaration(d: string): boolean {
  * CSS for the plan. Every selector starts with html[data-xsuit] so nothing can leak onto
  * the page, and only attributes set by the engine are matched.
  */
-const DESCENDANTS = ["img", "picture", "video", "a", "p", "li", "section", "article"];
+const DESCENDANTS = [
+  "img",
+  "picture",
+  "video",
+  "a",
+  "p",
+  "li",
+  "section",
+  "article",
+  "text",
+  "layout",
+];
+/** Named groups for page-level effects. :where() keeps specificity at zero for the group itself. */
+const GROUPS: Record<string, string> = {
+  text: ":where(p, li, h1, h2, h3, h4, h5, h6, a, span, div, td, th, dd, dt, blockquote, figcaption)",
+  layout: ":where(div, ul, ol, section, main, nav, header, footer, aside)",
+};
 
 /** Splits "image-prominence=high@img" into its base key and optional allowed descendant. */
 export function parseEffectKey(key: string): { base: string; descendant: string | null } | null {
@@ -38,7 +54,9 @@ export function buildCss(plan: Plan, effects: EffectCatalog): string {
       if (!parsed || parsed.base !== baseKey) continue;
       const decls = raw.filter(safeDeclaration);
       if (!decls.length) continue;
-      const target = parsed.descendant ? `${attrSelector} ${parsed.descendant}` : attrSelector;
+      const target = parsed.descendant
+        ? `${attrSelector} ${GROUPS[parsed.descendant] ?? parsed.descendant}`
+        : attrSelector;
       blocks.push(
         `html[data-${NS}] ${target} { ${decls.map((d) => `${d.trim()} !important`).join("; ")}; }`,
       );

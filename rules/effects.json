@@ -102,34 +102,6 @@
       "ruleIds": ["visual.western.search-first"]
     },
     {
-      "key": "density=compact@p",
-      "declarations": ["line-height: 1.4", "margin-block: 0.3em"],
-      "basis": "Page-level scope: the studies measure whole homepages (li2026), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.",
-      "constraints": ["Line height stays at or above 1.4.", "Spacing only; no content hidden."],
-      "ruleIds": ["visual.china.compact-density"]
-    },
-    {
-      "key": "density=compact@li",
-      "declarations": ["line-height: 1.4", "margin-block: 0.15em"],
-      "basis": "Page-level scope: the studies measure whole homepages (li2026), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.",
-      "constraints": ["Line height stays at or above 1.4."],
-      "ruleIds": ["visual.china.compact-density"]
-    },
-    {
-      "key": "density=spacious@p",
-      "declarations": ["line-height: 1.8", "margin-block: 1em"],
-      "basis": "Page-level scope: the studies measure whole homepages (li2026 and nng2016), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.",
-      "constraints": ["Spacing only; no content hidden."],
-      "ruleIds": ["visual.western.spacious-density"]
-    },
-    {
-      "key": "density=spacious@li",
-      "declarations": ["line-height: 1.8", "margin-block: 0.5em"],
-      "basis": "Page-level scope: the studies measure whole homepages (li2026 and nng2016), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.",
-      "constraints": ["Spacing only; no content hidden."],
-      "ruleIds": ["visual.western.spacious-density"]
-    },
-    {
       "key": "spacing-scale=tight@section",
       "declarations": ["padding-block: 0.4rem"],
       "basis": "Page-level scope: the studies measure whole homepages (li2026), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.",
@@ -184,6 +156,34 @@
       "basis": "Page-level scope: the studies measure whole homepages (li2026 and nng2016), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.",
       "constraints": ["Video only."],
       "ruleIds": ["visual.western.muted-palette"]
+    },
+    {
+      "key": "density=compact@text",
+      "declarations": ["line-height: 1.4"],
+      "basis": "Page-level scope: the studies measure whole homepages (li2026), so the effect applies to the whole page, not only to recognized blocks (real-site tests showed block-only effects were barely visible). Direction from the cited evidence; magnitude is a design choice.",
+      "constraints": ["Line height stays at or above 1.4; no font-size change."],
+      "ruleIds": ["visual.china.compact-density"]
+    },
+    {
+      "key": "density=spacious@text",
+      "declarations": ["line-height: 1.8"],
+      "basis": "Page-level scope: the studies measure whole homepages (li2026), so the effect applies to the whole page, not only to recognized blocks (real-site tests showed block-only effects were barely visible). Direction from the cited evidence; magnitude is a design choice.",
+      "constraints": ["Line height only; no content hidden."],
+      "ruleIds": ["visual.western.spacious-density"]
+    },
+    {
+      "key": "spacing-scale=tight@layout",
+      "declarations": ["gap: 0.25rem"],
+      "basis": "Page-level scope: the studies measure whole homepages (li2026), so the effect applies to the whole page, not only to recognized blocks (real-site tests showed block-only effects were barely visible). Direction from the cited evidence; magnitude is a design choice. gap only affects flex/grid containers.",
+      "constraints": ["gap cannot hide content or move elements out of their containers."],
+      "ruleIds": ["visual.china.tight-spacing"]
+    },
+    {
+      "key": "spacing-scale=airy@layout",
+      "declarations": ["gap: 1.75rem"],
+      "basis": "Page-level scope: the studies measure whole homepages (li2026), so the effect applies to the whole page, not only to recognized blocks (real-site tests showed block-only effects were barely visible). Direction from the cited evidence; magnitude is a design choice. gap only affects flex/grid containers.",
+      "constraints": ["gap cannot hide content or move elements out of their containers."],
+      "ruleIds": ["visual.western.airy-spacing"]
     }
   ],
   "intentionallyEmpty": [
