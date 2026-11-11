@@ -11,7 +11,7 @@
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["home", "search-results", "article"],
-      "components": ["headline-list", "hero", "product-grid"],
+      "components": ["headline-list", "hero", "product-grid", "page"],
       "conditions": [
         {
           "type": "metric-above",
@@ -54,7 +54,8 @@
       "limits": [
         "Tendency from research, not a universal rule; varies by site and sector.",
         "Only spacing changes; content must not be hidden.",
-        "Does nothing on pages already at or below the threshold; also does nothing if the page could not be measured."
+        "Does nothing on pages already at or below the threshold; also does nothing if the page could not be measured.",
+        "Also applies at page level (whole page), because the studies measure whole homepages; the magnitude is a design choice."
       ],
       "testResults": []
     },
@@ -67,7 +68,7 @@
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["any"],
-      "components": ["header", "footer", "sidebar"],
+      "components": ["header", "footer", "sidebar", "page"],
       "conditions": [],
       "action": {
         "type": "set-token",
@@ -99,7 +100,10 @@
           "No test of whether adding spacing changes user outcomes."
         ]
       },
-      "limits": ["Tendency from research, not a universal rule; varies by site and sector."],
+      "limits": [
+        "Tendency from research, not a universal rule; varies by site and sector.",
+        "Also applies at page level (whole page), because the studies measure whole homepages; the magnitude is a design choice."
+      ],
       "testResults": []
     },
     {
@@ -111,7 +115,7 @@
       "level": "visual",
       "mode": "visual",
       "pageTypes": ["any"],
-      "components": ["hero", "promo-banner", "product-card"],
+      "components": ["hero", "promo-banner", "product-card", "page"],
       "conditions": [],
       "action": {
         "type": "set-token",
@@ -146,7 +150,8 @@
       },
       "limits": [
         "Tendency from research, not a universal rule; varies by site and sector.",
-        "Must keep text contrast at or above WCAG AA."
+        "Must keep text contrast at or above WCAG AA.",
+        "Also applies at page level (whole page), because the studies measure whole homepages; the magnitude is a design choice."
       ],
       "testResults": []
     },

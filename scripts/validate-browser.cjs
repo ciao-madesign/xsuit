@@ -22,6 +22,7 @@ function bigPage(n) {
 (async () => {
   const pages = {};
   for (const f of fs.readdirSync(FIX)) pages[f] = fs.readFileSync(path.join(FIX, f), "utf8");
+  pages["big-1000.html"] = bigPage(1000);
   pages["big-5000.html"] = bigPage(5000);
   const server = http.createServer((q, r) => {
     const name = decodeURIComponent(q.url.slice(1));

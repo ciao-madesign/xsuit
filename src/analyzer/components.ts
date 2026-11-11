@@ -172,6 +172,10 @@ export function recognizeComponents(doc: Document): Recognition {
     }
   }
 
+  // the whole page: always available, so page-level effects do not depend on recognition
+  if (doc.body)
+    out.page = { elements: [doc.body], confidence: "high", signals: ["semantic:document body"] };
+
   // video player
   {
     const videos = h.all("video").filter((v) => {

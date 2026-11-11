@@ -66,6 +66,54 @@ Concrete CSS for rule actions. Direction of each effect comes from the evidence 
   - Basis: Provisional: the rule using it (search first) is a hypothesis. An outline in the text colour marks the element without altering any colour or layout.
   - Constraints: currentColor keeps contrast equal to the text; outline does not affect layout.
   - Used by: visual.western.search-first
+- `density=compact@p`: `line-height: 1.4; margin-block: 0.3em`
+  - Basis: Page-level scope: the studies measure whole homepages (li2026), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.
+  - Constraints: Line height stays at or above 1.4. Spacing only; no content hidden.
+  - Used by: visual.china.compact-density
+- `density=compact@li`: `line-height: 1.4; margin-block: 0.15em`
+  - Basis: Page-level scope: the studies measure whole homepages (li2026), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.
+  - Constraints: Line height stays at or above 1.4.
+  - Used by: visual.china.compact-density
+- `density=spacious@p`: `line-height: 1.8; margin-block: 1em`
+  - Basis: Page-level scope: the studies measure whole homepages (li2026 and nng2016), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.
+  - Constraints: Spacing only; no content hidden.
+  - Used by: visual.western.spacious-density
+- `density=spacious@li`: `line-height: 1.8; margin-block: 0.5em`
+  - Basis: Page-level scope: the studies measure whole homepages (li2026 and nng2016), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.
+  - Constraints: Spacing only; no content hidden.
+  - Used by: visual.western.spacious-density
+- `spacing-scale=tight@section`: `padding-block: 0.4rem`
+  - Basis: Page-level scope: the studies measure whole homepages (li2026), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.
+  - Constraints: Padding only.
+  - Used by: visual.china.tight-spacing
+- `spacing-scale=tight@article`: `padding-block: 0.4rem`
+  - Basis: Page-level scope: the studies measure whole homepages (li2026), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.
+  - Constraints: Padding only.
+  - Used by: visual.china.tight-spacing
+- `spacing-scale=airy@section`: `padding-block: 2rem`
+  - Basis: Page-level scope: the studies measure whole homepages (li2026 and nng2016), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.
+  - Constraints: Padding only.
+  - Used by: visual.western.airy-spacing
+- `spacing-scale=airy@article`: `padding-block: 2rem`
+  - Basis: Page-level scope: the studies measure whole homepages (li2026 and nng2016), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.
+  - Constraints: Padding only.
+  - Used by: visual.western.airy-spacing
+- `palette-saturation=vivid@img`: `filter: saturate(1.5)`
+  - Basis: Page-level scope: the studies measure whole homepages (li2026), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible. Applied to images and video only, so text contrast is not affected.
+  - Constraints: Images and video only; text and backgrounds are untouched.
+  - Used by: visual.china.vivid-palette
+- `palette-saturation=vivid@video`: `filter: saturate(1.5)`
+  - Basis: Page-level scope: the studies measure whole homepages (li2026), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.
+  - Constraints: Video only.
+  - Used by: visual.china.vivid-palette
+- `palette-saturation=muted@img`: `filter: saturate(0.6)`
+  - Basis: Page-level scope: the studies measure whole homepages (li2026 and nng2016), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible. Applied to images and video only, so text contrast is not affected.
+  - Constraints: Images and video only.
+  - Used by: visual.western.muted-palette
+- `palette-saturation=muted@video`: `filter: saturate(0.6)`
+  - Basis: Page-level scope: the studies measure whole homepages (li2026 and nng2016), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.
+  - Constraints: Video only.
+  - Used by: visual.western.muted-palette
 
 Contrast simulation: Share of text/background colour pairs that pass WCAG 4.5:1 and fall below it after the CSS saturate() filter.
 
@@ -96,7 +144,7 @@ No effect (on purpose):
   - NN/G is small (6 Chinese users): Chinese users also met many usability problems on complex sites and some designs were judged too complicated.
   - Chinese users were less accepting of the simple sites tested, but this is not a test of this transformation.
   - Delta-based: the density threshold (25.54) is the midpoint of two sample means from a study of municipal homepages. It is provisional and compared against our own metric definition, whose scale may differ from the study's. Replace with own measurements (A2).
-- **Limits:** Tendency from research, not a universal rule; varies by site and sector. Touch targets must stay usable. Does nothing on pages already at or above the threshold; also does nothing if the page could not be measured.
+- **Limits:** Tendency from research, not a universal rule; varies by site and sector. Touch targets must stay usable. Does nothing on pages already at or above the threshold; also does nothing if the page could not be measured. Also applies at page level (whole page), because the studies measure whole homepages; the magnitude is a design choice.
 - **Test results:** none yet
 
 ### `visual.china.tight-spacing` — moderate
@@ -109,7 +157,7 @@ No effect (on purpose):
 - **Does not show:**
   - Methods and definitions differ across the reviewed studies.
   - No test of whether tighter spacing helps users.
-- **Limits:** Tendency from research, not a universal rule; varies by site and sector.
+- **Limits:** Tendency from research, not a universal rule; varies by site and sector. Also applies at page level (whole page), because the studies measure whole homepages; the magnitude is a design choice.
 - **Test results:** none yet
 
 ### `visual.china.vivid-palette` — moderate
@@ -123,7 +171,7 @@ No effect (on purpose):
   - Evidence comes from institutional (municipal) homepages; commercial sites are not covered.
   - No evidence that raising saturation improves experience.
   - Hue is deliberately untouched.
-- **Limits:** Tendency from research, not a universal rule; varies by site and sector. Must keep text contrast at or above WCAG AA. Never apply a red/gold stereotype.
+- **Limits:** Tendency from research, not a universal rule; varies by site and sector. Must keep text contrast at or above WCAG AA. Never apply a red/gold stereotype. Also applies at page level (whole page), because the studies measure whole homepages; the magnitude is a design choice.
 - **Test results:** none yet
 
 ### `visual.western.airy-spacing` — moderate
@@ -136,7 +184,7 @@ No effect (on purpose):
 - **Does not show:**
   - Methods and definitions of white space differ across the reviewed studies.
   - No test of whether adding spacing changes user outcomes.
-- **Limits:** Tendency from research, not a universal rule; varies by site and sector.
+- **Limits:** Tendency from research, not a universal rule; varies by site and sector. Also applies at page level (whole page), because the studies measure whole homepages; the magnitude is a design choice.
 - **Test results:** none yet
 
 ### `visual.western.spacious-density` — moderate
@@ -151,7 +199,7 @@ No effect (on purpose):
   - NN/G does not report a general Western preference for simplicity; its non-Chinese participants were 6 expatriates living in China.
   - Search-results and article pages are extrapolations from homepages.
   - Delta-based: the density threshold (25.54) is the midpoint of two sample means from a study of municipal homepages. It is provisional and compared against our own metric definition, whose scale may differ from the study's. Replace with own measurements (A2).
-- **Limits:** Tendency from research, not a universal rule; varies by site and sector. Only spacing changes; content must not be hidden. Does nothing on pages already at or below the threshold; also does nothing if the page could not be measured.
+- **Limits:** Tendency from research, not a universal rule; varies by site and sector. Only spacing changes; content must not be hidden. Does nothing on pages already at or below the threshold; also does nothing if the page could not be measured. Also applies at page level (whole page), because the studies measure whole homepages; the magnitude is a design choice.
 - **Test results:** none yet
 
 ### `visual.western.underlined-links` — moderate
@@ -231,7 +279,7 @@ No effect (on purpose):
   - Relative finding, no absolute Western saturation value.
   - Evidence comes from institutional (municipal) homepages; commercial sites are not covered.
   - No evidence that desaturating a site improves experience.
-- **Limits:** Tendency from research, not a universal rule; varies by site and sector. Must keep text contrast at or above WCAG AA.
+- **Limits:** Tendency from research, not a universal rule; varies by site and sector. Must keep text contrast at or above WCAG AA. Also applies at page level (whole page), because the studies measure whole homepages; the magnitude is a design choice.
 - **Test results:** none yet
 
 ### `visual.western.quiet-carousel` — emerging

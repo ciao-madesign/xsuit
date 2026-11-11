@@ -100,6 +100,90 @@
         "currentColor keeps contrast equal to the text; outline does not affect layout."
       ],
       "ruleIds": ["visual.western.search-first"]
+    },
+    {
+      "key": "density=compact@p",
+      "declarations": ["line-height: 1.4", "margin-block: 0.3em"],
+      "basis": "Page-level scope: the studies measure whole homepages (li2026), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.",
+      "constraints": ["Line height stays at or above 1.4.", "Spacing only; no content hidden."],
+      "ruleIds": ["visual.china.compact-density"]
+    },
+    {
+      "key": "density=compact@li",
+      "declarations": ["line-height: 1.4", "margin-block: 0.15em"],
+      "basis": "Page-level scope: the studies measure whole homepages (li2026), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.",
+      "constraints": ["Line height stays at or above 1.4."],
+      "ruleIds": ["visual.china.compact-density"]
+    },
+    {
+      "key": "density=spacious@p",
+      "declarations": ["line-height: 1.8", "margin-block: 1em"],
+      "basis": "Page-level scope: the studies measure whole homepages (li2026 and nng2016), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.",
+      "constraints": ["Spacing only; no content hidden."],
+      "ruleIds": ["visual.western.spacious-density"]
+    },
+    {
+      "key": "density=spacious@li",
+      "declarations": ["line-height: 1.8", "margin-block: 0.5em"],
+      "basis": "Page-level scope: the studies measure whole homepages (li2026 and nng2016), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.",
+      "constraints": ["Spacing only; no content hidden."],
+      "ruleIds": ["visual.western.spacious-density"]
+    },
+    {
+      "key": "spacing-scale=tight@section",
+      "declarations": ["padding-block: 0.4rem"],
+      "basis": "Page-level scope: the studies measure whole homepages (li2026), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.",
+      "constraints": ["Padding only."],
+      "ruleIds": ["visual.china.tight-spacing"]
+    },
+    {
+      "key": "spacing-scale=tight@article",
+      "declarations": ["padding-block: 0.4rem"],
+      "basis": "Page-level scope: the studies measure whole homepages (li2026), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.",
+      "constraints": ["Padding only."],
+      "ruleIds": ["visual.china.tight-spacing"]
+    },
+    {
+      "key": "spacing-scale=airy@section",
+      "declarations": ["padding-block: 2rem"],
+      "basis": "Page-level scope: the studies measure whole homepages (li2026 and nng2016), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.",
+      "constraints": ["Padding only."],
+      "ruleIds": ["visual.western.airy-spacing"]
+    },
+    {
+      "key": "spacing-scale=airy@article",
+      "declarations": ["padding-block: 2rem"],
+      "basis": "Page-level scope: the studies measure whole homepages (li2026 and nng2016), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.",
+      "constraints": ["Padding only."],
+      "ruleIds": ["visual.western.airy-spacing"]
+    },
+    {
+      "key": "palette-saturation=vivid@img",
+      "declarations": ["filter: saturate(1.5)"],
+      "basis": "Page-level scope: the studies measure whole homepages (li2026), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible. Applied to images and video only, so text contrast is not affected.",
+      "constraints": ["Images and video only; text and backgrounds are untouched."],
+      "ruleIds": ["visual.china.vivid-palette"]
+    },
+    {
+      "key": "palette-saturation=vivid@video",
+      "declarations": ["filter: saturate(1.5)"],
+      "basis": "Page-level scope: the studies measure whole homepages (li2026), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.",
+      "constraints": ["Video only."],
+      "ruleIds": ["visual.china.vivid-palette"]
+    },
+    {
+      "key": "palette-saturation=muted@img",
+      "declarations": ["filter: saturate(0.6)"],
+      "basis": "Page-level scope: the studies measure whole homepages (li2026 and nng2016), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible. Applied to images and video only, so text contrast is not affected.",
+      "constraints": ["Images and video only."],
+      "ruleIds": ["visual.western.muted-palette"]
+    },
+    {
+      "key": "palette-saturation=muted@video",
+      "declarations": ["filter: saturate(0.6)"],
+      "basis": "Page-level scope: the studies measure whole homepages (li2026 and nng2016), so the effect also applies to the page, not only to recognized blocks. Direction from the cited evidence; magnitude is a design choice, raised after real-site tests showed the first values were barely visible.",
+      "constraints": ["Video only."],
+      "ruleIds": ["visual.western.muted-palette"]
     }
   ],
   "intentionallyEmpty": [

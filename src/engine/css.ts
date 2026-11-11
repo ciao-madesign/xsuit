@@ -13,7 +13,7 @@ export function safeDeclaration(d: string): boolean {
  * CSS for the plan. Every selector starts with html[data-xsuit] so nothing can leak onto
  * the page, and only attributes set by the engine are matched.
  */
-const DESCENDANTS = ["img", "picture", "video", "a"];
+const DESCENDANTS = ["img", "picture", "video", "a", "p", "li", "section", "article"];
 
 /** Splits "image-prominence=high@img" into its base key and optional allowed descendant. */
 export function parseEffectKey(key: string): { base: string; descendant: string | null } | null {

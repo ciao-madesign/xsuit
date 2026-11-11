@@ -20,6 +20,7 @@ export const PAGE_TYPES = [
 ] as const;
 
 export const COMPONENTS = [
+  "page", // the whole page (<body>): for effects the studies measured at page level
   "header",
   "primary-nav",
   "search-box",

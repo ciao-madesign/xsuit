@@ -46,7 +46,7 @@ describe("generic component recognition", () => {
   it("does not recognize what it cannot justify (div soup)", () => {
     page("div-soup.html");
     const r = recognizeComponents(document);
-    expect(Object.keys(r)).toEqual([]);
+    expect(Object.keys(r)).toEqual(["page"]); // only the whole page, which needs no justification
   });
   it("search box: heuristics alone never reach high", () => {
     document.documentElement.innerHTML =

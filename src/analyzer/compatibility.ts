@@ -9,7 +9,8 @@ export interface Compatibility {
 
 /** How well xsuit understands this page (research layer only, decision #35). */
 export function compatibility(analysis: Analysis, adapter: Adapter | null): Compatibility {
-  const sure = analysis.recognized.filter((r) => r.confidence !== "low");
+  // "page" is always present and says nothing about understanding the page.
+  const sure = analysis.recognized.filter((r) => r.confidence !== "low" && r.component !== "page");
   const viaAdapter = analysis.recognized.some((r) => r.source === "adapter");
   if (adapter?.status === "tested" && viaAdapter) {
     return { level: "full", reason: "A tested site adapter matched this page." };
